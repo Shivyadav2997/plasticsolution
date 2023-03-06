@@ -38,12 +38,9 @@ import {
 // core components
 import Header from "components/Headers/Header.js";
 import { useEffect, useRef } from "react";
+import CustomTable from "components/Custom/CustomTable";
 
 const Tables = () => {
-  const datatableRef = useRef(null);
-  const $ = require("jquery");
-  $.DataTable = require("datatables.net");
-
   const columns = [
     {
       title: "Name",
@@ -57,20 +54,10 @@ const Tables = () => {
     },
   ];
 
-  useEffect(() => {
-    $(datatableRef.current).DataTable({
-      dom: '<"data-table-wrapper"t>',
-      data: [
-        { name: "Shiv", nickname: "vaydo" },
-        { name: "Minu", nickname: "shiv ni vaydi" },
-      ],
-      columns,
-      ordering: false,
-    });
-    return () => {
-      $(".data-table-wrapper").find("table").DataTable().destroy(true);
-    };
-  });
+  const data = [
+    { name: "Test", nickname: "Testn" },
+    { name: "Test1", nickname: "Testn2" },
+  ];
   return (
     <>
       <Header />
@@ -83,11 +70,7 @@ const Tables = () => {
               <CardHeader className="border-0">
                 <h3 className="mb-0">Card tables</h3>
               </CardHeader>
-              <Table
-                ref={datatableRef}
-                className="align-items-center table-flush"
-                responsive
-              >
+              <Table className="align-items-center table-flush" responsive>
                 {/* <thead className="thead-light">
                   <tr>
                     <th scope="col">Project</th>
@@ -904,9 +887,12 @@ const Tables = () => {
             </Card>
           </div>
         </Row>
-        <div>
-          <table ref={datatableRef}></table>
-        </div>
+        <Row>
+          <div className="col">
+            <CustomTable cols={columns} data={data} dark={false}></CustomTable>
+          </div>
+        </Row>
+
         {/* Dark table */}
         <Row className="mt-5">
           <div className="col">
