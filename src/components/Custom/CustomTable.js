@@ -26,10 +26,12 @@ import "datatables.net-buttons/js/buttons.flash.js";
 import "datatables.net-buttons/js/buttons.html5.js";
 import "datatables.net-buttons/js/buttons.print.js";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
+import "datatables.net-responsive-dt/css/responsive.dataTables.min.css";
+import "datatables.net-responsive-dt/js/responsive.dataTables.min.js";
+// import "datatables.net-responsive-bs";
 import $ from "jquery";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import "datatables.net-responsive-bs";
 import JSZip from "jszip";
 window.JSZip = JSZip;
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -46,7 +48,7 @@ const CustomTable = ({ cols, data, dark }) => {
       data: data,
       columns: cols,
       ordering: true,
-      info: false,
+      info: true,
       responsive: true,
       paging: false,
 
@@ -62,7 +64,12 @@ const CustomTable = ({ cols, data, dark }) => {
         //   .buttons()
         //   .container()
         //   .appendTo($(containerRef.current));
-        $(".dataTables_wrapper").find(".dt-button").addClass("btn btn-primary");
+        $(".dataTables_wrapper")
+          .find(".dt-button")
+          .addClass("btn btn-primary btn-sm");
+        $(".dataTables_wrapper")
+          .find(".dt-buttons")
+          .addClass("btn-group flex-wrap");
       },
     });
     $(datatableRef.current).find("thead").addClass("thead-light");
@@ -80,7 +87,8 @@ const CustomTable = ({ cols, data, dark }) => {
       </CardHeader>
       <div className="table-responsive">
         <table
-          className="align-items-center table-flush table"
+          className="align-items-center table-flush table dt-responsive"
+          style={{ width: "100%" }}
           ref={datatableRef}
         ></table>
       </div>
