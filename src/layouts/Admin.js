@@ -23,13 +23,13 @@ import { Container } from "reactstrap";
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-
+import { useSelector } from "react-redux";
 import routes from "routes.js";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-
+  const { user } = useSelector((store) => store.user);
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
@@ -72,7 +72,7 @@ const Admin = (props) => {
         logo={{
           innerLink: "/admin/index",
           imgSrc: require("../assets/img/brand/argon-react.png"),
-          imgAlt: "..."
+          imgAlt: "...",
         }}
       />
       <div className="main-content" ref={mainContent}>
@@ -86,6 +86,9 @@ const Admin = (props) => {
         </Switch>
         <Container fluid>
           <AdminFooter />
+          <p>
+            {user.name} {user.lname}
+          </p>
         </Container>
       </div>
     </>

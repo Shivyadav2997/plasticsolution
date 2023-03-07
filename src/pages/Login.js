@@ -12,8 +12,13 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { useDispatch } from "react-redux";
+import { login } from "features/User/UserSlice";
+import { useHistory } from "react-router-dom";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   return (
     <>
       <Col lg="5" md="7">
@@ -65,7 +70,15 @@ const Login = () => {
                 </label>
               </div> */}
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button">
+                <Button
+                  className="my-4"
+                  color="primary"
+                  type="button"
+                  onClick={() => {
+                    dispatch(login({ id: 1, name: "shiv", lname: "yadav" }));
+                    history.push("/admin/index");
+                  }}
+                >
                   Sign in
                 </Button>
               </div>
