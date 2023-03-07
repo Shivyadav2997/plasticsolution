@@ -4,19 +4,9 @@ import {
   Card,
   CardHeader,
   CardFooter,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
   Pagination,
   PaginationItem,
   PaginationLink,
-  Progress,
-  Table,
-  Container,
-  Row,
-  UncontrolledTooltip,
   Button,
 } from "reactstrap";
 import "datatables.net-dt/js/dataTables.dataTables";
@@ -33,7 +23,6 @@ import "datatables.net-responsive-dt/js/responsive.dataTables.min.js";
 import ReactDOM, { createRoot } from "react-dom/client";
 import { BiEditAlt } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
-
 import $ from "jquery";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -52,9 +41,6 @@ const CustomTable = ({
   deleteClick = null,
 }) => {
   const datatableRef = useRef(null);
-  //   const $ = require("jquery");
-  //   $.DataTable = require("datatables.net");
-
   var colDefs = [];
   const action = (td, cellData, rowData, row, col) => {
     return hasEdit || hasDelete ? (
@@ -103,7 +89,13 @@ const CustomTable = ({
   if (columndefs != null) {
     colDefs = [...colDefs, columndefs];
   }
+
+  const [datatable, setDatatable] = useState(null);
   useEffect(() => {
+    if (datatable != null) {
+      datatable.clear();
+      datatable.destroy();
+    }
     var table2 = $(datatableRef.current).DataTable({
       dom: "Bfrtip",
       data: data,
@@ -114,8 +106,6 @@ const CustomTable = ({
       paging: false,
       columnDefs: colDefs,
       buttons: ["excel", "pdf", "print"],
-      //   buttons: true,
-
       initComplete: (settings) => {
         $(".dataTables_wrapper")
           .find(".dt-button")
@@ -131,12 +121,15 @@ const CustomTable = ({
           .addClass("pd-custom-right");
       },
     });
+    setDatatable(table2);
     $(datatableRef.current).find("thead").addClass("thead-light");
-
     return () => {
-      $(".data-table-wrapper").find("table").DataTable().destroy(true);
+      if (datatable != null) {
+        datatable.clear();
+        datatable.destroy();
+      }
     };
-  }, []);
+  }, [data]);
   return (
     <Card className="shadow">
       <CardHeader className="border-0">

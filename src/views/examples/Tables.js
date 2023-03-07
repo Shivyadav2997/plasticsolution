@@ -43,29 +43,22 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { BiEditAlt } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
-
+import { getData } from "api/api";
+import { useState } from "react";
 const Tables = () => {
+  const [posts, setPosts] = useState([]);
   const columns = [
     {
-      title: "Name",
-
-      data: "name",
+      title: "Id",
+      data: "id",
     },
     {
-      title: "Nickname",
-      data: "nickname",
+      title: "Title",
+      data: "title",
     },
     {
-      title: "Surname",
-      data: "surname",
-    },
-    {
-      title: "Age",
-      data: "age",
-    },
-    {
-      title: "Gender",
-      data: "gender",
+      title: "Thumbnail Url",
+      data: "thumbnailUrl",
     },
     {
       title: "Action",
@@ -119,6 +112,15 @@ const Tables = () => {
     console.log("cd", cellData);
     console.log("col", col);
   };
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const data = await getData("photos");
+      console.log(data);
+      setPosts(data.data.slice(0, 20));
+    };
+    getPosts();
+  }, []);
   return (
     <>
       <Header />
@@ -130,7 +132,7 @@ const Tables = () => {
           <div className="col">
             <CustomTable
               cols={columns}
-              data={data}
+              data={posts}
               dark={false}
               editClick={test}
               deleteClick={test2}
