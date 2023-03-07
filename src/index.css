@@ -13,3 +13,7 @@
 .pd-custom-right{
 padding-right: 1.5rem !important;
 }
+
+.gap-10 {
+  gap:10px
+}

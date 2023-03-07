@@ -39,6 +39,10 @@ import {
 import Header from "components/Headers/Header.js";
 import { useEffect, useRef } from "react";
 import CustomTable from "components/Custom/CustomTable";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { BiEditAlt } from "react-icons/bi";
+import { MdDelete } from "react-icons/md";
 
 const Tables = () => {
   const columns = [
@@ -106,18 +110,14 @@ const Tables = () => {
       gender: "male",
     },
   ];
-  const columndefs = [
-    {
-      targets: -1,
-      data: "name",
-      render: (data, type, full, meta) => {
-        // return `<button onclick="test(${data.name})">${data.name} minu</button>`;
-        return <>{<button onClick={() => test("minu")}>Click</button>}</>;
-      },
-    },
-  ];
-  const test = (str) => {
-    alert(str);
+
+  const test = (cellData, rowData, row, col) => {
+    console.log("rd", rowData);
+    console.log("row", row);
+  };
+  const test2 = (cellData, rowData, row, col) => {
+    console.log("cd", cellData);
+    console.log("col", col);
   };
   return (
     <>
@@ -132,8 +132,9 @@ const Tables = () => {
               cols={columns}
               data={data}
               dark={false}
-              columndefs={columndefs}
-            ></CustomTable>
+              editClick={test}
+              deleteClick={test2}
+            />
           </div>
         </Row>
 
