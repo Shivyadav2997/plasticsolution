@@ -36,7 +36,7 @@ import JSZip from "jszip";
 window.JSZip = JSZip;
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const CustomTable = ({ cols, data, dark }) => {
+const CustomTable = ({ cols, data, dark, columndefs }) => {
   const datatableRef = useRef(null);
   //   const $ = require("jquery");
   //   $.DataTable = require("datatables.net");
@@ -44,14 +44,13 @@ const CustomTable = ({ cols, data, dark }) => {
   useEffect(() => {
     var table2 = $(datatableRef.current).DataTable({
       dom: "Bfrtip",
-
       data: data,
       columns: cols,
       ordering: true,
       info: true,
       responsive: true,
       paging: false,
-
+      columnDefs: columndefs,
       buttons: ["excel", "pdf", "print"],
       //   buttons: true,
       initComplete: (settings) => {
@@ -66,10 +65,16 @@ const CustomTable = ({ cols, data, dark }) => {
         //   .appendTo($(containerRef.current));
         $(".dataTables_wrapper")
           .find(".dt-button")
-          .addClass("btn btn-primary btn-sm");
+          .addClass("btn btn-primary btn-md");
         $(".dataTables_wrapper")
           .find(".dt-buttons")
-          .addClass("btn-group flex-wrap");
+          .addClass("btn-group flex-wrap pd-custom");
+        $(".dataTables_wrapper")
+          .find(".dataTables_info")
+          .addClass(" pd-custom");
+        $(".dataTables_wrapper")
+          .find(".dataTables_filter")
+          .addClass("pd-custom-right");
       },
     });
     $(datatableRef.current).find("thead").addClass("thead-light");

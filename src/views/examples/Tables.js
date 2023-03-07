@@ -44,28 +44,28 @@ const Tables = () => {
   const columns = [
     {
       title: "Name",
-      width: 120,
+
       data: "name",
     },
     {
       title: "Nickname",
-      width: 180,
       data: "nickname",
     },
     {
       title: "Surname",
-      width: 180,
       data: "surname",
     },
     {
       title: "Age",
-      width: 180,
       data: "age",
     },
     {
       title: "Gender",
-      width: 180,
       data: "gender",
+    },
+    {
+      title: "Action",
+      data: null,
     },
   ];
 
@@ -106,6 +106,19 @@ const Tables = () => {
       gender: "male",
     },
   ];
+  const columndefs = [
+    {
+      targets: -1,
+      data: "name",
+      render: (data, type, full, meta) => {
+        // return `<button onclick="test(${data.name})">${data.name} minu</button>`;
+        return <>{<button onClick={() => test("minu")}>Click</button>}</>;
+      },
+    },
+  ];
+  const test = (str) => {
+    alert(str);
+  };
   return (
     <>
       <Header />
@@ -115,7 +128,12 @@ const Tables = () => {
 
         <Row>
           <div className="col">
-            <CustomTable cols={columns} data={data} dark={false}></CustomTable>
+            <CustomTable
+              cols={columns}
+              data={data}
+              dark={false}
+              columndefs={columndefs}
+            ></CustomTable>
           </div>
         </Row>
 
