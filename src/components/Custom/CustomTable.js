@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
-  Badge,
   Card,
   CardHeader,
   CardFooter,
+  Button,
   Pagination,
   PaginationItem,
   PaginationLink,
-  Button,
 } from "reactstrap";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
@@ -27,8 +26,11 @@ import $ from "jquery";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import JSZip from "jszip";
+import Pagination2 from "./Pagination";
 window.JSZip = JSZip;
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+let PageSize = 10;
 
 const CustomTable = ({
   cols,
@@ -39,6 +41,7 @@ const CustomTable = ({
   hasDelete = true,
   editClick = null,
   deleteClick = null,
+  title = "",
 }) => {
   const datatableRef = useRef(null);
   var colDefs = [];
@@ -87,10 +90,17 @@ const CustomTable = ({
     ];
   }
   if (columndefs != null) {
-    colDefs = [...colDefs, columndefs];
+    colDefs = [...colDefs, ...columndefs];
   }
-
   const [datatable, setDatatable] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const currentTableData = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * PageSize;
+    const lastPageIndex = firstPageIndex + PageSize;
+    return data.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, data]);
+
   useEffect(() => {
     if (datatable != null) {
       datatable.clear();
@@ -101,9 +111,10 @@ const CustomTable = ({
       data: data,
       columns: cols,
       ordering: true,
+      order: [[1, "asc"]],
       info: true,
       responsive: true,
-      paging: false,
+      paging: true,
       columnDefs: colDefs,
       buttons: ["excel", "pdf", "print"],
       initComplete: (settings) => {
@@ -133,7 +144,7 @@ const CustomTable = ({
   return (
     <Card className="shadow">
       <CardHeader className="border-0">
-        <h3 className="mb-0">Card tables</h3>
+        <h3 className="mb-0">{title}</h3>
       </CardHeader>
       <div className="table-responsive">
         <table
@@ -180,6 +191,13 @@ const CustomTable = ({
               </PaginationLink>
             </PaginationItem>
           </Pagination>
+          {/* <Pagination2
+            className="pagination-bar"
+            currentPage={currentPage}
+            totalCount={data.length}
+            pageSize={PageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+          /> */}
         </nav>
       </CardFooter>
     </Card>

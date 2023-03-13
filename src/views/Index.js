@@ -18,7 +18,7 @@ import {
   Table,
   Container,
   Row,
-  Col
+  Col,
 } from "reactstrap";
 
 // core components
@@ -26,19 +26,26 @@ import {
   chartOptions,
   parseOptions,
   chartExample1,
-  chartExample2
+  chartExample2,
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import { partyListGet } from "api/api";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
+  const { user } = useSelector((store) => store.user);
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }
 
+  useEffect(() => {
+    partyListGet(user.token);
+  }, []);
   const toggleNavs = (e, index) => {
     e.preventDefault();
     setActiveNav(index);
@@ -65,7 +72,7 @@ const Index = (props) => {
                       <NavItem>
                         <NavLink
                           className={classnames("py-2 px-3", {
-                            active: activeNav === 1
+                            active: activeNav === 1,
                           })}
                           href="#pablo"
                           onClick={(e) => toggleNavs(e, 1)}
@@ -77,7 +84,7 @@ const Index = (props) => {
                       <NavItem>
                         <NavLink
                           className={classnames("py-2 px-3", {
-                            active: activeNav === 2
+                            active: activeNav === 2,
                           })}
                           data-toggle="tab"
                           href="#pablo"

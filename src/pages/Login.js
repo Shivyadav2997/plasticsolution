@@ -15,10 +15,22 @@ import {
 import { useDispatch } from "react-redux";
 import { login } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
-
+import { useState } from "react";
+import { loginApi } from "api/api";
 const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const [uname, setUname] = useState("");
+  const [pass, setPass] = useState("");
+  const loginSubmit = async () => {
+    const loginResponse = await loginApi(uname, pass);
+    if (loginResponse.sucess) {
+      dispatch(login({ token: loginResponse.token, name: loginResponse.name }));
+      history.push("/admin/index");
+    } else {
+      alert(loginResponse.msg);
+    }
+  };
   return (
     <>
       <Col lg="5" md="7">
@@ -36,9 +48,10 @@ const Login = () => {
                     </InputGroupText>
                   </InputGroupAddon>
                   <Input
-                    placeholder="Email"
-                    type="email"
+                    placeholder="User Name"
+                    type="text"
                     autoComplete="new-email"
+                    onChange={(e) => setUname(e.target.value)}
                   />
                 </InputGroup>
               </FormGroup>
@@ -53,31 +66,20 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    onChange={(e) => setPass(e.target.value)}
                   />
                 </InputGroup>
               </FormGroup>
-              {/* <div className="custom-control custom-control-alternative custom-checkbox">
-                <input
-                  className="custom-control-input"
-                  id=" customCheckLogin"
-                  type="checkbox"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor=" customCheckLogin"
-                >
-                  <span className="text-muted">Remember me</span>
-                </label>
-              </div> */}
               <div className="text-center">
                 <Button
                   className="my-4"
                   color="primary"
                   type="button"
-                  onClick={() => {
-                    dispatch(login({ id: 1, name: "shiv", lname: "yadav" }));
-                    history.push("/admin/index");
-                  }}
+                  // onClick={() => {
+                  //   dispatch(login({ id: 1, name: "shiv", lname: "yadav" }));
+                  //   history.push("/admin/index");
+                  // }}
+                  onClick={loginSubmit}
                 >
                   Sign in
                 </Button>

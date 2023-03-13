@@ -2,20 +2,33 @@ import { useState } from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
-import { useSelector } from "react-redux";
+
 // reactstrap components
 import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
   Collapse,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
+  FormGroup,
+  Form,
+  Input,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
   Media,
   NavbarBrand,
   Navbar,
   NavItem,
   NavLink,
   Nav,
+  Progress,
+  Table,
   Container,
   Row,
   Col,
@@ -24,7 +37,6 @@ import {
 var ps;
 
 const Sidebar = (props) => {
-  const { user } = useSelector((store) => store.user);
   const [collapseOpen, setCollapseOpen] = useState();
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
@@ -41,25 +53,19 @@ const Sidebar = (props) => {
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
-        return (
-          <NavItem key={key}>
-            <NavLink
-              to={prop.layout + prop.path}
-              tag={NavLinkRRD}
-              onClick={closeCollapse}
-              activeClassName="active"
-            >
-              <i className={prop.icon}>
-                {prop.iconCmp && <prop.iconCmp style={{ fontSize: "18px" }} />}
-              </i>
-              {prop.name}
-            </NavLink>
-          </NavItem>
-        );
-      } else {
-        return null;
-      }
+      return (
+        <NavItem key={key}>
+          <NavLink
+            to={prop.layout + prop.path}
+            tag={NavLinkRRD}
+            onClick={closeCollapse}
+            activeClassName="active"
+          >
+            <i className={prop.icon} />
+            {prop.name}
+          </NavLink>
+        </NavItem>
+      );
     });
   };
 
@@ -162,19 +168,17 @@ const Sidebar = (props) => {
         {/* Collapse */}
         <Collapse navbar isOpen={collapseOpen}>
           {/* Collapse header */}
-          <div className="navbar-collapse-header">
+          <div className="navbar-collapse-header d-md-none">
             <Row>
               {logo ? (
                 <Col className="collapse-brand" xs="6">
                   {logo.innerLink ? (
                     <Link to={logo.innerLink}>
                       <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      Plastic Solution
                     </Link>
                   ) : (
                     <a href={logo.outterLink}>
                       <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      Plastic Solution
                     </a>
                   )}
                 </Col>
@@ -191,11 +195,57 @@ const Sidebar = (props) => {
               </Col>
             </Row>
           </div>
-          <hr className="my-3 d-md-block d-none" />
-          <h3 className="d-flex justify-content-center mb-0">{user.name}</h3>
-          <hr className="my-3" />
+          {/* Form */}
+          <Form className="mt-4 mb-3 d-md-none">
+            <InputGroup className="input-group-rounded input-group-merge">
+              <Input
+                aria-label="Search"
+                className="form-control-rounded form-control-prepended"
+                placeholder="Search"
+                type="search"
+              />
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <span className="fa fa-search" />
+                </InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
+          </Form>
           {/* Navigation */}
           <Nav navbar>{createLinks(routes)}</Nav>
+          {/* Divider */}
+          <hr className="my-3" />
+          {/* Heading */}
+          <h6 className="navbar-heading text-muted">Documentation</h6>
+          {/* Navigation */}
+          <Nav className="mb-md-3" navbar>
+            <NavItem>
+              <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/overview?ref=adr-admin-sidebar">
+                <i className="ni ni-spaceship" />
+                Getting started
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/colors?ref=adr-admin-sidebar">
+                <i className="ni ni-palette" />
+                Foundation
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/alerts?ref=adr-admin-sidebar">
+                <i className="ni ni-ui-04" />
+                Components
+              </NavLink>
+            </NavItem>
+          </Nav>
+          <Nav className="mb-md-3" navbar>
+            <NavItem className="active-pro active">
+              <NavLink href="https://www.creative-tim.com/product/argon-dashboard-pro-react?ref=adr-admin-sidebar">
+                <i className="ni ni-spaceship" />
+                Upgrade to PRO
+              </NavLink>
+            </NavItem>
+          </Nav>
         </Collapse>
       </Container>
     </Navbar>
