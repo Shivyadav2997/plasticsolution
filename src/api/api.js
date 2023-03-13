@@ -1,6 +1,10 @@
 import axios from "axios";
 import React from "react";
-import { userLoginAction, partyListAction } from "./action.js";
+import {
+  userLoginAction,
+  partyListAction,
+  transactionListAction,
+} from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
 const baseUrl = "https://plasticsolution.in/api/process.php";
@@ -51,5 +55,21 @@ const partyListGet = async (token) => {
     };
   }
 };
+const transactionListget = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${transactionListAction}&token=${token}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
 
-export { getData, loginApi, partyListGet };
+export { getData, loginApi, partyListGet, transactionListget };

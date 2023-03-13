@@ -10,11 +10,14 @@ import AuthLayout from "layouts/Auth.js";
 import { store } from "store";
 import { Provider } from "react-redux";
 import ProtectedRoute from "pages/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   // <StrictMode>
   <BrowserRouter>
+    <ToastContainer position="top-center" />
     <Provider store={store}>
       <Switch>
         <Route

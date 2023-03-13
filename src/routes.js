@@ -11,6 +11,7 @@ import { AiFillBook, AiOutlineDropbox } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import Party from "pages/Party/index";
+import Transaction from "pages/Transaction";
 
 var routes = [
   {
@@ -39,7 +40,7 @@ var routes = [
     path: "/transaction",
     name: "Transaction",
     icon: "ni ni-bullet-list-67 text-red",
-    component: Tables,
+    component: Transaction,
     layout: "/admin",
   },
   {

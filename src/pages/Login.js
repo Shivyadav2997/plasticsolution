@@ -5,6 +5,7 @@ import {
   CardBody,
   FormGroup,
   Form,
+  FormFeedback,
   Input,
   InputGroupAddon,
   InputGroupText,
@@ -17,20 +18,35 @@ import { login } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import { loginApi } from "api/api";
+import { toast } from "react-toastify";
 const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [uname, setUname] = useState("");
   const [pass, setPass] = useState("");
+  const [errorUname, setErrorUname] = useState("");
+  const [errorPass, setErrorPass] = useState();
   const loginSubmit = async () => {
-    const loginResponse = await loginApi(uname, pass);
-    if (loginResponse.sucess) {
-      dispatch(login({ token: loginResponse.token, name: loginResponse.name }));
-      history.push("/admin/index");
-    } else {
-      alert(loginResponse.msg);
+    if (uname === "") {
+      setErrorUname("User name is required");
+    }
+    if (pass === "") {
+      setErrorPass("Password is required");
+    }
+    if (uname && pass) {
+      const loginResponse = await loginApi(uname, pass);
+      if (loginResponse.sucess) {
+        dispatch(
+          login({ token: loginResponse.token, name: loginResponse.name })
+        );
+        history.push("/admin/index");
+      } else {
+        // alert(loginResponse.msg);
+        toast(loginResponse.msg);
+      }
     }
   };
+
   return (
     <>
       <Col lg="5" md="7">
@@ -51,9 +67,15 @@ const Login = () => {
                     placeholder="User Name"
                     type="text"
                     autoComplete="new-email"
-                    onChange={(e) => setUname(e.target.value)}
+                    onChange={(e) => {
+                      setUname(e.target.value);
+                      setErrorUname("");
+                    }}
+                    // invalid={errorUname !== ""}
+                    // valid={errorUname === ""}
                   />
                 </InputGroup>
+                {errorUname && <label className="errorMsg">{errorUname}</label>}
               </FormGroup>
               <FormGroup>
                 <InputGroup className="input-group-alternative">
@@ -66,9 +88,13 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
-                    onChange={(e) => setPass(e.target.value)}
+                    onChange={(e) => {
+                      setPass(e.target.value);
+                      setErrorPass("");
+                    }}
                   />
                 </InputGroup>
+                {errorPass && <label className="errorMsg">{errorPass}</label>}
               </FormGroup>
               <div className="text-center">
                 <Button
