@@ -18,7 +18,7 @@ import "datatables.net-buttons/js/buttons.print.js";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import "datatables.net-responsive-dt/css/responsive.dataTables.min.css";
 import "datatables.net-responsive-dt/js/responsive.dataTables.min.js";
-
+import "./CustomTable.css";
 import ReactDOM, { createRoot } from "react-dom/client";
 import { BiEditAlt } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
@@ -106,7 +106,6 @@ const CustomTable = ({
       responsive: true,
       paging: true,
       columnDefs: colDefs,
-      buttons: ["excel", "pdf", "print"],
       language: {
         paginate: {
           previous: ReactDOMServer.renderToString(
@@ -115,9 +114,16 @@ const CustomTable = ({
               <span class="sr-only">Previous</span>
             </>
           ),
-          next: ">",
+          next: ReactDOMServer.renderToString(
+            <>
+              <i class="fas fa-angle-right"></i>
+              <span class="sr-only">Next</span>
+            </>
+          ),
         },
       },
+      drawCallback: function () {},
+      buttons: ["excel", "pdf", "print"],
       initComplete: (settings) => {
         $(".dataTables_wrapper")
           .find(".dt-button")
@@ -156,65 +162,7 @@ const CustomTable = ({
               ref={datatableRef}
             ></table>
           </div>
-          <CardFooter className="py-4">
-            <nav aria-label="...">
-              <Pagination
-                className="pagination justify-content-end mb-0"
-                listClassName="justify-content-end mb-0"
-              >
-                <PaginationItem className="disabled">
-                  <PaginationLink
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                    tabIndex="-1"
-                  >
-                    <i className="fas fa-angle-left" />
-                    <span className="sr-only">Previous</span>
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem className="active">
-                  <PaginationLink
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    1
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    2 <span className="sr-only">(current)</span>
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    39
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <i className="fas fa-angle-right" />
-                    <span className="sr-only">Next</span>
-                  </PaginationLink>
-                </PaginationItem>
-              </Pagination>
-              {/* <Pagination2
-            className="pagination-bar"
-            currentPage={currentPage}
-            totalCount={data.length}
-            pageSize={PageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-          /> */}
-            </nav>
-          </CardFooter>
+          <CardFooter className="py-4"></CardFooter>
         </Card>
       ) : (
         <div className="table-responsive">

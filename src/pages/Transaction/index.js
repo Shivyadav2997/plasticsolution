@@ -1,30 +1,18 @@
-import { Container, Row } from "reactstrap";
+import { Container, Row, Col, Button } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
+import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState } from "react";
-import { partyListGet } from "api/api";
 import ReactDOM from "react-dom/client";
-import {
-  Nav,
-  NavItem,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownMenu,
-  NavLink,
-  TabPane,
-  TabContent,
-} from "reactstrap";
 import CustomTab from "components/Custom/CustomTab";
 import { transactionListget } from "api/api";
 const Transaction = () => {
   const [parties, setParties] = useState([]);
   const { user } = useSelector((store) => store.user);
-  const [tabId, setTabId] = useState(1);
 
   const colDefs = [
     {
@@ -119,6 +107,27 @@ const Transaction = () => {
     <>
       <Header />
       <Container className="mt--7" fluid>
+        <Row xs="2">
+          <Col>
+            <h1>Transection List</h1>
+          </Col>
+          <Col>
+            <Row className="float-sm-right">
+              <Col>
+                <Button>Receive</Button>
+              </Col>
+              <Col>
+                <Button>Payment1</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row>
+          <CustomDatePicker
+            startDate={"01/01/2020"}
+            endDate={"01/05/2020"}
+          ></CustomDatePicker>
+        </Row>
         <Row>
           <div className="col">
             <CustomTab
