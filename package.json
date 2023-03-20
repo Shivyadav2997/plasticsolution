@@ -50,6 +50,7 @@
     "bootstrap-daterangepicker": "^3.1.0",
     "chart.js": "2.9.4",
     "classnames": "^2.3.1",
+    "formik": "^2.2.9",
     "moment": "^2.29.4",
     "nouislider": "15.2.0",
     "react": "18.2.0",
@@ -65,7 +66,8 @@
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.1",
     "reactstrap": "8.9.0",
-    "sass": "1.54.5"
+    "sass": "1.54.5",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "datatables.net": "^1.13.3",
