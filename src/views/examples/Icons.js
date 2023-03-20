@@ -9,7 +9,7 @@ import {
   Container,
   Row,
   Col,
-  UncontrolledTooltip
+  UncontrolledTooltip,
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
@@ -18,9 +18,7 @@ const Icons = () => {
   const [copiedText, setCopiedText] = useState();
   return (
     <>
-      <Header />
-      {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="pt-6" fluid>
         {/* Table */}
         <Row>
           <div className="col">

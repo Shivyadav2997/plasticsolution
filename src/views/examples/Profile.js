@@ -8,7 +8,7 @@ import {
   Input,
   Container,
   Row,
-  Col
+  Col,
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
@@ -16,9 +16,7 @@ import UserHeader from "components/Headers/UserHeader.js";
 const Profile = () => {
   return (
     <>
-      <UserHeader />
-      {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="pt-9" fluid>
         <Row>
           <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
             <Card className="card-profile shadow">

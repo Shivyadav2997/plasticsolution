@@ -105,9 +105,7 @@ const Tables = () => {
   }, []);
   return (
     <>
-      <Header />
-      {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="pt-6" fluid>
         {/* Table */}
 
         <Row>

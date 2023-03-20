@@ -117,9 +117,7 @@ const Transaction = () => {
 
   return (
     <>
-      {/* <Header /> */}
-
-      <Container className="mt-5" fluid>
+      <Container className="pt-6" fluid>
         <Row xs="2">
           <Col>
             <h1>Transection List</h1>

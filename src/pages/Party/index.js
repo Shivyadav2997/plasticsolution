@@ -62,8 +62,7 @@ const Party = () => {
   }, []);
   return (
     <>
-      {/* <Header /> */}
-      <Container className="mt-5" fluid>
+      <Container className="pt-6" fluid>
         <Row>
           <div className="col">
             <CustomTable

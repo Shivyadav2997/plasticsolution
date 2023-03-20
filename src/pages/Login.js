@@ -19,9 +19,6 @@ import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import { loginApi } from "api/api";
 import { toast } from "react-toastify";
-import { Formik, ErrorMessage, useField } from "formik";
-import * as Yup from "yup";
-import { TextField } from "components/Custom/TextField";
 const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -29,8 +26,6 @@ const Login = () => {
   const [pass, setPass] = useState("");
   const [errorUname, setErrorUname] = useState("");
   const [errorPass, setErrorPass] = useState();
-  const [show, setShow] = useState(false);
-  const handleToggle = () => setShow(!show);
 
   const loginSubmit = async () => {
     if (uname === "") {
@@ -53,22 +48,6 @@ const Login = () => {
     }
   };
 
-  const validate = Yup.object({
-    firstName: Yup.string()
-      .max(15, "Must be 15 characters or less")
-      .required("Required"),
-    lastName: Yup.string()
-      .max(20, "Must be 20 characters or less")
-      .required("Required"),
-    email: Yup.string().email("Email is invalid").required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 charaters")
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Password must match")
-      .required("Confirm password is required"),
-  });
-
   return (
     <>
       <Col lg="5" md="7">
@@ -77,8 +56,7 @@ const Login = () => {
             <div className="text-center text-muted mb-4">
               <small>Log in to start your session</small>
             </div>
-            <Button onClick={handleToggle}></Button>
-            {/* <Form role="form">
+            <Form role="form">
               <FormGroup className="mb-3">
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
@@ -133,51 +111,7 @@ const Login = () => {
                   Sign in
                 </Button>
               </div>
-            </Form> */}
-            <Formik
-              initialValues={{
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-              }}
-              validationSchema={validate}
-              onSubmit={(values) => {
-                console.log(values);
-              }}
-            >
-              {(formik) => (
-                <div>
-                  <h1 className="my-4 font-weight-bold .display-4">Sign Up</h1>
-                  <Form>
-                    <TextField
-                      label="First Name"
-                      name="firstName"
-                      type="text"
-                    />
-                    <TextField label="last Name" name="lastName" type="text" />
-                    <TextField label="Email" name="email" type="email" />
-                    <TextField
-                      label="password"
-                      name="password"
-                      type="password"
-                    />
-                    <TextField
-                      label="Confirm Password"
-                      name="confirmPassword"
-                      type="password"
-                    />
-                    <button className="btn btn-dark mt-3" type="submit">
-                      Register
-                    </button>
-                    <button className="btn btn-danger mt-3 ml-3" type="reset">
-                      Reset
-                    </button>
-                  </Form>
-                </div>
-              )}
-            </Formik>
+            </Form>
           </CardBody>
         </Card>
         <Row className="mt-3">
