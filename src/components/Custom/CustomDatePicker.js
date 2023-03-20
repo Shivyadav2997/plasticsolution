@@ -9,7 +9,6 @@ const CustomDatePicker = ({ startDate, endDate, onCallback, children }) => {
       initialSettings={{
         startDate: startDate,
         endDate: endDate,
-        autoApply: true,
         ranges: {
           Today: [moment().toDate(), moment().toDate()],
           Yesterday: [

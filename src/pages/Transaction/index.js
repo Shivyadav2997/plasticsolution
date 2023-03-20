@@ -1,6 +1,4 @@
 import { Container, Row, Col, Button } from "reactstrap";
-// core components
-import Header from "components/Headers/Header.js";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
@@ -11,8 +9,11 @@ import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
 import { transactionListget } from "api/api";
 import $ from "jquery";
+import { format } from "date-fns";
+
 const Transaction = () => {
   const [parties, setParties] = useState([]);
+  const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const { user } = useSelector((store) => store.user);
 
   const colDefs = [
@@ -62,28 +63,24 @@ const Transaction = () => {
 
   useEffect(() => {
     const getParties = async () => {
-      var data = await transactionListget(user.token);
-      // var dummyParties = [];
-      // for (let index = 0; index < 100; index++) {
-      //   dummyParties = [...dummyParties, ...data.data];
-      // }
+      var data = await transactionListget(
+        user.token,
+        filterDate.st,
+        filterDate.et
+      );
       setParties(data.data);
-      console.log("trans", data.data);
-
-      // data = await partyListGet(user.token);
-      // setParties(data.data);
     };
     getParties();
-  }, []);
+  }, [filterDate]);
+
   const rowCallBack = (row, data, index) => {
     if (data.type == "payment") {
       $(row).css("color", "red");
-      console.log("row", row);
     } else {
       $(row).css("color", "green");
-      console.log("row", data);
     }
   };
+
   const tabPan = [
     <CustomTable
       rowCallBack={rowCallBack}
@@ -115,6 +112,14 @@ const Transaction = () => {
     />,
   ];
 
+  const dateSelect = (start, end) => {
+    console.log("st", format(start.toDate(), "yyyy-MM-dd"));
+    console.log("en", format(end.toDate(), "yyyy-MM-dd"));
+    // setFilterDate({
+    //   st: format(start.toDate(), "yyyy-MM-dd"),
+    //   et: format(end.toDate(), "yyyy-MM-dd"),
+    // });
+  };
   return (
     <>
       <Container className="pt-6" fluid>
@@ -135,10 +140,7 @@ const Transaction = () => {
         </Row>
         <Row className="mb-2">
           <Col>
-            <CustomDatePicker
-              startDate={"01/01/2020"}
-              endDate={"01/05/2020"}
-            ></CustomDatePicker>
+            <CustomDatePicker onCallback={dateSelect} />
           </Col>
         </Row>
         <Row>
