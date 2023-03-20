@@ -34,6 +34,7 @@ const CustomTable = ({
   cols,
   data,
   dark,
+  rowCallBack,
   columndefs = null,
   hasEdit = true,
   hasDelete = true,
@@ -106,6 +107,7 @@ const CustomTable = ({
       responsive: true,
       paging: true,
       columnDefs: colDefs,
+      rowCallback: rowCallBack,
       language: {
         paginate: {
           previous: ReactDOMServer.renderToString(

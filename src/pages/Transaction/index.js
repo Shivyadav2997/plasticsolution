@@ -10,6 +10,7 @@ import { useState } from "react";
 import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
 import { transactionListget } from "api/api";
+import $ from "jquery";
 const Transaction = () => {
   const [parties, setParties] = useState([]);
   const { user } = useSelector((store) => store.user);
@@ -74,8 +75,18 @@ const Transaction = () => {
     };
     getParties();
   }, []);
+  const rowCallBack = (row, data, index) => {
+    if (data.type == "payment") {
+      $(row).css("color", "red");
+      console.log("row", row);
+    } else {
+      $(row).css("color", "green");
+      console.log("row", data);
+    }
+  };
   const tabPan = [
     <CustomTable
+      rowCallBack={rowCallBack}
       cols={columns}
       dark={false}
       data={parties.transection}
@@ -103,10 +114,12 @@ const Transaction = () => {
       hasEdit={false}
     />,
   ];
+
   return (
     <>
-      <Header />
-      <Container className="mt--7" fluid>
+      {/* <Header /> */}
+
+      <Container className="mt-5" fluid>
         <Row xs="2">
           <Col>
             <h1>Transection List</h1>
@@ -114,27 +127,29 @@ const Transaction = () => {
           <Col>
             <Row className="float-sm-right">
               <Col>
-                <Button>Receive</Button>
+                <Button className="btn-md">Receive</Button>
               </Col>
               <Col>
-                <Button>Payment1</Button>
+                <Button className="btn-md">Payment1</Button>
               </Col>
             </Row>
           </Col>
         </Row>
-        <Row>
-          <CustomDatePicker
-            startDate={"01/01/2020"}
-            endDate={"01/05/2020"}
-          ></CustomDatePicker>
+        <Row className="mb-2">
+          <Col>
+            <CustomDatePicker
+              startDate={"01/01/2020"}
+              endDate={"01/05/2020"}
+            ></CustomDatePicker>
+          </Col>
         </Row>
         <Row>
-          <div className="col">
+          <Col>
             <CustomTab
               tabnames={["Transaction", "Receive", "Payment"]}
               tabpanes={tabPan}
             />
-          </div>
+          </Col>
         </Row>
       </Container>
     </>
