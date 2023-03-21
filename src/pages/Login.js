@@ -54,7 +54,7 @@ const Login = () => {
         <Card className="bg-secondary shadow border-0">
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Log in to start your session</small>
+              <small>Log in to start your session </small>
             </div>
             <Form role="form">
               <FormGroup className="mb-3">

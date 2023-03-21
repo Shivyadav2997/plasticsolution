@@ -4,12 +4,20 @@ import {
   userLoginAction,
   partyListAction,
   transactionListAction,
+  partyAddAction,
+  deleteAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
-const baseUrl = "https://plasticsolution.in/api/process.php";
+const baseUrl = process.env.REACT_APP_API_URL;
 const key = "accountdigi9868";
 
+const getParams = (payload) => {
+  const strParams = Object.keys(payload).map((k) => {
+    return `${k}=${payload[k]}`;
+  });
+  return strParams.join("&");
+};
 const getData = async (type) => {
   try {
     const resp = await axios.get(baseUrltest + type);
@@ -55,6 +63,43 @@ const partyListGet = async (token) => {
     };
   }
 };
+
+const partyAdd = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${partyAddAction}&token=${token}&${getParams(payload)}`
+    );
+    console.log(resp);
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const deleteRecord = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${deleteAction}&token=${token}&${getParams(payload)}`
+    );
+    console.log(resp);
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const transactionListget = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
@@ -73,4 +118,11 @@ const transactionListget = async (token, st = "", en = "") => {
   }
 };
 
-export { getData, loginApi, partyListGet, transactionListget };
+export {
+  getData,
+  loginApi,
+  partyListGet,
+  transactionListget,
+  partyAdd,
+  deleteRecord,
+};

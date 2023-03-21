@@ -68,7 +68,11 @@ const Transaction = () => {
         filterDate.st,
         filterDate.et
       );
-      setParties(data.data);
+      if (data.data) {
+        setParties(data.data);
+      } else {
+        setParties([]);
+      }
     };
     getParties();
   }, [filterDate]);
@@ -115,17 +119,23 @@ const Transaction = () => {
   const dateSelect = (start, end) => {
     console.log("st", format(start.toDate(), "yyyy-MM-dd"));
     console.log("en", format(end.toDate(), "yyyy-MM-dd"));
-    // setFilterDate({
-    //   st: format(start.toDate(), "yyyy-MM-dd"),
-    //   et: format(end.toDate(), "yyyy-MM-dd"),
-    // });
+    setFilterDate({
+      st: format(start.toDate(), "yyyy-MM-dd"),
+      et: format(end.toDate(), "yyyy-MM-dd"),
+    });
   };
   return (
     <>
       <Container className="pt-6" fluid>
         <Row xs="2">
           <Col>
-            <h1>Transection List</h1>
+            <h1>
+              Transection List
+              <span style={{ fontSize: "18px" }}>
+                {filterDate.st != "" &&
+                  ` (${filterDate.st} to ${filterDate.et})`}
+              </span>{" "}
+            </h1>
           </Col>
           <Col>
             <Row className="float-sm-right">
