@@ -1,9 +1,10 @@
 import { Container, Row, Col, Button } from "reactstrap";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import CustomTable from "components/Custom/CustomTable";
+import { Paginated } from "components/Custom/ReactTable2";
 import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
+import { useTable } from "react-table";
 import { useState } from "react";
 import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
@@ -11,27 +12,24 @@ import { transactionListget } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
+import CustomTable from "components/Custom/CustomTable";
 
 const Transaction = () => {
-  const [parties, setParties] = useState({
-    payment: [],
-    recive: [],
-    transection: [],
-  });
+  const [parties, setParties] = useState([]);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const { user } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
 
-  // const colDefs = [
-  //   {
-  //     targets: 0,
-  //     createdCell: (td, cellData, rowData, row, col) => {
-  //       const root = ReactDOM.createRoot(td);
-  //       root.render(`${row + 1}`);
-  //     },
-  //     orderable: false,
-  //   },
-  // ];
+  const colDefs = [
+    {
+      targets: 0,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(`${row + 1}`);
+      },
+      orderable: false,
+    },
+  ];
   const columns = [
     {
       title: "Party",
@@ -48,12 +46,10 @@ const Transaction = () => {
     {
       title: "WithAmt",
       data: "tkachu",
-      type: "number",
     },
     {
       title: "BillAmt",
       data: "tpaku",
-      type: "number",
     },
     {
       title: "Date",
@@ -64,7 +60,32 @@ const Transaction = () => {
       data: null,
     },
   ];
-
+  const columnsReact = [
+    {
+      Header: "Party",
+      accessor: "pid",
+    },
+    {
+      Header: "Type",
+      accessor: "type",
+    },
+    {
+      Header: "Mode",
+      accessor: "mode",
+    },
+    {
+      Header: "WithAmt",
+      accessor: "tkachu",
+    },
+    {
+      Header: "BillAmt",
+      accessor: "tpaku",
+    },
+    {
+      Header: "Date",
+      accessor: "Date",
+    },
+  ];
   useEffect(() => {
     const getParties = async () => {
       setLoading(true);
@@ -75,52 +96,52 @@ const Transaction = () => {
       );
       if (data.data) {
         var data2 = data.data;
+        // for (let index = 0; index < 8; index++) {
+        //   data2["transection"] = [
+        //     ...data2["transection"],
+        //     ...data2["transection"],
+        //   ];
+        // }
+        // data2["transection"] = [
+        //   ...data2["transection"],
+        //   ...data2["transection"].splice(0, 4),
+        // ];
+        // for (let index = 0; index < 8; index++) {
+        //   data2["payment"] = [...data2["payment"], ...data2["payment"]];
+        // }
+        // for (let index = 0; index < 8; index++) {
+        //   data2["recive"] = [...data2["recive"], ...data2["recive"]];
+        // }
         setParties(data2);
+        // console.log(data2);
       } else {
-        setParties({ payment: [], recive: [], transection: [] });
+        setParties([]);
       }
       setLoading(false);
     };
     getParties();
   }, [filterDate]);
 
-  const rowCallBack = (row, data, index) => {
-    if (data.type == "payment") {
-      $(row).css("color", "red");
-    } else {
-      $(row).css("color", "green");
-    }
-  };
-
   const tabPan = [
-    <CustomTable
-      rowCallBack={rowCallBack}
-      cols={columns}
-      dark={false}
-      data={parties.transection}
-      title="Transaction List"
-      withCard={false}
-      hasEdit={false}
-      custom={true}
-    />,
-    <CustomTable
-      cols={columns}
-      dark={false}
-      data={parties.recive}
-      title="Recieve List"
-      withCard={false}
-      hasEdit={false}
-      custom={true}
-    />,
-    <CustomTable
-      cols={columns}
-      dark={false}
-      data={parties.payment}
-      title="Payment List"
-      withCard={false}
-      hasEdit={false}
-      custom={true}
-    />,
+    <Paginated columns={columnsReact} data={parties.transection} />,
+    // <CustomTable
+    //   cols={columns}
+    //   dark={false}
+    //   data={parties.recive}
+    //   columndefs={colDefs}
+    //   title="Recieve List"
+    //   withCard={false}
+    //   hasEdit={false}
+    // />,
+    // <CustomTable
+    //   cols={columns}
+    //   dark={false}
+    //   data={parties.payment}
+    //   columndefs={colDefs}
+    //   title="Payment List"
+    //   withCard={false}
+    //   hasEdit={false}
+    // />,
   ];
 
   const dateSelect = (start, end) => {
@@ -129,27 +150,13 @@ const Transaction = () => {
       et: format(end.toDate(), "yyyy-MM-dd"),
     });
   };
+
   return (
     <>
       <Container className="pt-6" fluid>
         <Row xs="2" className="mb-2">
           <Col>
-            <div>
-              <CustomDatePicker onCallback={dateSelect} />
-              <Button
-                className="btn-md"
-                onClick={() => setFilterDate({ st: "", et: "" })}
-              >
-                All Transactions
-              </Button>
-            </div>
-
-            <h1>
-              <span style={{ fontSize: "18px" }}>
-                {filterDate.st != "" &&
-                  ` (${filterDate.st} to ${filterDate.et})`}
-              </span>{" "}
-            </h1>
+            <CustomDatePicker onCallback={dateSelect} />
           </Col>
           <Col>
             <Row className="justify-content-end mr-0">
@@ -163,12 +170,10 @@ const Transaction = () => {
             {loading ? (
               <Loader loading={loading} />
             ) : (
-              <>
-                <CustomTab
-                  tabnames={["Transaction", "Receive", "Payment"]}
-                  tabpanes={tabPan}
-                />
-              </>
+              <CustomTab
+                tabnames={["Transaction", "Receive", "Payment"]}
+                tabpanes={tabPan}
+              />
             )}
           </Col>
         </Row>

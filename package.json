@@ -3,7 +3,8 @@
   "version": "1.2.2",
   "description": "Plastic Solution",
   "homepage": "http://accountdigi.com",
-  "main": "index.js",  "scripts": {
+  "main": "index.js",
+  "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -45,6 +46,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
+    "react-table": "^7.8.0",
     "react-toastify": "^9.1.1",
     "reactstrap": "8.9.0",
     "sass": "1.54.5",

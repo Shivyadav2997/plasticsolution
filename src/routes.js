@@ -12,6 +12,8 @@ import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
+import Transaction2 from "pages/Transaction/index2";
+import Transaction3 from "pages/Transaction/index3";
 
 var routes = [
   {
@@ -43,6 +45,20 @@ var routes = [
     component: Transaction,
     layout: "/admin",
   },
+  // {
+  //   path: "/transaction2",
+  //   name: "Regular Datatable",
+  //   icon: "ni ni-bullet-list-67 text-red",
+  //   component: Transaction2,
+  //   layout: "/admin",
+  // },
+  // {
+  //   path: "/transaction3",
+  //   name: "React Table",
+  //   icon: "ni ni-bullet-list-67 text-red",
+  //   component: Transaction3,
+  //   layout: "/admin",
+  // },
   {
     path: "/expenses",
     name: "Expenses",

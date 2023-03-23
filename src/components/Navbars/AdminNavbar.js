@@ -17,7 +17,9 @@ import {
   Media,
 } from "reactstrap";
 
+import { useSelector } from "react-redux";
 const AdminNavbar = (props) => {
+  const { user } = useSelector((store) => store.user);
   return (
     <>
       <Navbar className="navbar-top navbar-dark" id="navbar-main">
@@ -52,7 +54,7 @@ const AdminNavbar = (props) => {
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold text-dark">
-                      Jessica Jones
+                      {user.name}
                     </span>
                   </Media>
                 </Media>

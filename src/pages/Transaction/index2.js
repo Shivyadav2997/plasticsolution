@@ -13,25 +13,21 @@ import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
 
 const Transaction = () => {
-  const [parties, setParties] = useState({
-    payment: [],
-    recive: [],
-    transection: [],
-  });
+  const [parties, setParties] = useState([]);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const { user } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
 
-  // const colDefs = [
-  //   {
-  //     targets: 0,
-  //     createdCell: (td, cellData, rowData, row, col) => {
-  //       const root = ReactDOM.createRoot(td);
-  //       root.render(`${row + 1}`);
-  //     },
-  //     orderable: false,
-  //   },
-  // ];
+  const colDefs = [
+    {
+      targets: 0,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(`${row + 1}`);
+      },
+      orderable: false,
+    },
+  ];
   const columns = [
     {
       title: "Party",
@@ -48,12 +44,10 @@ const Transaction = () => {
     {
       title: "WithAmt",
       data: "tkachu",
-      type: "number",
     },
     {
       title: "BillAmt",
       data: "tpaku",
-      type: "number",
     },
     {
       title: "Date",
@@ -74,10 +68,22 @@ const Transaction = () => {
         filterDate.et
       );
       if (data.data) {
-        var data2 = data.data;
-        setParties(data2);
+        // var data2 = data.data;
+        // for (let index = 0; index < 8; index++) {
+        //   data2["transection"] = [
+        //     ...data2["transection"],
+        //     ...data2["transection"],
+        //   ];
+        // }
+        // for (let index = 0; index < 8; index++) {
+        //   data2["payment"] = [...data2["payment"], ...data2["payment"]];
+        // }
+        // for (let index = 0; index < 8; index++) {
+        //   data2["recive"] = [...data2["recive"], ...data2["recive"]];
+        // }
+        setParties(data.data);
       } else {
-        setParties({ payment: [], recive: [], transection: [] });
+        setParties([]);
       }
       setLoading(false);
     };
@@ -98,29 +104,29 @@ const Transaction = () => {
       cols={columns}
       dark={false}
       data={parties.transection}
+      columndefs={colDefs}
       title="Transaction List"
       withCard={false}
       hasEdit={false}
-      custom={true}
     />,
-    <CustomTable
-      cols={columns}
-      dark={false}
-      data={parties.recive}
-      title="Recieve List"
-      withCard={false}
-      hasEdit={false}
-      custom={true}
-    />,
-    <CustomTable
-      cols={columns}
-      dark={false}
-      data={parties.payment}
-      title="Payment List"
-      withCard={false}
-      hasEdit={false}
-      custom={true}
-    />,
+    // <CustomTable
+    //   cols={columns}
+    //   dark={false}
+    //   data={parties.recive}
+    //   columndefs={colDefs}
+    //   title="Recieve List"
+    //   withCard={false}
+    //   hasEdit={false}
+    // />,
+    // <CustomTable
+    //   cols={columns}
+    //   dark={false}
+    //   data={parties.payment}
+    //   columndefs={colDefs}
+    //   title="Payment List"
+    //   withCard={false}
+    //   hasEdit={false}
+    // />,
   ];
 
   const dateSelect = (start, end) => {
@@ -134,22 +140,7 @@ const Transaction = () => {
       <Container className="pt-6" fluid>
         <Row xs="2" className="mb-2">
           <Col>
-            <div>
-              <CustomDatePicker onCallback={dateSelect} />
-              <Button
-                className="btn-md"
-                onClick={() => setFilterDate({ st: "", et: "" })}
-              >
-                All Transactions
-              </Button>
-            </div>
-
-            <h1>
-              <span style={{ fontSize: "18px" }}>
-                {filterDate.st != "" &&
-                  ` (${filterDate.st} to ${filterDate.et})`}
-              </span>{" "}
-            </h1>
+            <CustomDatePicker onCallback={dateSelect} />
           </Col>
           <Col>
             <Row className="justify-content-end mr-0">

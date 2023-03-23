@@ -42,7 +42,9 @@ const CustomTable = ({
   deleteClick = null,
   title = "",
   withCard = true,
+  custom = false,
 }) => {
+  custom = true;
   const datatableRef = useRef(null);
   var colDefs = [];
   const action = (td, cellData, rowData, row, col) => {
@@ -91,18 +93,133 @@ const CustomTable = ({
   if (columndefs != null) {
     colDefs = [...colDefs, ...columndefs];
   }
-  const [datatable, setDatatable] = useState(null);
+  let custCallback = null;
+  if (custom) {
+    custCallback = function (data2, callback, settings) {
+      let curData = data;
+      if (data2.search.value != "" && data.length > 0) {
+        curData = curData.filter((x) =>
+          data2.columns
+            .filter((c) => c.searchable)
+            .map((value) => x[value.data])
+            .some((y) =>
+              y?.toLowerCase().includes(data2.search.value.toLowerCase())
+            )
+        );
+      }
+
+      if (data2.order.length > 0) {
+        let col = data2.columns[data2.order[0].column].data.toString();
+        let isAsc = data2.order[0].dir == "asc";
+
+        isAsc
+          ? curData.sort((a, b) =>
+              a[col] == "" ? 1 : b[col] == "" ? -1 : a[col] > b[col]
+            )
+          : curData.sort((a, b) =>
+              a[col] == "" ? 1 : b[col] == "" ? -1 : a[col] < b[col]
+            );
+      }
+      callback({
+        data: curData.slice(data2.start, data2.start + data2.length),
+        recordsTotal: data.length,
+        recordsFiltered: curData.length,
+        draw: data2.draw,
+      });
+    };
+  }
+  function newexportaction(e, dt, button, config) {
+    var self = this;
+    var oldStart = dt.settings()[0]._iDisplayStart;
+    dt.one("preXhr", function (e, s, data) {
+      // Just this once, load all data from the server...
+      data.start = 0;
+      data.length = 2147483647;
+      dt.one("preDraw", function (e, settings) {
+        // Call the original action function
+        if (button[0].className.indexOf("buttons-copy") >= 0) {
+          $.fn.dataTable.ext.buttons.copyHtml5.action.call(
+            self,
+            e,
+            dt,
+            button,
+            config
+          );
+        } else if (button[0].className.indexOf("buttons-excel") >= 0) {
+          $.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)
+            ? $.fn.dataTable.ext.buttons.excelHtml5.action.call(
+                self,
+                e,
+                dt,
+                button,
+                config
+              )
+            : $.fn.dataTable.ext.buttons.excelFlash.action.call(
+                self,
+                e,
+                dt,
+                button,
+                config
+              );
+        } else if (button[0].className.indexOf("buttons-csv") >= 0) {
+          $.fn.dataTable.ext.buttons.csvHtml5.available(dt, config)
+            ? $.fn.dataTable.ext.buttons.csvHtml5.action.call(
+                self,
+                e,
+                dt,
+                button,
+                config
+              )
+            : $.fn.dataTable.ext.buttons.csvFlash.action.call(
+                self,
+                e,
+                dt,
+                button,
+                config
+              );
+        } else if (button[0].className.indexOf("buttons-pdf") >= 0) {
+          $.fn.dataTable.ext.buttons.pdfHtml5.available(dt, config)
+            ? $.fn.dataTable.ext.buttons.pdfHtml5.action.call(
+                self,
+                e,
+                dt,
+                button,
+                config
+              )
+            : $.fn.dataTable.ext.buttons.pdfFlash.action.call(
+                self,
+                e,
+                dt,
+                button,
+                config
+              );
+        } else if (button[0].className.indexOf("buttons-print") >= 0) {
+          $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+        }
+        dt.one("preXhr", function (e, s, data) {
+          // DataTables thinks the first item displayed is index 0, but we're not drawing that.
+          // Set the property to what it was before exporting.
+          settings._iDisplayStart = oldStart;
+          data.start = oldStart;
+        });
+        // Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+        setTimeout(dt.ajax.reload, 0);
+        // Prevent rendering of the full data to the DOM
+        return false;
+      });
+    });
+    // Requery the server with the new one-time export settings
+    dt.ajax.reload();
+  }
+  //For Export Buttons available inside jquery-datatable "server side processing" - End
   useEffect(() => {
-    if (datatable != null) {
-      datatable.clear();
-      datatable.destroy();
-    }
+    console.log(custom, custCallback);
     var table2 = $(datatableRef.current).DataTable({
       dom: "Bfrtip",
-      data: data,
+      data: custom ? data.slice(0, 10) : data,
       columns: cols,
       ordering: true,
-      order: [[1, "asc"]],
+      order: [],
       info: true,
       responsive: true,
       paging: true,
@@ -125,7 +242,42 @@ const CustomTable = ({
         },
       },
       drawCallback: function () {},
-      buttons: ["excel", "pdf", "print"],
+      // buttons: {
+      //   extend: "excel",
+      //   exportOptions: {
+      //     modifier: {
+      //       page: "all",
+      //       search: "none",
+      //     },
+      //   },
+      // },
+      // buttons: [
+      //   $.extend(true, {}, fixNewLine, {
+      //     extend: "excel",
+      //   }),
+      //   "pdf",
+      //   "print",
+      //   "copy",
+      //   "csv",
+      // ],
+      buttons: [
+        {
+          extend: "excel",
+          titleAttr: "Excel",
+          action: newexportaction,
+        },
+        {
+          extend: "pdf",
+          titleAttr: "PDF",
+          action: newexportaction,
+        },
+        {
+          extend: "print",
+          titleAttr: "Print",
+          action: newexportaction,
+        },
+      ],
+      // buttons: ["excel", "pdf", "print"],
       initComplete: (settings) => {
         $(".dataTables_wrapper")
           .find(".dt-button")
@@ -140,13 +292,20 @@ const CustomTable = ({
           .find(".dataTables_filter")
           .addClass("pd-custom-right");
       },
+      serverSide: custom,
+      ajax: custCallback,
     });
-    setDatatable(table2);
+    table2.on(
+      "buttons-action",
+      function (e, buttonApi, dataTable, node, config) {
+        console.log("Button " + buttonApi.text() + " was activated");
+      }
+    );
     $(datatableRef.current).find("thead").addClass("thead-light");
     return () => {
-      if (datatable != null) {
-        datatable.clear();
-        datatable.destroy();
+      if (table2 != null) {
+        table2.clear();
+        table2.destroy();
       }
     };
   }, [data]);
@@ -154,10 +313,7 @@ const CustomTable = ({
     <>
       {withCard ? (
         <Card className="shadow">
-          <CardHeader className="border-0">
-            <h3 className="mb-0">{title}</h3>
-          </CardHeader>
-          <div className="table-responsive">
+          <div className="table-responsive mt-3">
             <table
               className="align-items-center table-flush table dt-responsive"
               style={{ width: "100%" }}

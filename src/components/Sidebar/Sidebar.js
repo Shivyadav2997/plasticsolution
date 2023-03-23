@@ -100,9 +100,10 @@ const Sidebar = (props) => {
               className="navbar-brand-img"
               src={logo.imgSrc}
             />
-            Plastic Solution
           </NavbarBrand>
-        ) : null}
+        ) : (
+          "Plastic Solution"
+        )}
         {/* User */}
         <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>
@@ -191,9 +192,9 @@ const Sidebar = (props) => {
               </Col>
             </Row>
           </div>
-          <hr className="my-3 d-md-block d-none" />
+          {/* <hr className="my-3 d-md-block d-none" />
           <h3 className="d-flex justify-content-center mb-0">{user.name}</h3>
-          <hr className="my-3" />
+          <hr className="my-3" /> */}
           {/* Navigation */}
           <Nav navbar>{createLinks(routes)}</Nav>
         </Collapse>

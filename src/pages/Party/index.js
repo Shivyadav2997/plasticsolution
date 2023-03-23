@@ -108,96 +108,93 @@ const Party = () => {
           <Loader loading={loading} />
         ) : (
           <>
-            <Row xs="1">
-              <Col>
-                <Row className="float-sm-right">
-                  <Col>
-                    <Button className="btn-md" onClick={handleToggle}>
-                      Add Party
-                    </Button>
-                    <CustomModal
-                      show={show}
-                      handleToggle={handleToggle}
-                      title="Add Party"
-                      footer={
-                        <Button
-                          type="submit"
-                          className="mr-1"
-                          color="primary"
-                          block
-                          size="lg"
-                          onClick={() => {
-                            inputRef.current.handleSubmit();
-                          }}
-                        >
-                          Save
-                        </Button>
-                      }
-                    >
-                      <Formik
-                        initialValues={{
-                          name: "",
-                          owner: "",
-                          mobile: "",
-                          email: "",
-                          gst: "",
-                          city: "",
-                          add: "",
-                        }}
-                        validationSchema={validate}
-                        onSubmit={(values) => {
-                          addParty(values);
-                        }}
-                        innerRef={inputRef}
-                      >
-                        {(formik) => (
-                          <div>
-                            <Form>
-                              <CustomInput
-                                placeholder="Bussiness Name"
-                                name="name"
-                                type="text"
-                              />
+            <CustomModal
+              show={show}
+              handleToggle={handleToggle}
+              title="Add Party"
+              footer={
+                <Button
+                  type="submit"
+                  className="mr-1"
+                  color="primary"
+                  block
+                  size="lg"
+                  onClick={() => {
+                    inputRef.current.handleSubmit();
+                  }}
+                >
+                  Save
+                </Button>
+              }
+            >
+              <Formik
+                initialValues={{
+                  name: "",
+                  owner: "",
+                  mobile: "",
+                  email: "",
+                  gst: "",
+                  city: "",
+                  add: "",
+                }}
+                validationSchema={validate}
+                onSubmit={(values) => {
+                  addParty(values);
+                }}
+                innerRef={inputRef}
+              >
+                {(formik) => (
+                  <div>
+                    <Form>
+                      <CustomInput
+                        placeholder="Bussiness Name"
+                        name="name"
+                        type="text"
+                      />
 
-                              <CustomInput
-                                placeholder="Owner Name"
-                                name="owner"
-                                type="text"
-                              />
-                              <CustomInput
-                                placeholder="Bussiness Mobile No."
-                                name="mobile"
-                                type="number"
-                              />
-                              <CustomInput
-                                placeholder="Bussiness Email"
-                                name="email"
-                                type="email"
-                              />
-                              <CustomInput
-                                placeholder="Bussiness GST No."
-                                name="gst"
-                                type="text"
-                              />
-                              <CustomInput
-                                placeholder="Bussiness City"
-                                name="city"
-                                type="text"
-                              />
-                              <CustomInput
-                                placeholder="Bussiness Address"
-                                name="add"
-                                type="text"
-                              />
-                            </Form>
-                          </div>
-                        )}
-                      </Formik>
-                    </CustomModal>
-                  </Col>
-                  <Col>
-                    <Button className="btn-md">Add File</Button>
-                  </Col>
+                      <CustomInput
+                        placeholder="Owner Name"
+                        name="owner"
+                        type="text"
+                      />
+                      <CustomInput
+                        placeholder="Bussiness Mobile No."
+                        name="mobile"
+                        type="number"
+                      />
+                      <CustomInput
+                        placeholder="Bussiness Email"
+                        name="email"
+                        type="email"
+                      />
+                      <CustomInput
+                        placeholder="Bussiness GST No."
+                        name="gst"
+                        type="text"
+                      />
+                      <CustomInput
+                        placeholder="Bussiness City"
+                        name="city"
+                        type="text"
+                      />
+                      <CustomInput
+                        placeholder="Bussiness Address"
+                        name="add"
+                        type="text"
+                      />
+                    </Form>
+                  </div>
+                )}
+              </Formik>
+            </CustomModal>
+            <Row xs="2" className="mb-2">
+              <Col></Col>
+              <Col>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md" onClick={handleToggle}>
+                    Add Party
+                  </Button>
+                  <Button className="btn-md">Add File</Button>
                 </Row>
               </Col>
             </Row>
