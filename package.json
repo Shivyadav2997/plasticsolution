@@ -1,7 +1,7 @@
 {
-  "name": "plasticsolution",
+  "name": "accountdigital",
   "version": "1.2.2",
-  "description": "Plastic Solution",
+  "description": "Account Digital",
   "homepage": "http://accountdigi.com",
   "main": "index.js",
   "scripts": {

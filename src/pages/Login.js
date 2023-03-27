@@ -16,7 +16,7 @@ import {
 import { useDispatch } from "react-redux";
 import { login } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { loginApi } from "api/api";
 import { toast } from "react-toastify";
 const Login = () => {
@@ -26,7 +26,7 @@ const Login = () => {
   const [pass, setPass] = useState("");
   const [errorUname, setErrorUname] = useState("");
   const [errorPass, setErrorPass] = useState();
-
+  const unameRef = useRef(null);
   const loginSubmit = async () => {
     if (uname === "") {
       setErrorUname("User name is required");
@@ -47,6 +47,12 @@ const Login = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (unameRef.current) {
+      unameRef.current.focus();
+    }
+  }, [unameRef.current]);
 
   return (
     <>
@@ -72,6 +78,9 @@ const Login = () => {
                       setUname(e.target.value);
                       setErrorUname("");
                     }}
+                    onFocus={() => console.log("focussed")}
+                    ref={unameRef}
+                    autoFocus
                     // invalid={errorUname !== ""}
                     // valid={errorUname === ""}
                   />

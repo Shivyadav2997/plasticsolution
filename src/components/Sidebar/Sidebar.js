@@ -20,10 +20,14 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import { useDispatch } from "react-redux";
+import { logout } from "features/User/UserSlice";
+import { useHistory } from "react-router-dom";
 var ps;
 
 const Sidebar = (props) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const { user } = useSelector((store) => store.user);
   const [collapseOpen, setCollapseOpen] = useState();
   // verifies if routeName is the one active (in browser input)
@@ -37,6 +41,11 @@ const Sidebar = (props) => {
   // closes the collapse
   const closeCollapse = () => {
     setCollapseOpen(false);
+  };
+
+  const logoutClick = () => {
+    dispatch(logout());
+    history.push("/auth/login");
   };
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
@@ -102,7 +111,7 @@ const Sidebar = (props) => {
             />
           </NavbarBrand>
         ) : (
-          "Plastic Solution"
+          "Account Digital"
         )}
         {/* User */}
         <Nav className="align-items-center d-md-none">
@@ -153,7 +162,13 @@ const Sidebar = (props) => {
                 <span>Support</span>
               </DropdownItem>
               <DropdownItem divider />
-              <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+              <DropdownItem
+                href="#pablo"
+                onClick={(e) => {
+                  e.preventDefault();
+                  logoutClick();
+                }}
+              >
                 <i className="ni ni-user-run" />
                 <span>Logout</span>
               </DropdownItem>
@@ -170,12 +185,12 @@ const Sidebar = (props) => {
                   {logo.innerLink ? (
                     <Link to={logo.innerLink}>
                       <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      Plastic Solution
+                      Account Digital
                     </Link>
                   ) : (
                     <a href={logo.outterLink}>
                       <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      Plastic Solution
+                      Account Digital
                     </a>
                   )}
                 </Col>

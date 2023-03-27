@@ -17,9 +17,19 @@ import {
   Media,
 } from "reactstrap";
 
+import { useDispatch } from "react-redux";
+import { logout } from "features/User/UserSlice";
+import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 const AdminNavbar = (props) => {
   const { user } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const logoutClick = () => {
+    dispatch(logout());
+    history.push("/auth/login");
+  };
   return (
     <>
       <Navbar className="navbar-top navbar-dark" id="navbar-main">
@@ -80,7 +90,13 @@ const AdminNavbar = (props) => {
                   <span>Support</span>
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                <DropdownItem
+                  href="#pablo"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    logoutClick();
+                  }}
+                >
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>

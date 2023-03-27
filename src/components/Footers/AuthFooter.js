@@ -14,46 +14,23 @@ const Login = () => {
                   href="https://www.creative-tim.com?ref=adr-auth-footer"
                   target="_blank"
                 >
-                  Plastic Solution
+                  Prisha Software Pvt Ltd
                 </a>
               </div>
             </Col>
-            {/* <Col xl="6">
+            <Col xl="6">
               <Nav className="nav-footer justify-content-center justify-content-xl-end">
                 <NavItem>
-                  <NavLink
-                    href="https://www.creative-tim.com?ref=adr-auth-footer"
-                    target="_blank"
-                  >
-                    Creative Tim
-                  </NavLink>
+                  <NavLink href="#">About Us</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink
-                    href="https://www.creative-tim.com/presentation?ref=adr-auth-footer"
-                    target="_blank"
-                  >
-                    About Us
-                  </NavLink>
+                  <NavLink href="">Contact</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink
-                    href="http://blog.creative-tim.com?ref=adr-auth-footer"
-                    target="_blank"
-                  >
-                    Blog
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    href="https://github.com/creativetimofficial/argon-dashboard/blob/master/LICENSE.md?ref=adr-auth-footer"
-                    target="_blank"
-                  >
-                    MIT License
-                  </NavLink>
+                  <NavLink href="">Privacy</NavLink>
                 </NavItem>
               </Nav>
-            </Col> */}
+            </Col>
           </Row>
         </Container>
       </footer>

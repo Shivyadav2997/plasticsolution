@@ -34,6 +34,10 @@ const Transaction = () => {
   // ];
   const columns = [
     {
+      title: "No",
+      data: null,
+    },
+    {
       title: "Party",
       data: "pid",
     },

@@ -5,8 +5,18 @@ const CustomModal = ({ children, handleToggle, show, title, footer }) => {
   return (
     <>
       <Modal isOpen={show} toggle={handleToggle}>
-        <ModalHeader toggle={handleToggle}>{title}</ModalHeader>
-        <ModalBody>{children}</ModalBody>
+        <div class="modal-header">
+          <h3 class="modal-title">{title}</h3>
+          <button
+            type="button"
+            class="close"
+            aria-label="Close"
+            onClick={handleToggle}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <ModalBody className="pt-0">{children}</ModalBody>
         <ModalFooter>{footer}</ModalFooter>
       </Modal>
     </>

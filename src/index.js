@@ -17,7 +17,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <StrictMode>
   <BrowserRouter>
-    <ToastContainer position="top-center" />
+    <ToastContainer position="top-center" autoClose={1250} />
     <Provider store={store}>
       <Switch>
         <Route

@@ -46,7 +46,14 @@ const CustomTable = ({
 }) => {
   custom = true;
   const datatableRef = useRef(null);
-  var colDefs = [];
+  var colDefs = [
+    {
+      targets: 0,
+      render: function (data, type, row, meta) {
+        return meta.row + meta.settings._iDisplayStart + 1;
+      },
+    },
+  ];
   const action = (td, cellData, rowData, row, col) => {
     return hasEdit || hasDelete ? (
       <div className="d-flex gap-10">
@@ -80,6 +87,7 @@ const CustomTable = ({
   };
   if (action != null) {
     colDefs = [
+      ...colDefs,
       {
         targets: -1,
         createdCell: (td, cellData, rowData, row, col) => {
@@ -213,7 +221,6 @@ const CustomTable = ({
   }
   //For Export Buttons available inside jquery-datatable "server side processing" - End
   useEffect(() => {
-    console.log(custom, custCallback);
     var table2 = $(datatableRef.current).DataTable({
       dom: "Bfrtip",
       data: custom ? data.slice(0, 10) : data,
@@ -225,6 +232,7 @@ const CustomTable = ({
       paging: true,
       columnDefs: colDefs,
       rowCallback: rowCallBack,
+      // pageLength: 5,
       language: {
         paginate: {
           previous: ReactDOMServer.renderToString(
@@ -241,25 +249,6 @@ const CustomTable = ({
           ),
         },
       },
-      drawCallback: function () {},
-      // buttons: {
-      //   extend: "excel",
-      //   exportOptions: {
-      //     modifier: {
-      //       page: "all",
-      //       search: "none",
-      //     },
-      //   },
-      // },
-      // buttons: [
-      //   $.extend(true, {}, fixNewLine, {
-      //     extend: "excel",
-      //   }),
-      //   "pdf",
-      //   "print",
-      //   "copy",
-      //   "csv",
-      // ],
       buttons: [
         {
           extend: "excel",
@@ -277,7 +266,6 @@ const CustomTable = ({
           action: newexportaction,
         },
       ],
-      // buttons: ["excel", "pdf", "print"],
       initComplete: (settings) => {
         $(".dataTables_wrapper")
           .find(".dt-button")
@@ -295,12 +283,7 @@ const CustomTable = ({
       serverSide: custom,
       ajax: custCallback,
     });
-    table2.on(
-      "buttons-action",
-      function (e, buttonApi, dataTable, node, config) {
-        console.log("Button " + buttonApi.text() + " was activated");
-      }
-    );
+
     $(datatableRef.current).find("thead").addClass("thead-light");
     return () => {
       if (table2 != null) {

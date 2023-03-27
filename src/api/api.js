@@ -6,6 +6,7 @@ import {
   transactionListAction,
   partyAddAction,
   deleteAction,
+  partyEditAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -14,7 +15,7 @@ const key = "accountdigi9868";
 
 const getParams = (payload) => {
   const strParams = Object.keys(payload).map((k) => {
-    return `${k}=${payload[k]}`;
+    return payload[k] ? `${k}=${payload[k]}` : "";
   });
   return strParams.join("&");
 };
@@ -82,12 +83,29 @@ const partyAdd = async (token, payload) => {
   }
 };
 
+const partyEdit = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${partyEditAction}&token=${token}&${getParams(payload)}`
+    );
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const deleteRecord = async (token, payload) => {
   try {
     const resp = await axios.get(
       baseUrl + `?action=${deleteAction}&token=${token}&${getParams(payload)}`
     );
-    console.log(resp);
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -124,5 +142,6 @@ export {
   partyListGet,
   transactionListget,
   partyAdd,
+  partyEdit,
   deleteRecord,
 };
