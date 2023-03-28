@@ -4,6 +4,21 @@
     "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+table.dataTable tbody th,
+table.dataTable tbody td {
+  padding: 5px 10px !important;
+}
+
+table.dataTable th,
+table.dataTable td {
+  box-sizing: initial;
+}
+
+.card .table td,
+.card .table th {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
 .btn-md {
   padding: 0.45rem 1.2rem !important;
 }

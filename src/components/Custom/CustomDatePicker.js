@@ -38,7 +38,7 @@ const CustomDatePicker = ({ startDate, endDate, onCallback, children }) => {
     >
       {/* {children} */}
 
-      <button className="btn btn-secondary btn-md">
+      <button className="btn btn-outline-primary btn-md">
         <div>
           <i className="ni ni-calendar-grid-58" />
           <span>Transaction By Date</span>

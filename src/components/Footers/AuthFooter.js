@@ -9,11 +9,7 @@ const Login = () => {
             <Col xl="6">
               <div className="copyright text-center text-xl-left text-muted">
                 © {new Date().getFullYear()}{" "}
-                <a
-                  className="font-weight-bold ml-1"
-                  href="https://www.creative-tim.com?ref=adr-auth-footer"
-                  target="_blank"
-                >
+                <a className="font-weight-bold ml-1" href="" target="_blank">
                   Prisha Software Pvt Ltd
                 </a>
               </div>

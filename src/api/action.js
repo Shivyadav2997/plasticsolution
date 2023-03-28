@@ -1,6 +1,12 @@
 export const userLoginAction = "user_login";
+export const userLogoutAction = "user_logout";
 export const partyListAction = "party_list";
 export const partyAddAction = "add_party";
 export const partyEditAction = "edit_party";
 export const transactionListAction = "transection_list";
+export const transactionPartyAction = "transection_party";
+export const transactionRecieveAction = "recive_transection";
+export const transactionPaymentAction = "payment_transection";
+export const expensesListAction = "expenses_list";
+export const expenseAddAction = "add_expenses";
 export const deleteAction = "delete";

@@ -7,6 +7,12 @@ import {
   partyAddAction,
   deleteAction,
   partyEditAction,
+  transactionPartyAction,
+  transactionRecieveAction,
+  transactionPaymentAction,
+  expensesListAction,
+  expenseAddAction,
+  userLogoutAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -48,6 +54,18 @@ const loginApi = async (uname, pass) => {
   }
 };
 
+const logoutApi = async () => {
+  try {
+    const resp = await axios.get(baseUrl + `?action=${userLogoutAction}`);
+    return resp.data;
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const partyListGet = async (token) => {
   try {
     const resp = await axios.get(
@@ -70,7 +88,7 @@ const partyAdd = async (token, payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${partyAddAction}&token=${token}&${getParams(payload)}`
     );
-    console.log(resp);
+
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -136,12 +154,113 @@ const transactionListget = async (token, st = "", en = "") => {
   }
 };
 
+const transactionPartyGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${transactionPartyAction}&token=${token}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const transactionRecieveAdd = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${transactionRecieveAction}&token=${token}&${getParams(
+          payload
+        )}`
+    );
+
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const transactionPaymentAdd = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${transactionPaymentAction}&token=${token}&${getParams(
+          payload
+        )}`
+    );
+
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const expensesListGet = async (token, st = "", en = "") => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${expensesListAction}&token=${token}&st=${st}&en=${en}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const expenseAdd = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${expenseAddAction}&token=${token}&${getParams(payload)}`
+    );
+
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getData,
   loginApi,
+  logoutApi,
   partyListGet,
   transactionListget,
   partyAdd,
   partyEdit,
   deleteRecord,
+  transactionPartyGet,
+  transactionRecieveAdd,
+  transactionPaymentAdd,
+  expensesListGet,
+  expenseAdd,
 };

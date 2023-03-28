@@ -14,9 +14,9 @@ const Auth = (props) => {
   const location = useLocation();
 
   React.useEffect(() => {
-    document.body.classList.add("bg-default");
+    document.body.classList.add("bg-lightDefault");
     return () => {
-      document.body.classList.remove("bg-default");
+      document.body.classList.remove("bg-lightDefault");
     };
   }, []);
   React.useEffect(() => {
@@ -50,7 +50,7 @@ const Auth = (props) => {
             <div className="header-body text-center">
               <Row className="justify-content-center">
                 <Col lg="5" md="6">
-                  <h1 className="text-white">Login</h1>
+                  <h1 className="text-primary">Login</h1>
                   {/* <p className="text-lead text-light">
                     Use these awesome forms to login or create new account in
                     your project for free.

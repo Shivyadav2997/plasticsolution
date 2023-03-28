@@ -12,8 +12,7 @@ import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
-import Transaction2 from "pages/Transaction/index2";
-import Transaction3 from "pages/Transaction/index3";
+import Expense from "pages/Expenses";
 
 var routes = [
   {
@@ -30,14 +29,14 @@ var routes = [
     component: Party,
     layout: "/admin",
   },
-  {
-    path: "/account",
-    name: "Account",
-    icon: "text-success",
-    component: Profile,
-    layout: "/admin",
-    iconCmp: GrTransaction,
-  },
+  // {
+  //   path: "/account",
+  //   name: "Account",
+  //   icon: "text-success",
+  //   component: Profile,
+  //   layout: "/admin",
+  //   iconCmp: GrTransaction,
+  // },
   {
     path: "/transaction",
     name: "Transaction",
@@ -63,72 +62,72 @@ var routes = [
     path: "/expenses",
     name: "Expenses",
     icon: "ni ni-money-coins text-success",
-    component: Index,
+    component: Expense,
     layout: "/admin",
   },
-  {
-    path: "/day-book",
-    name: "Day Book",
-    icon: "text-blue",
-    component: Icons,
-    layout: "/admin",
-    iconCmp: AiFillBook,
-  },
-  {
-    path: "/sales",
-    name: "Sales",
-    icon: "text-yellow",
-    component: Profile,
-    layout: "/admin",
-    iconCmp: TbPackageExport,
-  },
-  {
-    path: "/purchase",
-    name: "Purchase",
-    icon: "text-red",
-    component: Tables,
-    layout: "/admin",
-    iconCmp: TbPackageImport,
-  },
+  // {
+  //   path: "/day-book",
+  //   name: "Day Book",
+  //   icon: "text-blue",
+  //   component: Icons,
+  //   layout: "/admin",
+  //   iconCmp: AiFillBook,
+  // },
+  // {
+  //   path: "/sales",
+  //   name: "Sales",
+  //   icon: "text-yellow",
+  //   component: Profile,
+  //   layout: "/admin",
+  //   iconCmp: TbPackageExport,
+  // },
+  // {
+  //   path: "/purchase",
+  //   name: "Purchase",
+  //   icon: "text-red",
+  //   component: Tables,
+  //   layout: "/admin",
+  //   iconCmp: TbPackageImport,
+  // },
 
-  {
-    path: "/product",
-    name: "Product",
-    icon: "text-red",
-    component: Tables,
-    layout: "/admin",
-    iconCmp: AiOutlineDropbox,
-  },
-  {
-    path: "/production",
-    name: "Production",
-    icon: "text-primary",
-    component: Index,
-    layout: "/admin",
-    iconCmp: GiFactory,
-  },
-  {
-    path: "/gst",
-    name: "GST",
-    icon: "text-success",
-    component: Icons,
-    layout: "/admin",
-    iconCmp: FaFileInvoiceDollar,
-  },
-  {
-    path: "/setting",
-    name: "Setting",
-    icon: "ni ni-settings text-yellow",
-    component: Profile,
-    layout: "/admin",
-  },
-  {
-    path: "/contact-us",
-    name: "Contact Us",
-    icon: "ni ni-email-83 text-red",
-    component: Tables,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/product",
+  //   name: "Product",
+  //   icon: "text-red",
+  //   component: Tables,
+  //   layout: "/admin",
+  //   iconCmp: AiOutlineDropbox,
+  // },
+  // {
+  //   path: "/production",
+  //   name: "Production",
+  //   icon: "text-primary",
+  //   component: Index,
+  //   layout: "/admin",
+  //   iconCmp: GiFactory,
+  // },
+  // {
+  //   path: "/gst",
+  //   name: "GST",
+  //   icon: "text-success",
+  //   component: Icons,
+  //   layout: "/admin",
+  //   iconCmp: FaFileInvoiceDollar,
+  // },
+  // {
+  //   path: "/setting",
+  //   name: "Setting",
+  //   icon: "ni ni-settings text-yellow",
+  //   component: Profile,
+  //   layout: "/admin",
+  // },
+  // {
+  //   path: "/contact-us",
+  //   name: "Contact Us",
+  //   icon: "ni ni-email-83 text-red",
+  //   component: Tables,
+  //   layout: "/admin",
+  // },
   {
     path: "/register",
     name: "Register",

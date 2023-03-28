@@ -8,12 +8,13 @@ import { useState } from "react";
 import { partyListGet, partyAdd, partyEdit, deleteRecord } from "api/api";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
+import { CustomInput } from "components/Custom/CustomInput";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
-import { CustomInput } from "components/Custom/CustomInput";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import Loader from "components/Custom/Loader";
+import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
 const Party = () => {
   const [parties, setParties] = useState([]);
   const { user } = useSelector((store) => store.user);
@@ -66,6 +67,30 @@ const Party = () => {
     {
       title: "Action",
       data: null,
+    },
+  ];
+
+  var colDefs = [
+    {
+      targets: 2,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            <strong>{rowData.b_owner}</strong>
+            <br />
+            <a href={`tel:${rowData.mobile}`}>
+              <FaPhoneAlt size={22} />
+            </a>
+            <a
+              className="ml-1"
+              href={`whatsapp://send?phone=:${rowData.mobile}`}
+            >
+              <FaWhatsapp size={25} />
+            </a>
+          </>
+        );
+      },
     },
   ];
 
@@ -220,14 +245,17 @@ const Party = () => {
         >
           Are You Sure you want to delete this ?
         </ConfirmationDialog>
-        <Row xs="2" className="mb-2">
-          <Col></Col>
+        <Row sm="2" className="mb-2">
+          <Col className="d-none d-sm-block"></Col>
           <Col>
             <Row className="justify-content-end mr-0">
-              <Button className="btn-md" onClick={handleToggle}>
+              <Button
+                className="btn-md btn-outline-primary"
+                onClick={handleToggle}
+              >
                 Add Party
               </Button>
-              <Button className="btn-md">Add File</Button>
+              <Button className="btn-md btn-outline-default">Add File</Button>
             </Row>
           </Col>
         </Row>
@@ -242,7 +270,7 @@ const Party = () => {
                     cols={columns}
                     dark={false}
                     data={parties}
-                    // columndefs={colDefs}
+                    columndefs={colDefs}
                     title="Party List"
                     deleteClick={deleteClick}
                     editClick={editClick}

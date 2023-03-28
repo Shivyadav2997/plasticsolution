@@ -5,18 +5,10 @@ import CustomTable from "components/Custom/CustomTable";
 import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
-import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
-import {
-  transactionListget,
-  transactionPartyGet,
-  transactionRecieveAdd,
-  transactionPaymentAdd,
-  deleteRecord,
-} from "api/api";
-import { Input } from "reactstrap";
+import { expensesListGet, deleteRecord, expenseAdd } from "api/api";
 import $ from "jquery";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -25,63 +17,55 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 
-const Transaction = () => {
-  const [transactions, setTransactions] = useState({
-    payment: [],
-    recive: [],
-    transection: [],
+const Expense = () => {
+  const [expenses, setExpenses] = useState({
+    all: [],
+    monthly: [],
   });
-  const [parties, setParties] = useState([]);
+
   const childRef = useRef(null);
   const childRef2 = useRef(null);
-  const childRef3 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const { user } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [transId, setTransId] = useState(null);
-  const [addType, setAddType] = useState(1);
+  const [expenseId, setExpenseId] = useState(null);
 
   const formRef = useRef(null);
 
   const handleShowConfirmation = () => {
     if (showDelete) {
-      setTransId(null);
+      setExpenseId(null);
     }
     setShowDelete(!showDelete);
   };
 
-  const deleteTransaction = async () => {
-    if (transId != null) {
+  const deleteExpense = async () => {
+    if (expenseId != null) {
       handleShowConfirmation();
       setLoading(true);
       const resp = await deleteRecord(user.token, {
-        type: "transection",
-        id: transId,
+        type: "expenses",
+        id: expenseId,
       });
       toast(resp.message);
       if (resp.data.sucess == 1) {
-        getTransactions();
-        setTransId(null);
+        getExpenses();
+        setExpenseId(null);
       }
     }
   };
 
   const deleteClick = (cellData, rowData, row, col) => {
-    setTransId(cellData.id);
+    setExpenseId(cellData.id);
     handleShowConfirmation();
   };
 
-  const getTransactionParties = async () => {
-    var data = await transactionPartyGet(user.token);
-    if (data.data) {
-      setParties(data.data);
-    }
-  };
   const handleToggle = async () => {
     if (!show) {
-      await getTransactionParties().then(() => setShow(true));
+      //await getTransactionParties().then(() => setShow(true));
+      setShow(true);
     } else {
       setShow(false);
     }
@@ -102,14 +86,10 @@ const Transaction = () => {
     },
   ];
 
-  const columns = [
+  const columnsExpenses = [
     {
       title: "No",
       data: null,
-    },
-    {
-      title: "Party",
-      data: "pid",
     },
     {
       title: "Type",
@@ -120,18 +100,12 @@ const Transaction = () => {
       data: "mode",
     },
     {
-      title: "WithAmt",
-      data: "tkachu",
-      type: "number",
-    },
-    {
-      title: "BillAmt",
-      data: "tpaku",
-      type: "number",
+      title: "Amount",
+      data: "amount",
     },
     {
       title: "Date",
-      data: "Date",
+      data: "date",
     },
     {
       title: "Action",
@@ -139,61 +113,53 @@ const Transaction = () => {
     },
   ];
 
-  const getTransactions = async () => {
+  const columnsMonthlyExpenses = [
+    {
+      title: "Month",
+      data: "Month",
+    },
+    {
+      title: "Expenses Amount",
+      data: "Amount",
+    },
+  ];
+
+  const getExpenses = async () => {
     setLoading(true);
-    var data = await transactionListget(
-      user.token,
-      filterDate.st,
-      filterDate.et
-    );
+    var data = await expensesListGet(user.token, filterDate.st, filterDate.et);
     if (data.data) {
       var data2 = data.data;
-      setTransactions({
-        payment: data2.payment || [],
-        recive: data2.recive || [],
-        transection: data2.transection || [],
+      setExpenses({
+        all: data2.expenses || [],
+        monthly: data2.monthly_expenses || [],
       });
     } else {
-      setTransactions({ payment: [], recive: [], transection: [] });
+      setExpenses({ all: [], monthly: [] });
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    getTransactions();
+    getExpenses();
   }, [filterDate]);
 
-  const addTransaction = async (payload) => {
+  const addExpense = async (payload) => {
     setLoading(true);
-    let resp = null;
-    if (addType == 1) {
-      resp = await transactionRecieveAdd(user.token, payload);
-    } else {
-      resp = await transactionPaymentAdd(user.token, payload);
-    }
+    let resp = await expenseAdd(user.token, payload);
     toast(resp.message);
     if (resp.data.sucess == 1) {
       handleToggle();
-      getTransactions();
-    }
-  };
-
-  const rowCallBack = (row, data, index) => {
-    if (data.type == "payment") {
-      $(row).css("color", "red");
-    } else {
-      $(row).css("color", "green");
+      getExpenses();
     }
   };
 
   const tabPan = [
     <CustomTable
-      rowCallBack={rowCallBack}
-      cols={columns}
+      cols={columnsExpenses}
       columndefs={colDefs}
       dark={false}
-      data={transactions.transection}
-      title="Transaction List"
+      data={expenses.all}
+      title="Expense List"
       withCard={false}
       hasEdit={false}
       custom={true}
@@ -201,28 +167,17 @@ const Transaction = () => {
       deleteClick={deleteClick}
     />,
     <CustomTable
-      cols={columns}
-      columndefs={colDefs}
+      cols={columnsMonthlyExpenses}
       dark={false}
-      data={transactions.recive}
-      title="Recieve List"
+      data={expenses.monthly}
+      title="Monthly Expense List"
       withCard={false}
       hasEdit={false}
+      hasDelete={false}
       custom={true}
       ref={childRef2}
-      deleteClick={deleteClick}
-    />,
-    <CustomTable
-      cols={columns}
-      columndefs={colDefs}
-      dark={false}
-      data={transactions.payment}
-      title="Payment List"
-      withCard={false}
-      hasEdit={false}
-      custom={true}
-      ref={childRef3}
-      deleteClick={deleteClick}
+      showNoCol={false}
+      pageLength={12}
     />,
   ];
 
@@ -232,9 +187,6 @@ const Transaction = () => {
     },
     () => {
       childRef2.current.setResponsive();
-    },
-    () => {
-      childRef3.current.setResponsive();
     },
   ];
 
@@ -246,7 +198,6 @@ const Transaction = () => {
   };
 
   const validate = Yup.object({
-    pid: Yup.string().required("Required"),
     amount: Yup.number().required("Required"),
     type: Yup.string().required("Required"),
     mode: Yup.string().required("Required"),
@@ -274,9 +225,6 @@ const Transaction = () => {
       >
         <Formik
           initialValues={{
-            pid: "",
-            wAmount: "",
-            bAmount: "",
             amount: "",
             type: "",
             mode: "",
@@ -285,7 +233,7 @@ const Transaction = () => {
           }}
           validationSchema={validate}
           onSubmit={(values) => {
-            addTransaction(values);
+            addExpense(values);
           }}
           innerRef={formRef}
         >
@@ -293,62 +241,16 @@ const Transaction = () => {
             <div>
               <Form>
                 <CustomInput
-                  name="pid"
-                  type="select"
-                  label="Party"
-                  onChange={(e) => {
-                    formik.handleChange(e);
-                    const party = parties.find((x) => x.pid == e.target.value);
-                    formik.setFieldValue(
-                      "wAmount",
-                      party ? party.withoutamt : ""
-                    );
-                    formik.setFieldValue("bAmount", party ? party.billamt : "");
-                  }}
-                  options={[
-                    <option value="">Select Party</option>,
-                    ...parties.map((opt) => {
-                      return <option value={opt.pid}>{opt.b_name}</option>;
-                    }),
-                  ]}
-                />
-
-                <Row xs="2">
-                  <Col>
-                    <CustomInput
-                      placeholder=""
-                      name="wAmount"
-                      type="text"
-                      label="Without Amt. (Outstanding)"
-                      disabled
-                    />
-                  </Col>
-                  <Col>
-                    <CustomInput
-                      placeholder=""
-                      name="bAmount"
-                      type="text"
-                      label="Bill Amt. (Outstanding)"
-                      disabled
-                    />
-                  </Col>
-                </Row>
-
-                <CustomInput
-                  placeholder={addType == 1 ? "Credit Amount" : "Debit Amount"}
-                  name="amount"
-                  type="number"
-                  label={addType == 1 ? "Credit Amount" : "Debit Amount"}
-                />
-
-                <CustomInput
                   name="type"
                   type="select"
-                  label="Type"
+                  label="Expense Type"
                   options={[
                     { label: "Select Type", value: "" },
-                    { label: "WithoutAmt", value: "WithoutAmt" },
-                    { label: "BillAmt", value: "BillAmt" },
+                    { label: "Salary", value: "Salary" },
+                    { label: "Rent", value: "Rent" },
+                    { label: "Machine", value: "Machine" },
+                    { label: "Transsport", value: "Transsport" },
+                    { label: "Other", value: "Other" },
                   ].map((opt) => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}
@@ -357,14 +259,20 @@ const Transaction = () => {
                 <CustomInput
                   name="mode"
                   type="select"
-                  label="Mode"
+                  label="Expense Mode"
                   options={[
                     { label: "Select Mode", value: "" },
-                    { label: "Cash", value: "cash" },
-                    { label: "Bank", value: "bank" },
+                    { label: "Cash", value: "Cash" },
+                    { label: "Bank", value: "Bank" },
                   ].map((opt) => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}
+                />
+                <CustomInput
+                  placeholder="Amount"
+                  name="amount"
+                  type="number"
+                  label="Amount"
                 />
 
                 <CustomInput
@@ -388,7 +296,7 @@ const Transaction = () => {
         show={showDelete}
         handleToggle={handleShowConfirmation}
         title="Delete"
-        handleOkay={deleteTransaction}
+        handleOkay={deleteExpense}
         handleCancel={handleShowConfirmation}
       >
         Are You Sure you want to delete this ?
@@ -402,7 +310,7 @@ const Transaction = () => {
                 className="btn-md btn-outline-primary"
                 onClick={() => setFilterDate({ st: "", et: "" })}
               >
-                All Transactions
+                All Expenses
               </Button>
 
               <h1>
@@ -416,6 +324,14 @@ const Transaction = () => {
           <Col>
             <Row className="justify-content-md-end mr-0">
               <Button
+                className="btn-md btn-outline-primary"
+                onClick={() => {
+                  handleToggle();
+                }}
+              >
+                Receive
+              </Button>
+              {/* <Button
                 className="btn-md btn-outline-success"
                 onClick={() => {
                   setAddType(1);
@@ -432,7 +348,7 @@ const Transaction = () => {
                 }}
               >
                 Payment
-              </Button>
+              </Button> */}
             </Row>
           </Col>
         </Row>
@@ -443,7 +359,7 @@ const Transaction = () => {
             ) : (
               <>
                 <CustomTab
-                  tabnames={["Transaction", "Receive", "Payment"]}
+                  tabnames={["All Expenses", "Monthly Expenses"]}
                   tabpanes={tabPan}
                   onChangeEvents={onChangeEvents}
                 />
@@ -456,4 +372,4 @@ const Transaction = () => {
   );
 };
 
-export default Transaction;
+export default Expense;

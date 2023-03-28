@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { logoutApi } from "api/api";
 const initialState = {
   user: null,
 };
@@ -18,6 +18,7 @@ export const userSlice = createSlice({
       sessionStorage.setItem("userData", JSON.stringify(payload));
     },
     logout: (state, { payload }) => {
+      logoutApi();
       state.user = null;
       sessionStorage.removeItem("userData");
     },

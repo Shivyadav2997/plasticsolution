@@ -37,9 +37,7 @@ const Login = () => {
     if (uname && pass) {
       const loginResponse = await loginApi(uname, pass);
       if (loginResponse.sucess) {
-        dispatch(
-          login({ token: loginResponse.token, name: loginResponse.name })
-        );
+        dispatch(login(loginResponse));
         history.push("/admin/index");
       } else {
         // alert(loginResponse.msg);
@@ -78,7 +76,6 @@ const Login = () => {
                       setUname(e.target.value);
                       setErrorUname("");
                     }}
-                    onFocus={() => console.log("focussed")}
                     ref={unameRef}
                     autoFocus
                     // invalid={errorUname !== ""}
@@ -126,7 +123,7 @@ const Login = () => {
         <Row className="mt-3">
           <Col xs="6">
             <a
-              className="text-light"
+              className="text-dark"
               href="#pablo"
               onClick={(e) => e.preventDefault()}
             >
@@ -135,7 +132,7 @@ const Login = () => {
           </Col>
           <Col className="text-right" xs="6">
             <a
-              className="text-light"
+              className="text-dark"
               href="#pablo"
               onClick={(e) => e.preventDefault()}
             >

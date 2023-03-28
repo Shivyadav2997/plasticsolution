@@ -16,7 +16,7 @@ const CustomModal = ({ children, handleToggle, show, title, footer }) => {
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <ModalBody className="pt-0">{children}</ModalBody>
+        <ModalBody className="pt-0 bg-secondary">{children}</ModalBody>
         <ModalFooter>{footer}</ModalFooter>
       </Modal>
     </>
