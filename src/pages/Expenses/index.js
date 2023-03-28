@@ -164,7 +164,7 @@ const Expense = () => {
       hasEdit={false}
       custom={true}
       ref={childRef}
-      deleteClick={deleteClick}
+      // deleteClick={deleteClick}
     />,
     <CustomTable
       cols={columnsMonthlyExpenses}
@@ -233,7 +233,7 @@ const Expense = () => {
           }}
           validationSchema={validate}
           onSubmit={(values) => {
-            addExpense(values);
+            //addExpense(values);
           }}
           innerRef={formRef}
         >
@@ -255,7 +255,7 @@ const Expense = () => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}
                 />
-
+                {/* 
                 <CustomInput
                   name="mode"
                   type="select"
@@ -286,7 +286,7 @@ const Expense = () => {
                   name="desc"
                   type="textarea"
                   label="Note"
-                />
+                /> */}
               </Form>
             </div>
           )}
@@ -329,26 +329,8 @@ const Expense = () => {
                   handleToggle();
                 }}
               >
-                Receive
+                Add Expense
               </Button>
-              {/* <Button
-                className="btn-md btn-outline-success"
-                onClick={() => {
-                  setAddType(1);
-                  handleToggle();
-                }}
-              >
-                Receive
-              </Button>
-              <Button
-                className="btn-md btn-outline-danger"
-                onClick={() => {
-                  setAddType(2);
-                  handleToggle();
-                }}
-              >
-                Payment
-              </Button> */}
             </Row>
           </Col>
         </Row>
