@@ -152,7 +152,7 @@ const Party = () => {
 
   return (
     <>
-      <Container className="pt-6" fluid>
+      <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <CustomModal
           show={show}
           handleToggle={handleToggle}

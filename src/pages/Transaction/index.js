@@ -393,7 +393,7 @@ const Transaction = () => {
       >
         Are You Sure you want to delete this ?
       </ConfirmationDialog>
-      <Container className="pt-6" fluid>
+      <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Row sm="2" xs="1" className="mb-2">
           <Col>
             <Row className="ml-0">

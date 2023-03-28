@@ -58,13 +58,13 @@ var routes = [
   //   component: Transaction3,
   //   layout: "/admin",
   // },
-  {
-    path: "/expenses",
-    name: "Expenses",
-    icon: "ni ni-money-coins text-success",
-    component: Expense,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/expenses",
+  //   name: "Expenses",
+  //   icon: "ni ni-money-coins text-success",
+  //   component: Expense,
+  //   layout: "/admin",
+  // },
   // {
   //   path: "/day-book",
   //   name: "Day Book",
