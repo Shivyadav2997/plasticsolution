@@ -405,7 +405,10 @@ const Transaction = () => {
         <Row sm="2" xs="1" className="mb-2">
           <Col>
             <Row className="ml-0">
-              <CustomDatePicker onCallback={dateSelect} />
+              <CustomDatePicker
+                onCallback={dateSelect}
+                text="Transaction By Date"
+              />
               <Button
                 className="btn-md btn-outline-primary"
                 onClick={() => setFilterDate({ st: "", et: "" })}

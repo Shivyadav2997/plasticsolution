@@ -10,3 +10,5 @@ export const transactionPaymentAction = "payment_transection";
 export const expensesListAction = "expenses_list";
 export const expenseAddAction = "add_expenses";
 export const deleteAction = "delete";
+export const saleListAction = "sale_list";
+export const purchaseListAction = "purchase_list";

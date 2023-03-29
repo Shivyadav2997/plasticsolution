@@ -6,7 +6,7 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { expensesListGet, deleteRecord, expenseAdd } from "api/api";
+import { saleListGet } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
@@ -17,8 +17,8 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 
-const Expense = () => {
-  const [expenses, setExpenses] = useState({
+const Sales = () => {
+  const [sales, setSales] = useState({
     all: [],
     monthly: [],
   });
@@ -34,74 +34,82 @@ const Expense = () => {
 
   const formRef = useRef(null);
 
-  const handleShowConfirmation = () => {
-    if (showDelete) {
-      setExpenseId(null);
-    }
-    setShowDelete(!showDelete);
-  };
+  //   const handleShowConfirmation = () => {
+  //     if (showDelete) {
+  //       setExpenseId(null);
+  //     }
+  //     setShowDelete(!showDelete);
+  //   };
 
-  const deleteExpense = async () => {
-    if (expenseId != null) {
-      handleShowConfirmation();
-      setLoading(true);
-      const resp = await deleteRecord(user.token, {
-        type: "expenses",
-        id: expenseId,
-      });
-      toast(resp.message);
-      if (resp.data.sucess == 1) {
-        getExpenses();
-        setExpenseId(null);
-      }
-    }
-  };
+  //   const deleteExpense = async () => {
+  //     if (expenseId != null) {
+  //       handleShowConfirmation();
+  //       setLoading(true);
+  //       const resp = await deleteRecord(user.token, {
+  //         type: "expenses",
+  //         id: expenseId,
+  //       });
+  //       toast(resp.message);
+  //       if (resp.data.sucess == 1) {
+  //         getExpenses();
+  //         setExpenseId(null);
+  //       }
+  //     }
+  //   };
 
-  const deleteClick = (cellData, rowData, row, col) => {
-    setExpenseId(cellData.id);
-    handleShowConfirmation();
-  };
+  //   const deleteClick = (cellData, rowData, row, col) => {
+  //     setExpenseId(cellData.id);
+  //     handleShowConfirmation();
+  //   };
 
-  const handleToggle = async () => {
-    if (!show) {
-      //await getTransactionParties().then(() => setShow(true));
-      setShow(true);
-    } else {
-      setShow(false);
-    }
-  };
+  //   const handleToggle = async () => {
+  //     if (!show) {
+  //       //await getTransactionParties().then(() => setShow(true));
+  //       setShow(true);
+  //     } else {
+  //       setShow(false);
+  //     }
+  //   };
 
   var colDefs = [
     {
       targets: -2,
-      // createdCell: (td, cellData, rowData, row, col) => {
-      //   const root = ReactDOM.createRoot(td);
-      //   root.render(
-      //     <>{format(parse(cellData, "yyyy-MM-dd", new Date()), "dd-MM-yyyy")}</>
-      //   );
-      // },
-      render: function (data, type, row, meta) {
+      render: function (data) {
         return new Date(data).toLocaleDateString("en-GB").replaceAll("/", "-");
       },
     },
   ];
 
-  const columnsExpenses = [
+  const columns = [
     {
       title: "No",
       data: null,
     },
     {
-      title: "Type",
-      data: "type",
+      title: "Name",
+      data: "b_name",
     },
     {
-      title: "Mode",
-      data: "mode",
+      title: "BNo",
+      data: "bno",
     },
     {
-      title: "Amount",
-      data: "amount",
+      title: "WithoutAmt",
+      data: "withoutAmt",
+    },
+    {
+      title: "BillAmt",
+      data: "billamt",
+    },
+
+    {
+      title: "GST",
+      data: "gst",
+    },
+
+    {
+      title: "Total",
+      data: "total",
     },
     {
       title: "Date",
@@ -113,64 +121,83 @@ const Expense = () => {
     },
   ];
 
-  const columnsMonthlyExpenses = [
+  const columnsMonthly = [
     {
       title: "Month",
       data: "Month",
     },
     {
-      title: "Expenses Amount",
-      data: "Amount",
+      title: "No",
+      data: "no",
+    },
+    {
+      title: "WithoutAmt",
+      data: "withoutAmt",
+    },
+    {
+      title: "BillAmt",
+      data: "billAmt",
+    },
+
+    {
+      title: "GST",
+      data: "gst",
+    },
+
+    {
+      title: "Total",
+      data: "total",
     },
   ];
 
-  const getExpenses = async () => {
+  const getData = async () => {
     setLoading(true);
-    var data = await expensesListGet(user.token, filterDate.st, filterDate.et);
+    var data = await saleListGet(user.token, filterDate.st, filterDate.et);
     if (data.data) {
       var data2 = data.data;
-      setExpenses({
-        all: data2.expenses || [],
-        monthly: data2.monthly_expenses || [],
+      setSales({
+        all: data2.sale || [],
+        monthly: data2.monthly_sale || [],
       });
     } else {
-      setExpenses({ all: [], monthly: [] });
+      setSales({ all: [], monthly: [] });
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    getExpenses();
+    getData();
   }, [filterDate]);
 
-  const addExpense = async (payload) => {
-    handleToggle();
-    setLoading(true);
-    let resp = await expenseAdd(user.token, payload);
-    toast(resp.message);
-    if (resp.data.sucess == 1) {
-      getExpenses();
-    }
-  };
+  //   const addExpense = async (payload) => {
+  //     handleToggle();
+  //     setLoading(true);
+  //     let resp = await expenseAdd(user.token, payload);
+  //     toast(resp.message);
+  //     if (resp.data.sucess == 1) {
+  //       getExpenses();
+  //     }
+  //   };
 
   const tabPan = [
     <CustomTable
-      cols={columnsExpenses}
+      cols={columns}
       columndefs={colDefs}
       dark={false}
-      data={expenses.all}
-      title="Expense List"
+      data={sales.all}
+      title="Sales List"
       withCard={false}
       hasEdit={false}
       custom={true}
       ref={childRef}
-      deleteClick={deleteClick}
+      //   deleteClick={deleteClick}
+      numColumns={[3, 4, 5, 6]}
     />,
     <CustomTable
-      cols={columnsMonthlyExpenses}
+      cols={columnsMonthly}
       dark={false}
-      data={expenses.monthly}
-      title="Monthly Expense List"
+      data={sales.monthly}
+      title="Monthly List"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
@@ -206,7 +233,7 @@ const Expense = () => {
 
   return (
     <>
-      <CustomModal
+      {/* <CustomModal
         show={show}
         title={`Recieve`}
         handleToggle={handleToggle}
@@ -301,20 +328,17 @@ const Expense = () => {
         handleCancel={handleShowConfirmation}
       >
         Are You Sure you want to delete this ?
-      </ConfirmationDialog>
+      </ConfirmationDialog> */}
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Row sm="2" xs="1" className="mb-2">
           <Col>
             <Row className="ml-0">
-              <CustomDatePicker
-                onCallback={dateSelect}
-                text="Expenses By Date"
-              />
+              <CustomDatePicker onCallback={dateSelect} text="Sales By Date" />
               <Button
                 className="btn-md btn-outline-primary"
                 onClick={() => setFilterDate({ st: "", et: "" })}
               >
-                All Expenses
+                All Sales
               </Button>
 
               <h1>
@@ -330,10 +354,10 @@ const Expense = () => {
               <Button
                 className="btn-md btn-outline-primary"
                 onClick={() => {
-                  handleToggle();
+                  //   handleToggle();
                 }}
               >
-                Add Expense
+                Add Sale
               </Button>
             </Row>
           </Col>
@@ -345,7 +369,7 @@ const Expense = () => {
             ) : (
               <>
                 <CustomTab
-                  tabnames={["All Expenses", "Monthly Expenses"]}
+                  tabnames={["All Sales", "Monthly Sale"]}
                   tabpanes={tabPan}
                   onChangeEvents={onChangeEvents}
                 />
@@ -358,4 +382,4 @@ const Expense = () => {
   );
 };
 
-export default Expense;
+export default Sales;

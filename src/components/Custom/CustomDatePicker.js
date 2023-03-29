@@ -3,7 +3,7 @@ import DateRangePicker from "react-bootstrap-daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
 import moment from "moment";
 import { Button } from "reactstrap";
-const CustomDatePicker = ({ startDate, endDate, onCallback, children }) => {
+const CustomDatePicker = ({ startDate, endDate, onCallback, text }) => {
   return (
     <DateRangePicker
       initialSettings={{
@@ -41,7 +41,7 @@ const CustomDatePicker = ({ startDate, endDate, onCallback, children }) => {
       <button className="btn btn-outline-primary btn-md">
         <div>
           <i className="ni ni-calendar-grid-58" />
-          <span>Transaction By Date</span>
+          <span>{text}</span>
         </div>
       </button>
     </DateRangePicker>

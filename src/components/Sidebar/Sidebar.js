@@ -29,7 +29,9 @@ const Sidebar = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { user } = useSelector((store) => store.user);
+  let allStates = { sales: false, sales2: false };
   const [collapseOpen, setCollapseOpen] = useState();
+  const [submenuOpen, setSubMenuOpen] = useState(allStates);
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -51,21 +53,68 @@ const Sidebar = (props) => {
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
-        return (
-          <NavItem key={key}>
-            <NavLink
-              to={prop.layout + prop.path}
-              tag={NavLinkRRD}
-              onClick={closeCollapse}
-              activeClassName="active"
-            >
-              <i className={prop.icon}>
-                {prop.iconCmp && <prop.iconCmp style={{ fontSize: "18px" }} />}
-              </i>
-              {prop.name}
-            </NavLink>
-          </NavItem>
-        );
+        if (prop.hasChild) {
+          return (
+            <NavItem>
+              <NavLink
+                onClick={() => {
+                  const updStates = { ...submenuOpen };
+                  updStates[prop.state] = !updStates[prop.state];
+                  setSubMenuOpen(updStates);
+                }}
+              >
+                <i className={prop.icon}>
+                  {prop.iconCmp && (
+                    <prop.iconCmp style={{ fontSize: "18px" }} />
+                  )}
+                </i>
+                {prop.name}
+              </NavLink>
+              <Collapse isOpen={submenuOpen[prop.state]}>
+                <Nav>
+                  {prop.childRoutes.map((prop2, key2) => {
+                    return (
+                      <NavItem key={key2}>
+                        <NavLink
+                          to={prop2.layout + prop2.path}
+                          tag={NavLinkRRD}
+                          onClick={closeCollapse}
+                          activeClassName="active"
+                          className="pl-5"
+                        >
+                          <i className={prop2.icon}>
+                            {prop2.iconCmp && (
+                              <prop2.iconCmp style={{ fontSize: "18px" }} />
+                            )}
+                          </i>
+                          {prop2.name}
+                        </NavLink>
+                      </NavItem>
+                    );
+                  })}
+                </Nav>
+              </Collapse>
+            </NavItem>
+          );
+        } else {
+          return (
+            <NavItem key={key}>
+              <NavLink
+                to={prop.layout + prop.path}
+                tag={NavLinkRRD}
+                onClick={closeCollapse}
+                activeClassName="active"
+              >
+                <i className={prop.icon}>
+                  {prop.iconCmp && (
+                    <prop.iconCmp style={{ fontSize: "18px" }} />
+                  )}
+                </i>
+                {prop.name}
+              </NavLink>
+            </NavItem>
+          );
+        }
       } else {
         return null;
       }
@@ -73,6 +122,7 @@ const Sidebar = (props) => {
   };
 
   const { bgColor, routes, logo } = props;
+
   let navbarBrandProps;
   if (logo && logo.innerLink) {
     navbarBrandProps = {

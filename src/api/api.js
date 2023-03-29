@@ -13,6 +13,8 @@ import {
   expensesListAction,
   expenseAddAction,
   userLogoutAction,
+  saleListAction,
+  purchaseListAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -249,6 +251,39 @@ const expenseAdd = async (token, payload) => {
   }
 };
 
+const purchaseListGet = async (token, st = "", en = "") => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${purchaseListAction}&token=${token}&st=${st}&en=${en}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const saleListGet = async (token, st = "", en = "") => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${saleListAction}&token=${token}&st=${st}&en=${en}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
 export {
   getData,
   loginApi,
@@ -263,4 +298,6 @@ export {
   transactionPaymentAdd,
   expensesListGet,
   expenseAdd,
+  purchaseListGet,
+  saleListGet,
 };

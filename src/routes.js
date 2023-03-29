@@ -10,9 +10,11 @@ import { GiExpense, GiFactory } from "react-icons/gi";
 import { AiFillBook, AiOutlineDropbox } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { FaFileInvoiceDollar } from "react-icons/fa";
+import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
+import Sales from "pages/Sales";
 import CreateInvoice from "pages/Invoice/CreateInvoice.js";
 
 var routes = [
@@ -74,14 +76,35 @@ var routes = [
   //   layout: "/admin",
   //   iconCmp: AiFillBook,
   // },
-  // {
-  //   path: "/sales",
-  //   name: "Sales",
-  //   icon: "text-yellow",
-  //   component: CreateInvoice,
-  //   layout: "/admin",
-  //   iconCmp: TbPackageExport,
-  // },
+  {
+    // path: "/sales",
+    name: "Sales",
+    icon: "text-yellow",
+    // component: CreateInvoice,
+    layout: "/admin",
+    iconCmp: TbPackageExport,
+    hasChild: true,
+    state: "sales",
+    childRoutes: [
+      {
+        path: "/invoice",
+        name: "Create Invoices",
+        icon: "",
+        component: Index,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+      {
+        path: "/sales",
+        name: "Sales Bill",
+        icon: "",
+        component: Sales,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+    ],
+  },
+
   // {
   //   path: "/purchase",
   //   name: "Purchase",
