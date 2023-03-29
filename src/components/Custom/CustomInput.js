@@ -2,7 +2,7 @@ import React from "react";
 import { Input, FormGroup } from "reactstrap";
 import { ErrorMessage, useField } from "formik";
 
-export const CustomInput = ({ label, showError, options, ...props }) => {
+export const CustomInput = ({ label, showError, options, size, ...props }) => {
   const [field, meta] = useField(props);
   const errorClass = meta.error != undefined ? "has-error" : "";
   return (
@@ -15,6 +15,7 @@ export const CustomInput = ({ label, showError, options, ...props }) => {
         )}
 
         <Input
+          bsSize={size || "sm"}
           className={`form-control-alternative ${errorClass}`}
           {...field}
           {...props}

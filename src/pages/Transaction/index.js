@@ -164,8 +164,9 @@ const Transaction = () => {
   }, [filterDate]);
 
   const addTransaction = async (payload) => {
-    setLoading(true);
     let resp = null;
+    handleToggle();
+    setLoading(true);
     if (addType == 1) {
       resp = await transactionRecieveAdd(user.token, payload);
     } else {
@@ -173,7 +174,6 @@ const Transaction = () => {
     }
     toast(resp.message);
     if (resp.data.sucess == 1) {
-      handleToggle();
       getTransactions();
     }
   };
@@ -199,6 +199,7 @@ const Transaction = () => {
       custom={true}
       ref={childRef}
       deleteClick={deleteClick}
+      numColumns={[4, 5]}
     />,
     <CustomTable
       cols={columns}
@@ -265,7 +266,7 @@ const Transaction = () => {
             className="mr-1"
             color="primary"
             block
-            size="lg"
+            size="md"
             onClick={() => formRef.current.handleSubmit()}
           >
             Save
@@ -288,6 +289,8 @@ const Transaction = () => {
             addTransaction(values);
           }}
           innerRef={formRef}
+          validateOnBlur={false}
+          validateOnChange={false}
         >
           {(formik) => (
             <div>

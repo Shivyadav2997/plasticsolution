@@ -13,6 +13,7 @@ import { FaFileInvoiceDollar } from "react-icons/fa";
 import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
+import CreateInvoice from "pages/Invoice/CreateInvoice.js";
 
 var routes = [
   {
@@ -77,7 +78,7 @@ var routes = [
   //   path: "/sales",
   //   name: "Sales",
   //   icon: "text-yellow",
-  //   component: Profile,
+  //   component: CreateInvoice,
   //   layout: "/admin",
   //   iconCmp: TbPackageExport,
   // },

@@ -128,20 +128,21 @@ const Party = () => {
   };
 
   const addParty = async (payload) => {
+    handleToggle();
     setLoading(true);
     const resp = await partyAdd(user.token, payload);
     toast(resp.message);
     if (resp.data.sucess == 1) {
-      handleToggle();
       getParties();
     }
   };
 
   const editParty = async (payload) => {
+    handleToggle();
+    setLoading(true);
     const resp = await partyEdit(user.token, payload);
     toast(resp.message);
     if (resp.data.sucess == 1) {
-      handleToggle();
       getParties();
     }
   };
@@ -163,7 +164,7 @@ const Party = () => {
               className="mr-1"
               color="primary"
               block
-              size="lg"
+              size="md"
               onClick={() => {
                 inputRef.current.handleSubmit();
               }}
@@ -190,6 +191,8 @@ const Party = () => {
                 addParty(values);
               }
             }}
+            validateOnBlur={false}
+            validateOnChange={false}
             innerRef={inputRef}
           >
             {(formik) => (
@@ -197,37 +200,44 @@ const Party = () => {
                 <Form>
                   <CustomInput
                     placeholder="Bussiness Name"
+                    label="Bussiness Name"
                     name="name"
                     type="text"
                   />
 
                   <CustomInput
                     placeholder="Owner Name"
+                    label="Owner Name"
                     name="owner"
                     type="text"
                   />
                   <CustomInput
                     placeholder="Bussiness Mobile No."
+                    label="Mobile No."
                     name="mobile"
                     type="number"
                   />
                   <CustomInput
                     placeholder="Bussiness Email"
+                    label="Email"
                     name="email"
                     type="email"
                   />
                   <CustomInput
                     placeholder="Bussiness GST No."
+                    label="GST No."
                     name="gst"
                     type="text"
                   />
                   <CustomInput
                     placeholder="Bussiness City"
+                    label="City"
                     name="city"
                     type="text"
                   />
                   <CustomInput
                     placeholder="Bussiness Address"
+                    label="Address"
                     name="add"
                     type="text"
                   />

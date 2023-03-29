@@ -216,7 +216,7 @@ const Expense = () => {
             className="mr-1"
             color="primary"
             block
-            size="lg"
+            size="md"
             onClick={() => formRef.current.handleSubmit()}
           >
             Save
@@ -236,6 +236,8 @@ const Expense = () => {
             //addExpense(values);
           }}
           innerRef={formRef}
+          validateOnChange={false}
+          validateOnBlur={false}
         >
           {(formik) => (
             <div>

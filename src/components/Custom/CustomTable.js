@@ -53,6 +53,7 @@ const CustomTable = forwardRef(
       custom = false,
       showNoCol = true,
       pageLength = 10,
+      numColumns = [],
     },
     ref
   ) => {
@@ -140,13 +141,55 @@ const CustomTable = forwardRef(
           let col = data2.columns[data2.order[0].column].data.toString();
           let isAsc = data2.order[0].dir == "asc";
 
-          isAsc
-            ? curData.sort((a, b) =>
-                a[col] == "" ? 1 : b[col] == "" ? -1 : a[col] > b[col]
-              )
-            : curData.sort((a, b) =>
-                a[col] == "" ? 1 : b[col] == "" ? -1 : a[col] < b[col]
-              );
+          if (numColumns.includes(data2.order[0].column)) {
+            isAsc
+              ? curData.sort((a, b) => {
+                  return a[col] == ""
+                    ? 1
+                    : b[col] == ""
+                    ? -1
+                    : a[col] == b[col]
+                    ? 0
+                    : parseInt(a[col]) < parseInt(b[col])
+                    ? -1
+                    : 1;
+                })
+              : curData.sort((a, b) => {
+                  return a[col] == ""
+                    ? 1
+                    : b[col] == ""
+                    ? -1
+                    : a[col] == b[col]
+                    ? 0
+                    : parseInt(a[col]) > parseInt(b[col])
+                    ? -1
+                    : 1;
+                });
+          } else {
+            isAsc
+              ? curData.sort((a, b) => {
+                  return a[col] == ""
+                    ? 1
+                    : b[col] == ""
+                    ? -1
+                    : a[col] == b[col]
+                    ? 0
+                    : a[col] < b[col]
+                    ? -1
+                    : 1;
+                })
+              : curData.sort((a, b) => {
+                  return a[col] == ""
+                    ? 1
+                    : b[col] == ""
+                    ? -1
+                    : a[col] == b[col]
+                    ? 0
+                    : a[col] > b[col]
+                    ? -1
+                    : 1;
+                });
+          }
         }
         callback({
           data: curData.slice(data2.start, data2.start + data2.length),
