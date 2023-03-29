@@ -104,6 +104,10 @@ const Expense = () => {
       data: "amount",
     },
     {
+      title: "Description",
+      data: "description",
+    },
+    {
       title: "Date",
       data: "date",
     },
