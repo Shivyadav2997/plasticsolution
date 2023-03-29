@@ -280,7 +280,7 @@ const Party = () => {
                     cols={columns}
                     dark={false}
                     data={parties}
-                    // columndefs={colDefs}
+                    columndefs={colDefs}
                     title="Party List"
                     deleteClick={deleteClick}
                     editClick={editClick}

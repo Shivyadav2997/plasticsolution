@@ -90,14 +90,19 @@ const Transaction = () => {
   var colDefs = [
     {
       targets: -2,
-      // createdCell: (td, cellData, rowData, row, col) => {
-      //   const root = ReactDOM.createRoot(td);
-      //   root.render(
-      //     <>{format(parse(cellData, "yyyy-MM-dd", new Date()), "dd-MM-yyyy")}</>
-      //   );
-      // },
       render: function (data, type, row, meta) {
         return new Date(data).toLocaleDateString("en-GB").replaceAll("/", "-");
+      },
+    },
+    {
+      targets: 2,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <span style={{ color: `${cellData == "payment" ? "red" : "green"}` }}>
+            {cellData}
+          </span>
+        );
       },
     },
   ];
@@ -178,17 +183,17 @@ const Transaction = () => {
     }
   };
 
-  const rowCallBack = (row, data, index) => {
-    if (data.type == "payment") {
-      $(row).css("color", "red");
-    } else {
-      $(row).css("color", "green");
-    }
-  };
+  // const rowCallBack = (row, data, index) => {
+  //   if (data.type == "payment") {
+  //     $(row).css("color", "red");
+  //   } else {
+  //     $(row).css("color", "green");
+  //   }
+  // };
 
   const tabPan = [
     <CustomTable
-      rowCallBack={rowCallBack}
+      // rowCallBack={rowCallBack}
       cols={columns}
       columndefs={colDefs}
       dark={false}
@@ -203,7 +208,7 @@ const Transaction = () => {
     />,
     <CustomTable
       cols={columns}
-      columndefs={colDefs}
+      columndefs={[colDefs[0]]}
       dark={false}
       data={transactions.recive}
       title="Recieve List"
@@ -215,7 +220,7 @@ const Transaction = () => {
     />,
     <CustomTable
       cols={columns}
-      columndefs={colDefs}
+      columndefs={[colDefs[0]]}
       dark={false}
       data={transactions.payment}
       title="Payment List"

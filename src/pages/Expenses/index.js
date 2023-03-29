@@ -144,11 +144,11 @@ const Expense = () => {
   }, [filterDate]);
 
   const addExpense = async (payload) => {
+    handleToggle();
     setLoading(true);
     let resp = await expenseAdd(user.token, payload);
     toast(resp.message);
     if (resp.data.sucess == 1) {
-      handleToggle();
       getExpenses();
     }
   };
@@ -164,7 +164,7 @@ const Expense = () => {
       hasEdit={false}
       custom={true}
       ref={childRef}
-      // deleteClick={deleteClick}
+      deleteClick={deleteClick}
     />,
     <CustomTable
       cols={columnsMonthlyExpenses}
@@ -233,7 +233,7 @@ const Expense = () => {
           }}
           validationSchema={validate}
           onSubmit={(values) => {
-            //addExpense(values);
+            addExpense(values);
           }}
           innerRef={formRef}
           validateOnChange={false}
@@ -257,7 +257,6 @@ const Expense = () => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}
                 />
-                {/* 
                 <CustomInput
                   name="mode"
                   type="select"
@@ -288,7 +287,7 @@ const Expense = () => {
                   name="desc"
                   type="textarea"
                   label="Note"
-                /> */}
+                />
               </Form>
             </div>
           )}
