@@ -26,25 +26,26 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 
 const CreateInvoice = () => {
+  const validate = Yup.object({
+    amount: Yup.number().required("Required"),
+  });
+
+  const [allRows, setAllRows] = useState([]);
+  const [index, setIndex] = useState(0);
+
   const initRow = () => {
+    setIndex((oldIndex) => oldIndex + 1);
     return (
-      <tr>
-        <td>
-          <FormGroup className="mb-1">
-            <Input
-              type="select"
-              bsSize="sm"
-              className={`form-control-alternative`}
-            >
-              {[
-                { label: "Select Item", value: "" },
-                { label: "Product1", value: "Product1" },
-              ].map((opt) => {
-                return <option value={opt.value}>{opt.label}</option>;
-              })}
-            </Input>
-          </FormGroup>
-        </td>
+      // <Formik
+      //   initialValues={{
+      //     amount: "",
+      //   }}
+      //   validationSchema={validate}
+      //   onSubmit={(values) => {}}
+      // >
+      //   {(formik) => (
+      <>
+        <td>Test</td>
         <td>PackUnit</td>
         <td>PckQty</td>
         <td>UnitQty</td>
@@ -53,13 +54,16 @@ const CreateInvoice = () => {
         <td>Gst%</td>
         <td>Tax</td>
         <td>WtoutAmt</td>
-        <td>BillAmt</td>
-        <td>
-          <Button className="btn btn-outline-danger btn-sm">Delete Row</Button>
-        </td>
-      </tr>
+        <td>{index}</td>
+      </>
+      //   )}
+      // </Formik>
     );
   };
+
+  useEffect(() => {
+    setAllRows([{ ind: index, row: initRow() }]);
+  }, []);
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Table className="align-items-center table-flush" responsive>
@@ -75,12 +79,46 @@ const CreateInvoice = () => {
             <th>Tax</th>
             <th>WtoutAmt</th>
             <th>BillAmt</th>
-            <th>
-              <Button className="btn btn-outline-danger btn-sm">Add Row</Button>
-            </th>
+            <th>Action</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {allRows.map((v) => {
+            return (
+              <tr>
+                {v.row}
+                <td>
+                  <Button
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => {
+                      setAllRows(allRows.filter((x) => x.ind != v.ind));
+                    }}
+                  >
+                    Delete Row
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
+          <tr>
+            <td>
+              <Button
+                className="btn btn-outline-danger btn-sm"
+                onClick={() => {
+                  setAllRows([
+                    ...allRows,
+                    {
+                      ind: index,
+                      row: initRow(),
+                    },
+                  ]);
+                }}
+              >
+                Add Row
+              </Button>
+            </td>
+          </tr>
+        </tbody>
       </Table>
     </Container>
   );

@@ -29,7 +29,7 @@ const Sidebar = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { user } = useSelector((store) => store.user);
-  let allStates = { sales: false, sales2: false };
+  let allStates = { sales: false, purchase: false };
   const [collapseOpen, setCollapseOpen] = useState();
   const [submenuOpen, setSubMenuOpen] = useState(allStates);
   // verifies if routeName is the one active (in browser input)

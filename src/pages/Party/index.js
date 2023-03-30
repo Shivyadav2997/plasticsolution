@@ -269,27 +269,25 @@ const Party = () => {
             </Row>
           </Col>
         </Row>
-        {loading ? (
+        {/* {loading ? (
           <Loader loading={loading} />
-        ) : (
-          <>
-            <Row>
-              <div className="col">
-                {parties.length > 0 && (
-                  <CustomTable
-                    cols={columns}
-                    dark={false}
-                    data={parties}
-                    columndefs={colDefs}
-                    title="Party List"
-                    deleteClick={deleteClick}
-                    editClick={editClick}
-                  />
-                )}
-              </div>
-            </Row>
-          </>
-        )}
+        ) : ( */}
+        <>
+          <Row>
+            <div className="col">
+              <CustomTable
+                cols={columns}
+                dark={false}
+                data={parties}
+                columndefs={colDefs}
+                title="Party List"
+                deleteClick={deleteClick}
+                editClick={editClick}
+              />
+            </div>
+          </Row>
+        </>
+        {/* )} */}
       </Container>
     </>
   );

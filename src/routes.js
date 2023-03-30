@@ -15,6 +15,7 @@ import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
+import Purchase from "pages/Purchase";
 import CreateInvoice from "pages/Invoice/CreateInvoice.js";
 
 var routes = [
@@ -77,10 +78,8 @@ var routes = [
   //   iconCmp: AiFillBook,
   // },
   {
-    // path: "/sales",
     name: "Sales",
     icon: "text-yellow",
-    // component: CreateInvoice,
     layout: "/admin",
     iconCmp: TbPackageExport,
     hasChild: true,
@@ -104,14 +103,38 @@ var routes = [
       },
     ],
   },
-
   // {
-  //   path: "/purchase",
+  //   path: "/invoiceTest",
+  //   name: "Invoice",
+  //   icon: "ni ni-money-coins text-success",
+  //   component: CreateInvoice,
+  //   layout: "/admin",
+  // },
+  // {
   //   name: "Purchase",
   //   icon: "text-red",
-  //   component: Tables,
   //   layout: "/admin",
   //   iconCmp: TbPackageImport,
+  //   hasChild: true,
+  //   state: "purchase",
+  //   childRoutes: [
+  //     {
+  //       path: "/invoice",
+  //       name: "Create Invoices",
+  //       icon: "",
+  //       component: Index,
+  //       layout: "/admin",
+  //       iconCmp: RiCheckboxBlankCircleLine,
+  //     },
+  //     {
+  //       path: "/purchase",
+  //       name: "Purchase Bill",
+  //       icon: "",
+  //       component: Purchase,
+  //       layout: "/admin",
+  //       iconCmp: RiCheckboxBlankCircleLine,
+  //     },
+  //   ],
   // },
 
   // {
