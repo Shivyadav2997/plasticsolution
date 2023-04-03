@@ -6,7 +6,8 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { purchaseListGet } from "api/api";
+import ReactDOM from "react-dom/client";
+import { purchaseListGet, getMonthName } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
@@ -28,6 +29,8 @@ const Purchase = () => {
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const { user } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
+  const [selMonth, setSelMonth] = useState(0);
+  const [monthPurchases, setMonthPurchases] = useState([]);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [expenseId, setExpenseId] = useState(null);
@@ -150,24 +153,60 @@ const Purchase = () => {
     },
   ];
 
+  var colDefsMonthly = [
+    {
+      targets: 0,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <a
+            className="text-primary cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelMonth(row + 1);
+            }}
+          >
+            {cellData}
+          </a>
+        );
+      },
+    },
+  ];
+
   const getData = async () => {
     setLoading(true);
-    var data = await purchaseListGet(user.token, filterDate.st, filterDate.et);
-    if (data.data) {
-      var data2 = data.data;
-      setPurchases({
-        all: data2.purchase || [],
-        monthly: data2.monthly_purchase || [],
-      });
+    var data = {};
+    if (selMonth > 0) {
+      data = await purchaseListGet(user.token, "", "", selMonth);
     } else {
-      setPurchases({ all: [], monthly: [] });
+      data = await purchaseListGet(user.token, filterDate.st, filterDate.et);
     }
+
+    if (selMonth > 0) {
+      if (data.data) {
+        var data2 = data.data;
+        setMonthPurchases(data2.purchase);
+      } else {
+        setMonthPurchases([]);
+      }
+    } else {
+      if (data.data) {
+        var data2 = data.data;
+        setPurchases({
+          all: data2.purchase || [],
+          monthly: data2.monthly_purchase || [],
+        });
+      } else {
+        setPurchases({ all: [], monthly: [] });
+      }
+    }
+
     setLoading(false);
   };
 
   useEffect(() => {
     getData();
-  }, [filterDate]);
+  }, [filterDate, selMonth]);
 
   //   const addExpense = async (payload) => {
   //     handleToggle();
@@ -182,7 +221,7 @@ const Purchase = () => {
   const tabPan = [
     <CustomTable
       cols={columns}
-      // columndefs={colDefs}
+      columndefs={colDefs}
       dark={false}
       data={purchases.all}
       title="Purchase List"
@@ -195,6 +234,7 @@ const Purchase = () => {
     />,
     <CustomTable
       cols={columnsMonthly}
+      columndefs={colDefsMonthly}
       dark={false}
       data={purchases.monthly}
       title="Monthly List"
@@ -330,56 +370,104 @@ const Purchase = () => {
         Are You Sure you want to delete this ?
       </ConfirmationDialog> */}
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
-        <Row sm="2" xs="1" className="mb-2">
-          <Col>
-            <Row className="ml-0">
-              <CustomDatePicker
-                onCallback={dateSelect}
-                text="Purchases By Date"
-              />
-              <Button
-                className="btn-md btn-outline-primary"
-                onClick={() => setFilterDate({ st: "", et: "" })}
-              >
-                All Purchase
-              </Button>
-
-              <h1>
-                <span style={{ fontSize: "18px" }}>
-                  {filterDate.st != "" &&
-                    ` (${filterDate.st} to ${filterDate.et})`}
-                </span>{" "}
-              </h1>
+        {selMonth > 0 ? (
+          <>
+            <Row sm="2" className="mb-2">
+              <Col className="">
+                <Row className="ml-0">
+                  <h1>
+                    {selMonth}-{getMonthName(selMonth)} Purchases
+                  </h1>
+                  <Button
+                    className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
+                    onClick={() => setSelMonth(0)}
+                  >
+                    All Purchases
+                  </Button>
+                </Row>
+              </Col>
+              <Col>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md btn-outline-primary">
+                    Create Purchase Bill
+                  </Button>
+                </Row>
+              </Col>
             </Row>
-          </Col>
-          <Col>
-            <Row className="justify-content-md-end mr-0">
-              <Button
-                className="btn-md btn-outline-primary"
-                onClick={() => {
-                  //   handleToggle();
-                }}
-              >
-                Add Purchase
-              </Button>
-            </Row>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
             {loading ? (
               <Loader loading={loading} />
             ) : (
               <>
-                <CustomTab
-                  tabnames={["All Purchases", "Monthly Purchase"]}
-                  tabpanes={tabPan}
-                  onChangeEvents={onChangeEvents}
-                />
+                <Row>
+                  <div className="col">
+                    <CustomTable
+                      cols={columns}
+                      dark={false}
+                      data={monthPurchases}
+                      // columndefs={colDefs}
+                      // title="Party List"
+                      // deleteClick={deleteClick}
+                      // editClick={editClick}
+                    />
+                  </div>
+                </Row>
               </>
             )}
-          </Col>
-        </Row>
+          </>
+        ) : (
+          <>
+            <Row sm="2" xs="1" className="mb-2">
+              <Col>
+                <Row className="ml-0">
+                  <CustomDatePicker
+                    onCallback={dateSelect}
+                    text="Purchases By Date"
+                  />
+                  <Button
+                    className="btn-md btn-outline-primary"
+                    onClick={() => setFilterDate({ st: "", et: "" })}
+                  >
+                    All Purchase
+                  </Button>
+
+                  <h1>
+                    <span style={{ fontSize: "18px" }}>
+                      {filterDate.st != "" &&
+                        ` (${filterDate.st} to ${filterDate.et})`}
+                    </span>{" "}
+                  </h1>
+                </Row>
+              </Col>
+              <Col>
+                <Row className="justify-content-md-end mr-0">
+                  <Button
+                    className="btn-md btn-outline-primary"
+                    onClick={() => {
+                      //   handleToggle();
+                    }}
+                  >
+                    Add Purchase
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                {loading ? (
+                  <Loader loading={loading} />
+                ) : (
+                  <>
+                    <CustomTab
+                      tabnames={["All Purchases", "Monthly Purchase"]}
+                      tabpanes={tabPan}
+                      onChangeEvents={onChangeEvents}
+                    />
+                  </>
+                )}
+              </Col>
+            </Row>
+          </>
+        )}
       </Container>
     </>
   );

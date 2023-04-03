@@ -21,6 +21,12 @@ const baseUrltest = "https://jsonplaceholder.typicode.com/";
 const baseUrl = process.env.REACT_APP_API_URL;
 const key = "accountdigi9868";
 
+const getMonthName = (monthNumber) => {
+  const date = new Date();
+  date.setMonth(monthNumber - 1);
+
+  return date.toLocaleString("en-US", { month: "long" });
+};
 const getParams = (payload) => {
   const strParams = Object.keys(payload).map((k) => {
     return payload[k] ? `${k}=${payload[k]}` : "";
@@ -251,10 +257,11 @@ const expenseAdd = async (token, payload) => {
   }
 };
 
-const purchaseListGet = async (token, st = "", en = "") => {
+const purchaseListGet = async (token, st = "", en = "", m = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${purchaseListAction}&token=${token}&st=${st}&en=${en}`
+      baseUrl +
+        `?action=${purchaseListAction}&token=${token}&st=${st}&en=${en}&m=${m}`
     );
     return {
       data: resp.data,
@@ -268,10 +275,11 @@ const purchaseListGet = async (token, st = "", en = "") => {
   }
 };
 
-const saleListGet = async (token, st = "", en = "") => {
+const saleListGet = async (token, st = "", en = "", m = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${saleListAction}&token=${token}&st=${st}&en=${en}`
+      baseUrl +
+        `?action=${saleListAction}&token=${token}&st=${st}&en=${en}&m=${m}`
     );
     return {
       data: resp.data,
@@ -285,6 +293,7 @@ const saleListGet = async (token, st = "", en = "") => {
   }
 };
 export {
+  getMonthName,
   getData,
   loginApi,
   logoutApi,

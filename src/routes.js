@@ -110,32 +110,32 @@ var routes = [
   //   component: CreateInvoice,
   //   layout: "/admin",
   // },
-  // {
-  //   name: "Purchase",
-  //   icon: "text-red",
-  //   layout: "/admin",
-  //   iconCmp: TbPackageImport,
-  //   hasChild: true,
-  //   state: "purchase",
-  //   childRoutes: [
-  //     {
-  //       path: "/invoice",
-  //       name: "Create Invoices",
-  //       icon: "",
-  //       component: Index,
-  //       layout: "/admin",
-  //       iconCmp: RiCheckboxBlankCircleLine,
-  //     },
-  //     {
-  //       path: "/purchase",
-  //       name: "Purchase Bill",
-  //       icon: "",
-  //       component: Purchase,
-  //       layout: "/admin",
-  //       iconCmp: RiCheckboxBlankCircleLine,
-  //     },
-  //   ],
-  // },
+  {
+    name: "Purchase",
+    icon: "text-red",
+    layout: "/admin",
+    iconCmp: TbPackageImport,
+    hasChild: true,
+    state: "purchase",
+    childRoutes: [
+      {
+        path: "/invoice",
+        name: "Create Invoices",
+        icon: "",
+        component: Index,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+      {
+        path: "/purchase",
+        name: "Purchase Bill",
+        icon: "",
+        component: Purchase,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+    ],
+  },
 
   // {
   //   path: "/product",

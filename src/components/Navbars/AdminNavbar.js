@@ -30,6 +30,22 @@ const AdminNavbar = (props) => {
     dispatch(logout());
     history.push("/auth/login");
   };
+  function getFinancialYear(nextYear = false) {
+    var fiscalyear = "";
+    var today = new Date();
+    if (nextYear) {
+      today = new Date(new Date().setFullYear(today.getFullYear() + 1));
+    }
+    if (today.getMonth() + 1 <= 3) {
+      fiscalyear =
+        (today.getFullYear() - 1).toString().substring(2, 4) +
+        "-" +
+        today.getFullYear().toString().substring(2, 4);
+    } else {
+      fiscalyear = today.getFullYear() + "-" + (today.getFullYear() + 1);
+    }
+    return fiscalyear;
+  }
   return (
     <>
       <Navbar className="navbar-top navbar-dark" id="navbar-main">
@@ -52,6 +68,12 @@ const AdminNavbar = (props) => {
               </InputGroup>
             </FormGroup>
           </Form> */}
+          <FormGroup className="mb-0 mr-1 ml-auto d-none d-md-block">
+            <Input type="select">
+              <option value={1}>{getFinancialYear()}</option>
+              <option value={2}>{getFinancialYear(true)}</option>
+            </Input>
+          </FormGroup>
           <Nav className="align-items-center d-none d-md-flex" navbar>
             <UncontrolledDropdown nav>
               <DropdownToggle className="pr-0" nav>
@@ -66,6 +88,7 @@ const AdminNavbar = (props) => {
                   </Media>
                 </Media>
               </DropdownToggle>
+
               <DropdownMenu className="dropdown-menu-arrow" right>
                 <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Welcome!</h6>
@@ -74,18 +97,7 @@ const AdminNavbar = (props) => {
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-settings-gear-65" />
-                  <span>Settings</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-calendar-grid-58" />
-                  <span>Activity</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-support-16" />
-                  <span>Support</span>
-                </DropdownItem>
+
                 <DropdownItem divider />
                 <DropdownItem
                   href="#pablo"

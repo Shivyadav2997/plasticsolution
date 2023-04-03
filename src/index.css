@@ -42,3 +42,6 @@ table.dataTable td {
 .has-error {
   border: 1px solid red !important;
 }
+.cursor-pointer {
+  cursor: pointer !important;
+}

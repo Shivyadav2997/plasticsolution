@@ -16,6 +16,8 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import ReactDOM from "react-dom/client";
+import { purchaseListGet, getMonthName } from "api/api";
 
 const Sales = () => {
   const [sales, setSales] = useState({
@@ -31,6 +33,8 @@ const Sales = () => {
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [expenseId, setExpenseId] = useState(null);
+  const [selMonth, setSelMonth] = useState(0);
+  const [monthSales, setmonthSales] = useState([]);
 
   const formRef = useRef(null);
 
@@ -150,24 +154,59 @@ const Sales = () => {
     },
   ];
 
+  var colDefsMonthly = [
+    {
+      targets: 0,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <a
+            className="text-primary cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelMonth(row + 1);
+            }}
+          >
+            {cellData}
+          </a>
+        );
+      },
+    },
+  ];
+
   const getData = async () => {
     setLoading(true);
-    var data = await saleListGet(user.token, filterDate.st, filterDate.et);
-    if (data.data) {
-      var data2 = data.data;
-      setSales({
-        all: data2.sale || [],
-        monthly: data2.monthly_sale || [],
-      });
+    var data = {};
+    if (selMonth > 0) {
+      data = await saleListGet(user.token, "", "", selMonth);
     } else {
-      setSales({ all: [], monthly: [] });
+      data = await saleListGet(user.token, filterDate.st, filterDate.et);
+    }
+
+    if (selMonth > 0) {
+      if (data.data) {
+        var data2 = data.data;
+        setmonthSales(data2.sale);
+      } else {
+        setmonthSales([]);
+      }
+    } else {
+      if (data.data) {
+        var data2 = data.data;
+        setSales({
+          all: data2.sale || [],
+          monthly: data2.monthly_sale || [],
+        });
+      } else {
+        setSales({ all: [], monthly: [] });
+      }
     }
     setLoading(false);
   };
 
   useEffect(() => {
     getData();
-  }, [filterDate]);
+  }, [filterDate, selMonth]);
 
   //   const addExpense = async (payload) => {
   //     handleToggle();
@@ -195,6 +234,7 @@ const Sales = () => {
     />,
     <CustomTable
       cols={columnsMonthly}
+      columndefs={colDefsMonthly}
       dark={false}
       data={sales.monthly}
       title="Monthly List"
@@ -330,53 +370,100 @@ const Sales = () => {
         Are You Sure you want to delete this ?
       </ConfirmationDialog> */}
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
-        <Row sm="2" xs="1" className="mb-2">
-          <Col>
-            <Row className="ml-0">
-              <CustomDatePicker onCallback={dateSelect} text="Sales By Date" />
-              <Button
-                className="btn-md btn-outline-primary"
-                onClick={() => setFilterDate({ st: "", et: "" })}
-              >
-                All Sales
-              </Button>
-
-              <h1>
-                <span style={{ fontSize: "18px" }}>
-                  {filterDate.st != "" &&
-                    ` (${filterDate.st} to ${filterDate.et})`}
-                </span>{" "}
-              </h1>
+        {selMonth > 0 ? (
+          <>
+            <Row sm="2" className="mb-2">
+              <Col className="">
+                <Row className="ml-0">
+                  <h1>
+                    {selMonth}-{getMonthName(selMonth)} Sales
+                  </h1>
+                  <Button
+                    className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
+                    onClick={() => setSelMonth(0)}
+                  >
+                    All Sales
+                  </Button>
+                </Row>
+              </Col>
+              <Col>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md btn-outline-primary">
+                    Create Sales Bill
+                  </Button>
+                </Row>
+              </Col>
             </Row>
-          </Col>
-          <Col>
-            <Row className="justify-content-md-end mr-0">
-              <Button
-                className="btn-md btn-outline-primary"
-                onClick={() => {
-                  //   handleToggle();
-                }}
-              >
-                Add Sale
-              </Button>
-            </Row>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
             {loading ? (
               <Loader loading={loading} />
             ) : (
               <>
-                <CustomTab
-                  tabnames={["All Sales", "Monthly Sale"]}
-                  tabpanes={tabPan}
-                  onChangeEvents={onChangeEvents}
-                />
+                <Row>
+                  <div className="col">
+                    <CustomTable
+                      cols={columns}
+                      dark={false}
+                      data={monthSales}
+                    />
+                  </div>
+                </Row>
               </>
             )}
-          </Col>
-        </Row>
+          </>
+        ) : (
+          <>
+            <Row sm="2" xs="1" className="mb-2">
+              <Col>
+                <Row className="ml-0">
+                  <CustomDatePicker
+                    onCallback={dateSelect}
+                    text="Sales By Date"
+                  />
+                  <Button
+                    className="btn-md btn-outline-primary"
+                    onClick={() => setFilterDate({ st: "", et: "" })}
+                  >
+                    All Sales
+                  </Button>
+
+                  <h1>
+                    <span style={{ fontSize: "18px" }}>
+                      {filterDate.st != "" &&
+                        ` (${filterDate.st} to ${filterDate.et})`}
+                    </span>{" "}
+                  </h1>
+                </Row>
+              </Col>
+              <Col>
+                <Row className="justify-content-md-end mr-0">
+                  <Button
+                    className="btn-md btn-outline-primary"
+                    onClick={() => {
+                      //   handleToggle();
+                    }}
+                  >
+                    Add Sale
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                {loading ? (
+                  <Loader loading={loading} />
+                ) : (
+                  <>
+                    <CustomTab
+                      tabnames={["All Sales", "Monthly Sale"]}
+                      tabpanes={tabPan}
+                      onChangeEvents={onChangeEvents}
+                    />
+                  </>
+                )}
+              </Col>
+            </Row>
+          </>
+        )}
       </Container>
     </>
   );

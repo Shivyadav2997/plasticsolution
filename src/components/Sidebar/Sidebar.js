@@ -19,6 +19,8 @@ import {
   Container,
   Row,
   Col,
+  FormGroup,
+  Input,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
 import { logout } from "features/User/UserSlice";
@@ -44,6 +46,23 @@ const Sidebar = (props) => {
   const closeCollapse = () => {
     setCollapseOpen(false);
   };
+
+  function getFinancialYear(nextYear = false) {
+    var fiscalyear = "";
+    var today = new Date();
+    if (nextYear) {
+      today = new Date(new Date().setFullYear(today.getFullYear() + 1));
+    }
+    if (today.getMonth() + 1 <= 3) {
+      fiscalyear =
+        (today.getFullYear() - 1).toString().substring(2, 4) +
+        "-" +
+        today.getFullYear().toString().substring(2, 4);
+    } else {
+      fiscalyear = today.getFullYear() + "-" + (today.getFullYear() + 1);
+    }
+    return fiscalyear;
+  }
 
   const logoutClick = () => {
     dispatch(logout());
@@ -163,6 +182,12 @@ const Sidebar = (props) => {
         ) : (
           "Account Digital"
         )}
+        <FormGroup className="mb-0 mr-1 ml-auto d-md-none">
+          <Input type="select">
+            <option value={1}>{getFinancialYear()}</option>
+            <option value={2}>{getFinancialYear(true)}</option>
+          </Input>
+        </FormGroup>
         {/* User */}
         <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>
@@ -198,18 +223,6 @@ const Sidebar = (props) => {
               <DropdownItem to="/admin/user-profile" tag={Link}>
                 <i className="ni ni-single-02" />
                 <span>My profile</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-settings-gear-65" />
-                <span>Settings</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-calendar-grid-58" />
-                <span>Activity</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-support-16" />
-                <span>Support</span>
               </DropdownItem>
               <DropdownItem divider />
               <DropdownItem
