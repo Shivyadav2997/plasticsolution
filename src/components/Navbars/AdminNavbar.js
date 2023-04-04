@@ -42,7 +42,10 @@ const AdminNavbar = (props) => {
         "-" +
         today.getFullYear().toString().substring(2, 4);
     } else {
-      fiscalyear = today.getFullYear() + "-" + (today.getFullYear() + 1);
+      fiscalyear =
+        today.getFullYear().toString().substring(2, 4) +
+        "-" +
+        (today.getFullYear() + 1).toString().substring(2, 4);
     }
     return fiscalyear;
   }

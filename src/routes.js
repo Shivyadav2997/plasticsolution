@@ -16,7 +16,7 @@ import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
 import Purchase from "pages/Purchase";
-import CreateInvoice from "pages/Invoice/CreateInvoice.js";
+import SalesInvoice from "pages/Sales/CreateInvoice.js";
 
 var routes = [
   {
@@ -86,10 +86,10 @@ var routes = [
     state: "sales",
     childRoutes: [
       {
-        path: "/invoice",
+        path: "/sales-invoice",
         name: "Create Invoices",
         icon: "",
-        component: Index,
+        component: SalesInvoice,
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },
@@ -119,7 +119,7 @@ var routes = [
     state: "purchase",
     childRoutes: [
       {
-        path: "/invoice",
+        path: "/purchase-invoice",
         name: "Create Invoices",
         icon: "",
         component: Index,

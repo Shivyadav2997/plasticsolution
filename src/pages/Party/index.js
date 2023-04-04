@@ -79,15 +79,19 @@ const Party = () => {
           <>
             <strong>{rowData.b_owner}</strong>
             <br />
-            <a href={`tel:${rowData.mobile}`}>
-              <FaPhoneAlt size={22} />
-            </a>
-            <a
-              className="ml-1"
-              href={`whatsapp://send?phone=:${rowData.mobile}`}
-            >
-              <FaWhatsapp size={25} />
-            </a>
+            <Button className="btn-neutral btn-icon btn-sm" color="default">
+              <a href={`tel:${rowData.mobile}`}>
+                <FaPhoneAlt size={16} />
+              </a>
+            </Button>
+            <Button className="btn-neutral btn-icon btn-sm" color="success">
+              <a
+                className="ml-1"
+                href={`whatsapp://send?phone=:${rowData.mobile}`}
+              >
+                <FaWhatsapp size={18} />
+              </a>
+            </Button>
           </>
         );
       },
