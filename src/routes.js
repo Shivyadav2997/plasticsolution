@@ -18,6 +18,7 @@ import Sales from "pages/Sales";
 import Purchase from "pages/Purchase";
 import SalesInvoice from "pages/Sales/CreateInvoice.js";
 import DayBook from "pages/Daybook";
+import Contact from "pages/ContactUs";
 
 var routes = [
   {
@@ -169,13 +170,13 @@ var routes = [
   //   component: Profile,
   //   layout: "/admin",
   // },
-  // {
-  //   path: "/contact-us",
-  //   name: "Contact Us",
-  //   icon: "ni ni-email-83 text-red",
-  //   component: Tables,
-  //   layout: "/admin",
-  // },
+  {
+    path: "/contact-us",
+    name: "Contact Us",
+    icon: "ni ni-email-83 text-red",
+    component: Contact,
+    layout: "/admin",
+  },
   {
     path: "/register",
     name: "Register",
