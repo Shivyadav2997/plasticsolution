@@ -45,3 +45,30 @@ table.dataTable td {
 .cursor-pointer {
   cursor: pointer !important;
 }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.daybookTable td,
+.daybookTable th {
+  font-size: 1rem !important;
+}
+.daybookTable td,
+th {
+  border-bottom: 1px groove;
+  padding: 0 rem;
+}
+.daybookTable td {
+  border: 1px solid black !important;
+  border-left: 0px !important;
+}
+.daybookTable .borderright0 {
+  border-right: 0px !important;
+}

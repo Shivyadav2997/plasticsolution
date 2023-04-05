@@ -16,20 +16,12 @@ import EditableTable from "components/Custom/EditableTable";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 
 const CreateInvoice = () => {
-  const stateObj = {
-    item: "",
-    pUnit: "",
-    pQty: "",
-    uQty: "",
-    rate: "",
-    bRate: "",
-    gst: "",
-    tax: "",
-    wAmt: "",
-    bAmt: "",
-  };
   const [rowsData, setRowsData] = useState([]);
   const [parties, setParties] = useState([]);
+  const [totalWAmt, setTotalWAmt] = useState(0);
+  const [totalBAmt, setTotalBAmt] = useState(0);
+  const [gstTax, setGstTax] = useState(0);
+  const [total, setTotal] = useState(0);
   const { user } = useSelector((store) => store.user);
   const addTableRows = () => {
     const rowsInput = {
@@ -55,7 +47,8 @@ const CreateInvoice = () => {
   const handleChange = (index, name, value) => {
     const rowsInput = [...rowsData];
     rowsInput[index][name] = value;
-    setRowsData(rowsInput);
+    // setRowsData(rowsInput);
+    calCulateTotal(rowsInput);
   };
 
   // console.log("1", allData);
@@ -66,6 +59,49 @@ const CreateInvoice = () => {
     }
   };
 
+  const calCulateTotal = (rowsInput) => {
+    // const rowsInput = [...rowsData];
+
+    for (let index = 0; index < rowsInput.length; index++) {
+      if (rowsInput[index]["bRate"] && rowsInput[index]["uQty"]) {
+        rowsInput[index]["bAmt"] =
+          rowsInput[index]["bRate"] * rowsInput[index]["uQty"];
+      }
+      if (
+        rowsInput[index]["bRate"] &&
+        rowsInput[index]["uQty"] &&
+        rowsInput[index]["rate"]
+      ) {
+        rowsInput[index]["wAmt"] =
+          (rowsInput[index]["rate"] - rowsInput[index]["bRate"]) *
+          rowsInput[index]["uQty"];
+      }
+      if (rowsInput[index]["gst"] && rowsInput[index]["bAmt"]) {
+        rowsInput[index]["tax"] =
+          (rowsInput[index]["bAmt"] * rowsInput[index]["gst"]) / 100;
+      }
+    }
+
+    let sub1 = 0,
+      sub2 = 0,
+      gst = 0;
+    for (let index = 0; index < rowsInput.length; index++) {
+      if (rowsInput[index]["wAmt"]) {
+        sub1 += rowsInput[index]["wAmt"];
+      }
+      if (rowsInput[index]["bAmt"]) {
+        sub2 += rowsInput[index]["bAmt"];
+      }
+      if (rowsInput[index]["tax"]) {
+        gst += rowsInput[index]["tax"];
+      }
+    }
+    setGstTax(gst);
+    setTotalBAmt(sub2);
+    setTotalWAmt(sub1);
+    setTotal(sub1 + sub2 + gst);
+    setRowsData(rowsInput);
+  };
   useEffect(() => {
     getTransactionParties();
     addTableRows();
@@ -151,6 +187,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               type="number"
               style={{ width: "60px" }}
+              className="text-right"
             />
           </td>
           <td>
@@ -161,6 +198,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               type="number"
               style={{ width: "70px" }}
+              className="text-right"
             />
           </td>
           <td>
@@ -171,6 +209,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               style={{ width: "70px" }}
               type="number"
+              className="text-right"
             />
           </td>
           <td>
@@ -181,6 +220,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               style={{ width: "70px" }}
               type="number"
+              className="text-right"
             />
           </td>
           <td>
@@ -191,7 +231,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               style={{ width: "50px" }}
               type="number"
-              disabled
+              className="text-right"
             />
           </td>
           <td>
@@ -202,6 +242,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               type="number"
               disabled
+              className="text-right"
             />
           </td>
           <td>
@@ -212,6 +253,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               type="number"
               disabled
+              className="text-right"
             />
           </td>
           <td>
@@ -222,6 +264,7 @@ const CreateInvoice = () => {
               updateMyData={handleChange}
               type="number"
               disabled
+              className="text-right"
             />
           </td>
           {/* <td>
@@ -315,6 +358,50 @@ const CreateInvoice = () => {
                   >
                     Add Row
                   </Button>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={7}></td>
+                <td align="right">Sub Total</td>
+                <td>
+                  <CustomInputWoutFormik
+                    className="text-right"
+                    value={totalWAmt}
+                    disabled
+                  />
+                </td>
+                <td>
+                  <CustomInputWoutFormik
+                    className="text-right"
+                    value={totalBAmt}
+                    disabled
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={7}></td>
+                <td align="right">GST Tax</td>
+                <td></td>
+                <td>
+                  <CustomInputWoutFormik
+                    className="text-right"
+                    value={gstTax}
+                    disabled
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={7}></td>
+                <td align="right">
+                  <strong>Final Total</strong>
+                </td>
+                <td></td>
+                <td>
+                  <CustomInputWoutFormik
+                    className="text-right"
+                    value={total}
+                    disabled
+                  />
                 </td>
               </tr>
             </tbody>

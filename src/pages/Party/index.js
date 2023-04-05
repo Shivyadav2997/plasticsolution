@@ -72,27 +72,31 @@ const Party = () => {
 
   var colDefs = [
     {
-      targets: 2,
+      targets: 1,
       createdCell: (td, cellData, rowData, row, col) => {
         const root = ReactDOM.createRoot(td);
         root.render(
-          <>
-            <strong>{rowData.b_owner}</strong>
-            <br />
-            <Button className="btn-neutral btn-icon btn-sm" color="default">
-              <a href={`tel:${rowData.mobile}`}>
-                <FaPhoneAlt size={16} />
-              </a>
-            </Button>
-            <Button className="btn-neutral btn-icon btn-sm" color="success">
-              <a
-                className="ml-1"
-                href={`whatsapp://send?phone=:${rowData.mobile}`}
-              >
-                <FaWhatsapp size={18} />
-              </a>
-            </Button>
-          </>
+          <div
+            style={{ widhth: "100%" }}
+            className="d-flex justify-content-between"
+          >
+            <strong>{rowData.b_name}</strong>
+            <span>
+              <Button className="btn-neutral btn-icon btn-sm" color="default">
+                <a href={`tel:${rowData.mobile}`}>
+                  <FaPhoneAlt size={16} />
+                </a>
+              </Button>
+              <Button className="btn-neutral btn-icon btn-sm" color="success">
+                <a
+                  className="ml-1"
+                  href={`whatsapp://send?phone=:${rowData.mobile}`}
+                >
+                  <FaWhatsapp size={18} />
+                </a>
+              </Button>
+            </span>
+          </div>
         );
       },
     },

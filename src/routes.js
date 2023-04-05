@@ -17,6 +17,7 @@ import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
 import Purchase from "pages/Purchase";
 import SalesInvoice from "pages/Sales/CreateInvoice.js";
+import DayBook from "pages/Daybook";
 
 var routes = [
   {
@@ -69,14 +70,14 @@ var routes = [
     component: Expense,
     layout: "/admin",
   },
-  // {
-  //   path: "/day-book",
-  //   name: "Day Book",
-  //   icon: "text-blue",
-  //   component: Icons,
-  //   layout: "/admin",
-  //   iconCmp: AiFillBook,
-  // },
+  {
+    path: "/day-book",
+    name: "Day Book",
+    icon: "text-blue",
+    component: DayBook,
+    layout: "/admin",
+    iconCmp: AiFillBook,
+  },
   {
     name: "Sales",
     icon: "text-yellow",
