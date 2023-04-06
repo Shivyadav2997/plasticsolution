@@ -57,7 +57,9 @@ input[type="number"] {
 }
 
 .daybookTable td,
-.daybookTable th {
+.daybookTable th,
+.dashboardTable td,
+.dashboardTable th {
   font-size: 1rem !important;
 }
 .daybookTable td,

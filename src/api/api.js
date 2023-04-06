@@ -15,6 +15,7 @@ import {
   userLogoutAction,
   saleListAction,
   purchaseListAction,
+  homeAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -292,6 +293,24 @@ const saleListGet = async (token, st = "", en = "", m = "") => {
     };
   }
 };
+
+const dashboardDataGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${homeAction}&token=${token}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -309,4 +328,5 @@ export {
   expenseAdd,
   purchaseListGet,
   saleListGet,
+  dashboardDataGet,
 };

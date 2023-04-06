@@ -71,14 +71,14 @@ var routes = [
     component: Expense,
     layout: "/admin",
   },
-  {
-    path: "/day-book",
-    name: "Day Book",
-    icon: "text-blue",
-    component: DayBook,
-    layout: "/admin",
-    iconCmp: AiFillBook,
-  },
+  // {
+  //   path: "/day-book",
+  //   name: "Day Book",
+  //   icon: "text-blue",
+  //   component: DayBook,
+  //   layout: "/admin",
+  //   iconCmp: AiFillBook,
+  // },
   {
     name: "Sales",
     icon: "text-yellow",

@@ -32,7 +32,7 @@ const Index = () => {
               >
                 AccountDigi
               </h3>
-              <p className="text-center text-muted">John Simha</p>
+              <p className="text-center text-muted">Jignesh Lakkad</p>
               <ListGroup>
                 <ListGroupItem className="border-left-0 border-right-0">
                   <b>Mobile No.</b>
@@ -43,7 +43,10 @@ const Index = () => {
                       className="btn-neutral btn-icon btn-sm"
                       color="success"
                     >
-                      <a className="ml-1" href={`whatsapp://send?phone=`}>
+                      <a
+                        className="ml-1"
+                        href={`whatsapp://send?phone=9662779868`}
+                      >
                         <FaWhatsapp size={18} />
                       </a>
                     </Button>
@@ -51,7 +54,7 @@ const Index = () => {
                       className="btn-neutral btn-icon btn-sm"
                       color="default"
                     >
-                      <a href={`tel`}>
+                      <a href={`tel:9662779868`}>
                         <FaPhoneAlt size={16} />
                       </a>
                     </Button>
@@ -59,7 +62,7 @@ const Index = () => {
                 </ListGroupItem>
                 <ListGroupItem className="border-left-0 border-right-0">
                   <b>Email</b>
-                  <a className="float-right">tset@gmail.com</a>
+                  <a className="float-right">lakkadjignesh@gmail.com</a>
                 </ListGroupItem>
                 <ListGroupItem className="border-left-0 border-right-0">
                   <b>City</b>
