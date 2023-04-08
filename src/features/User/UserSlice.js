@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { logoutApi } from "api/api";
 const initialState = {
   user: null,
+  loading: false,
 };
 
 try {
@@ -22,9 +23,12 @@ export const userSlice = createSlice({
       state.user = null;
       sessionStorage.removeItem("userData");
     },
+    setLoader: (state, { payload }) => {
+      state.loading = payload;
+    },
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, setLoader } = userSlice.actions;
 
 export default userSlice.reducer;

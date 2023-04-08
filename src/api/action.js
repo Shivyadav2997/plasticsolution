@@ -13,3 +13,7 @@ export const deleteAction = "delete";
 export const saleListAction = "sale_list";
 export const purchaseListAction = "purchase_list";
 export const homeAction = "home";
+export const homeLinkAction = "home_link";
+export const accountListAction = "account_list";
+export const creditDebitListAction = "creditdebit_list";
+export const daybookAction = "daybook";

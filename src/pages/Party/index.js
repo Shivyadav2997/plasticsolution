@@ -12,10 +12,21 @@ import { CustomInput } from "components/Custom/CustomInput";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
 import Loader from "components/Custom/Loader";
 import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
+
 const Party = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
+
   const [parties, setParties] = useState([]);
   const { user } = useSelector((store) => store.user);
   const [show, setShow] = useState(false);
@@ -23,6 +34,9 @@ const Party = () => {
   const [party, setParty] = useState(null);
   const [loading, setLoading] = useState(true);
   const inputRef = useRef(null);
+
+  const dispatch = useDispatch();
+
   const handleToggle = () => {
     if (show) {
       setParty(null);
@@ -61,10 +75,6 @@ const Party = () => {
       data: "email",
     },
     {
-      title: "Address",
-      data: "b_add",
-    },
-    {
       title: "Action",
       data: null,
     },
@@ -87,17 +97,32 @@ const Party = () => {
                   <FaPhoneAlt size={16} />
                 </a>
               </Button>
-              <Button className="btn-neutral btn-icon btn-sm" color="success">
+              <Button className="btn-neutral btn-icon btn-sm">
                 <a
                   className="ml-1"
                   href={`whatsapp://send?phone=:${rowData.mobile}`}
                 >
-                  <FaWhatsapp size={18} />
+                  <FaWhatsapp size={18} className="text-success" />
                 </a>
               </Button>
             </span>
           </div>
         );
+      },
+    },
+    {
+      targets: 3,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        rowData.gst
+          ? root.render(
+              <div>
+                {rowData.email}
+                <br />
+                {rowData.gst}
+              </div>
+            )
+          : root.render(<div>{cellData}</div>);
       },
     },
   ];
@@ -110,10 +135,19 @@ const Party = () => {
         type: "party",
         id: party.id,
       });
-      toast(resp.message);
+
       if (resp.data.sucess == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
         getParties();
         setParty(null);
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
       }
     }
   };
@@ -136,21 +170,34 @@ const Party = () => {
   };
 
   const addParty = async (payload) => {
-    handleToggle();
-    setLoading(true);
+    dispatch(setLoader(true));
     const resp = await partyAdd(user.token, payload);
-    toast(resp.message);
+    dispatch(setLoader(false));
     if (resp.data.sucess == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.message,
+      });
+      handleToggle();
       getParties();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.message,
+      });
     }
   };
 
   const editParty = async (payload) => {
-    handleToggle();
-    setLoading(true);
+    dispatch(setLoader(true));
     const resp = await partyEdit(user.token, payload);
-    toast(resp.message);
+    dispatch(setLoader(false));
+    Toast.fire({
+      icon: resp.data.sucess == 1 ? "success" : "error",
+      title: resp.message,
+    });
     if (resp.data.sucess == 1) {
+      handleToggle();
       getParties();
     }
   };

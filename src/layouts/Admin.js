@@ -6,11 +6,14 @@ import { Container } from "reactstrap";
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
+import LoadingOverlay from "react-loading-overlay";
 import routes from "routes.js";
+import { useSelector } from "react-redux";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
+  const { loading } = useSelector((store) => store.user);
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
@@ -69,32 +72,34 @@ const Admin = (props) => {
 
   return (
     <>
-      <Sidebar
-        {...props}
-        routes={routes}
-        logo={{
-          innerLink: "/admin/index",
-          imgSrc: require("../assets/img/brand/logo.png"),
-          imgAlt: "...",
-        }}
-      />
-      <div
-        className="main-content bg-gradient-lightDefault"
-        style={{ minHeight: "100vh" }}
-        ref={mainContent}
-      >
-        <AdminNavbar
+      <LoadingOverlay active={loading} spinner>
+        <Sidebar
           {...props}
-          brandText={getBrandText(props.location.pathname)}
+          routes={routes}
+          logo={{
+            innerLink: "/admin/index",
+            imgSrc: require("../assets/img/brand/logo.png"),
+            imgAlt: "...",
+          }}
         />
-        <Switch>
-          {getRoutes(routes)}
-          <Redirect from="*" to="/admin/index" />
-        </Switch>
-        <Container fluid>
-          <AdminFooter />
-        </Container>
-      </div>
+        <div
+          className="main-content bg-gradient-lightDefault"
+          style={{ minHeight: "100vh" }}
+          ref={mainContent}
+        >
+          <AdminNavbar
+            {...props}
+            brandText={getBrandText(props.location.pathname)}
+          />
+          <Switch>
+            {getRoutes(routes)}
+            <Redirect from="*" to="/admin/index" />
+          </Switch>
+          <Container fluid>
+            <AdminFooter />
+          </Container>
+        </div>
+      </LoadingOverlay>
     </>
   );
 };

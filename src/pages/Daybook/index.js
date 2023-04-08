@@ -10,11 +10,22 @@ import {
 } from "reactstrap";
 import { format, parse, add, sub } from "date-fns";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { daybookGet } from "api/api";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
 
 const DayBook = () => {
   const [curDate, setCurDate] = useState(new Date());
-
+  const [daybookData, setDaybookData] = useState({
+    credit: [],
+    debit: [],
+    sale: [],
+    puchase: [],
+  });
+  const { user } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
   const nextClick = () => {
     setCurDate(add(curDate, { days: 1 }));
   };
@@ -26,6 +37,39 @@ const DayBook = () => {
   const todayClick = () => {
     setCurDate(new Date());
   };
+
+  const getRowsFromArray = (array1, array2) => {
+    var returnRows = [];
+    if (array1 && array2) {
+      const arrayLength =
+        array1.length > array2.length ? array1.length : array2.length;
+      for (let index = 0; index < arrayLength; index++) {
+        returnRows = [
+          ...returnRows,
+          <tr className="text-center">
+            <td>{array1.length > index ? array1[index]["amount"] : ""}</td>
+            <td>{array1.length > index ? array1[index]["desc"] : ""}</td>
+            <td>{array2.length > index ? array2[index]["amount"] : ""}</td>
+            <td>{array2.length > index ? array2[index]["desc"] : ""}</td>
+          </tr>,
+        ];
+      }
+    }
+    return returnRows;
+  };
+  const getDaybookData = async () => {
+    dispatch(setLoader(true));
+    const data = await daybookGet(user.token, {
+      d: format(curDate, "yyyy-MM-dd"),
+    });
+    dispatch(setLoader(false));
+    setDaybookData(data.data);
+  };
+
+  useEffect(() => {
+    getDaybookData();
+  }, [curDate]);
+
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row className="text-center mb-2">
@@ -70,53 +114,87 @@ const DayBook = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td colSpan="2" className="font-weight-bold text-center">
+                    <td colSpan="2" className="font-weight-bolder text-center">
                       Credit (Recieve)
                     </td>
-                    <td colSpan="2" className="font-weight-bold text-center">
+                    <td colSpan="2" className="font-weight-bolder text-center">
                       Debit (Payment)
                     </td>
                   </tr>
                   <tr>
-                    <td className="text-center">Amount</td>
-                    <td className="text-center">Description</td>
-                    <td className="text-center">Amount</td>
-                    <td className="text-center">Description</td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Amount
+                    </td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Description
+                    </td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Amount
+                    </td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Description
+                    </td>
                   </tr>
                   {/* dynamic */}
+                  {getRowsFromArray(daybookData.credit, daybookData.debit).map(
+                    (val) => {
+                      return val;
+                    }
+                  )}
+                  {/* {getRowsFromArray(daybookData.credit, daybookData.debit).length} */}
                   <tr>
                     <td colSpan={4}></td>
                   </tr>
                   <tr>
-                    <td colSpan="2" className="font-weight-bold text-center">
+                    <td colSpan="2" className="font-weight-bolder text-center">
                       Purchase
                     </td>
-                    <td colSpan="2" className="font-weight-bold text-center">
+                    <td colSpan="2" className="font-weight-bolder text-center">
                       Sale
                     </td>
                   </tr>
                   <tr>
-                    <td className="text-center">Amount</td>
-                    <td className="text-center">Description</td>
-                    <td className="text-center">Amount</td>
-                    <td className="text-center">Description</td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Amount
+                    </td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Description
+                    </td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Amount
+                    </td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Description
+                    </td>
                   </tr>
-                  {/* dynamic */}
+                  {getRowsFromArray(daybookData.purchase, daybookData.sale).map(
+                    (val) => {
+                      return val;
+                    }
+                  )}
+                  {/* {getRowsFromArray(daybookData.purchase, daybookData.sale).length} */}
                   <tr>
                     <td colSpan={4}></td>
                   </tr>
                   <tr>
                     <td
                       colSpan="2"
-                      className="font-weight-bold text-center borderright0"
+                      className="font-weight-bolder text-center borderright0"
                     >
                       Expenses
                     </td>
                     <td colSpan={2}></td>
                   </tr>
                   <tr>
-                    <td className="text-center">Amount</td>
-                    <td className="text-center  borderright0">Description</td>
+                    <td className="font-weight-bolder text-center" width="25%">
+                      Amount
+                    </td>
+                    <td
+                      className="font-weight-bolder text-center  borderright0"
+                      width="25%"
+                    >
+                      Description
+                    </td>
                     <td colSpan={2}></td>
                   </tr>
                 </tbody>

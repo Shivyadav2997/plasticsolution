@@ -30,9 +30,6 @@ const Sales = () => {
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const { user } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
-  const [show, setShow] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [expenseId, setExpenseId] = useState(null);
   const [selMonth, setSelMonth] = useState(0);
   const [monthSales, setmonthSales] = useState([]);
 

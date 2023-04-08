@@ -19,6 +19,7 @@ import Purchase from "pages/Purchase";
 import SalesInvoice from "pages/Sales/CreateInvoice.js";
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
+import Account from "pages/Account";
 
 var routes = [
   {
@@ -35,14 +36,14 @@ var routes = [
     component: Party,
     layout: "/admin",
   },
-  // {
-  //   path: "/account",
-  //   name: "Account",
-  //   icon: "text-success",
-  //   component: Profile,
-  //   layout: "/admin",
-  //   iconCmp: GrTransaction,
-  // },
+  {
+    path: "/account",
+    name: "Account",
+    icon: "text-success",
+    component: Account,
+    layout: "/admin",
+    iconCmp: GrTransaction,
+  },
   {
     path: "/transaction",
     name: "Transaction",
@@ -71,14 +72,14 @@ var routes = [
     component: Expense,
     layout: "/admin",
   },
-  // {
-  //   path: "/day-book",
-  //   name: "Day Book",
-  //   icon: "text-blue",
-  //   component: DayBook,
-  //   layout: "/admin",
-  //   iconCmp: AiFillBook,
-  // },
+  {
+    path: "/day-book",
+    name: "Day Book",
+    icon: "text-blue",
+    component: DayBook,
+    layout: "/admin",
+    iconCmp: AiFillBook,
+  },
   {
     name: "Sales",
     icon: "text-yellow",
@@ -124,7 +125,7 @@ var routes = [
         path: "/purchase-invoice",
         name: "Create Invoices",
         icon: "",
-        component: Index,
+        component: SalesInvoice,
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },

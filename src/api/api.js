@@ -16,6 +16,10 @@ import {
   saleListAction,
   purchaseListAction,
   homeAction,
+  homeLinkAction,
+  accountListAction,
+  creditDebitListAction,
+  daybookAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -311,6 +315,76 @@ const dashboardDataGet = async (token) => {
   }
 };
 
+const dashboardSendReport = async (token, type) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const accountListGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${accountListAction}&token=${token}`
+    );
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const creditDebitListGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${creditDebitListAction}&token=${token}`
+    );
+
+    return {
+      data: resp.data,
+      message: "Api success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const daybookGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${daybookAction}&token=${token}&${getParams(payload)}`
+    );
+
+    return {
+      data: resp.data,
+      message: "Api success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -329,4 +403,8 @@ export {
   purchaseListGet,
   saleListGet,
   dashboardDataGet,
+  dashboardSendReport,
+  accountListGet,
+  creditDebitListGet,
+  daybookGet,
 };

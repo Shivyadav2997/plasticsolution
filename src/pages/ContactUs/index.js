@@ -30,9 +30,9 @@ const Index = () => {
                 className="text-center"
                 style={{ fontSize: "21px", marginTop: "5px" }}
               >
-                AccountDigi
+                {/* AccountDigi */}
               </h3>
-              <p className="text-center text-muted">Jignesh Lakkad</p>
+              <p className="text-center text-muted"></p>
               <ListGroup>
                 <ListGroupItem className="border-left-0 border-right-0">
                   <b>Mobile No.</b>

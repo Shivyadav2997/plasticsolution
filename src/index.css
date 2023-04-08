@@ -56,16 +56,16 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.daybookTable td,
-.daybookTable th,
 .dashboardTable td,
 .dashboardTable th {
   font-size: 1rem !important;
 }
 .daybookTable td,
-th {
+.daybookTable th {
   border-bottom: 1px groove;
   padding: 0 rem;
+  font-size: 0.75rem !important;
+  padding: 0.5rem !important;
 }
 .daybookTable td {
   border: 1px solid black !important;
@@ -73,4 +73,7 @@ th {
 }
 .daybookTable .borderright0 {
   border-right: 0px !important;
+}
+._loading_overlay_overlay {
+  z-index: 9999 !important;
 }

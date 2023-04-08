@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { NavLink as NavLinkRRD, Link, useHistory } from "react-router-dom";
 import {
   ListGroup,
   ListGroupItem,
@@ -22,11 +23,24 @@ import {
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { BiRupee } from "react-icons/bi";
-import { dashboardDataGet } from "api/api";
+import { dashboardDataGet, dashboardSendReport } from "api/api";
 import { useSelector } from "react-redux";
-import Loader from "components/Custom/Loader";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
 
 const Index = (props) => {
+  let history = useHistory();
+
+  const dispatch = useDispatch();
+
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   const [dashboardData, setDashboardData] = useState({
     current_sale: {
       title: "",
@@ -64,14 +78,27 @@ const Index = (props) => {
     sale_list: [],
     purchase_list: [],
   });
-  const [saleListOpen, setSaleListOpen] = useState(true);
-  const [purchaseListOpen, setPurchaseListOpen] = useState(true);
-  const [loading, setLoading] = useState(false);
+
+  const sendReport = async (type) => {
+    dispatch(setLoader(true));
+    const resp = await dashboardSendReport(user.token, type);
+    dispatch(setLoader(false));
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.data.msg,
+      });
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.data.msg || "Something went wrong",
+      });
+    }
+  };
+
   const getDashboardData = async () => {
-    setLoading(true);
     const data = await dashboardDataGet(user.token);
     setDashboardData(data.data);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -88,19 +115,34 @@ const Index = (props) => {
                 className="border-0 pb-0"
                 style={{ background: "none" }}
               >
-                <Button className="btn-md btn-outline-success">
+                <Button
+                  className="btn-md btn-outline-success"
+                  onClick={() => sendReport(1)}
+                >
                   <FaWhatsapp size={18} color="success" /> Daily Report
                 </Button>
-                <Button className="btn-md btn-outline-primary">
+                <Button
+                  className="btn-md btn-outline-primary"
+                  onClick={() => sendReport(2)}
+                >
                   <FaDatabase size={18} color="primary" /> Get Stock
                 </Button>
-                <Button className="btn-md btn-outline-danger">
+                <Button
+                  className="btn-md btn-outline-danger"
+                  onClick={() => sendReport(3)}
+                >
                   <FaWallet size={18} color="danger" /> Debit Ledger
                 </Button>
-                <Button className="btn-md btn-outline-success">
+                <Button
+                  className="btn-md btn-outline-success"
+                  onClick={() => sendReport(4)}
+                >
                   <FaWallet size={18} color="success" /> Credit Ledger
                 </Button>
-                <Button className="btn-md btn-outline-info">
+                <Button
+                  className="btn-md btn-outline-info"
+                  onClick={() => sendReport(5)}
+                >
                   <FaWallet size={18} color="info" /> Full Ledger
                 </Button>
               </ListGroupItem>
@@ -112,13 +154,22 @@ const Index = (props) => {
                 className="border-0"
                 style={{ background: "none" }}
               >
-                <Button className="btn-md btn-outline-primary">
+                <Button
+                  className="btn-md btn-outline-primary"
+                  onClick={() => history.push("/admin/sales-invoice")}
+                >
                   <FaShoppingCart size={18} color="primary" /> Sale
                 </Button>
-                <Button className="btn-md btn-outline-info">
+                <Button
+                  className="btn-md btn-outline-info"
+                  onClick={() => history.push("/admin/purchase-invoice")}
+                >
                   <FaShoppingCart size={18} color="info" /> Purchase
                 </Button>
-                <Button className="btn-md btn-outline-success">
+                <Button
+                  className="btn-md btn-outline-success"
+                  onClick={() => history.push("/admin/day-book")}
+                >
                   <FaWallet size={18} color="success" /> DayBook
                 </Button>
               </ListGroupItem>
@@ -409,7 +460,7 @@ const Index = (props) => {
                     <h3 className="mb-0">Sale Bill</h3>
                   </div>
                   <div className="col text-right">
-                    {saleListOpen ? (
+                    {/* {saleListOpen ? (
                       <AiOutlineMinus
                         size="25px"
                         onClick={() => setSaleListOpen(false)}
@@ -419,39 +470,49 @@ const Index = (props) => {
                         size="25px"
                         onClick={() => setSaleListOpen(true)}
                       />
-                    )}
+                    )} */}
+                    <Button
+                      color="primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        history.push("/admin/sales");
+                      }}
+                      size="sm"
+                    >
+                      See all
+                    </Button>
                   </div>
                 </Row>
               </CardHeader>
-              <Collapse isOpen={saleListOpen}>
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col">Party</th>
-                      <th scope="col">WithouAmt</th>
-                      <th scope="col">BillAmt</th>
-                      <th scope="col">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dashboardData?.sale_list?.map((sale) => {
-                      return (
-                        <tr>
-                          <td>{sale.party}</td>
-                          <td>{sale.withoutamt}</td>
-                          <td>{sale.billamt}</td>
-                          <td>
-                            {sale.total}
-                            <div>
-                              <strong>{sale.date}</strong>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </Collapse>
+              {/* <Collapse isOpen={saleListOpen}> */}
+              <Table className="align-items-center table-flush" responsive>
+                <thead className="thead-light">
+                  <tr>
+                    <th scope="col">Party</th>
+                    <th scope="col">WithouAmt</th>
+                    <th scope="col">BillAmt</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData?.sale_list?.map((sale) => {
+                    return (
+                      <tr>
+                        <td>{sale.party}</td>
+                        <td>{sale.withoutamt}</td>
+                        <td>{sale.billamt}</td>
+                        <td>
+                          {sale.total}
+                          <div>
+                            <strong>{sale.date}</strong>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+              {/* </Collapse> */}
             </Card>
           </Col>
           <Col md={6}>
@@ -462,7 +523,7 @@ const Index = (props) => {
                     <h3 className="mb-0">Purchase Bill</h3>
                   </div>
                   <div className="col text-right">
-                    {purchaseListOpen ? (
+                    {/* {purchaseListOpen ? (
                       <AiOutlineMinus
                         size="25px"
                         onClick={() => setPurchaseListOpen(false)}
@@ -472,39 +533,51 @@ const Index = (props) => {
                         size="25px"
                         onClick={() => setPurchaseListOpen(true)}
                       />
-                    )}
+                    )} */}
+                    <Button
+                      color="primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        history.push("/admin/purchase");
+                      }}
+                      size="sm"
+                    >
+                      {/* <Link to="/admin/purchase" className="text-white"> */}
+                      See all
+                      {/* </Link> */}
+                    </Button>
                   </div>
                 </Row>
               </CardHeader>
-              <Collapse isOpen={purchaseListOpen}>
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col">Party</th>
-                      <th scope="col">WithouAmt</th>
-                      <th scope="col">BillAmt</th>
-                      <th scope="col">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dashboardData?.purchase_list?.map((purchase) => {
-                      return (
-                        <tr>
-                          <td>{purchase.party}</td>
-                          <td>{purchase.withoutamt}</td>
-                          <td>{purchase.billamt}</td>
-                          <td>
-                            {purchase.total}
-                            <div>
-                              <strong>{purchase.date}</strong>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </Collapse>
+              {/* <Collapse isOpen={purchaseListOpen}> */}
+              <Table className="align-items-center table-flush" responsive>
+                <thead className="thead-light">
+                  <tr>
+                    <th scope="col">Party</th>
+                    <th scope="col">WithouAmt</th>
+                    <th scope="col">BillAmt</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData?.purchase_list?.map((purchase) => {
+                    return (
+                      <tr>
+                        <td>{purchase.party}</td>
+                        <td>{purchase.withoutamt}</td>
+                        <td>{purchase.billamt}</td>
+                        <td>
+                          {purchase.total}
+                          <div>
+                            <strong>{purchase.date}</strong>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+              {/* </Collapse> */}
             </Card>
           </Col>
         </Row>
