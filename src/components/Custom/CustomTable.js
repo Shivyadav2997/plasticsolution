@@ -68,6 +68,7 @@ const CustomTable = forwardRef(
           render: function (data, type, row, meta) {
             return meta.row + meta.settings._iDisplayStart + 1;
           },
+          className: "min-tablet-p",
         },
       ];
     }

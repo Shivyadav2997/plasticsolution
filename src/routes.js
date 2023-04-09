@@ -17,6 +17,7 @@ import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
 import Purchase from "pages/Purchase";
 import SalesInvoice from "pages/Sales/CreateInvoice.js";
+import CreateIncoiceDynamic from "pages/Sales/CreateIncoiceDynamic.js";
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
 import Account from "pages/Account";
@@ -92,7 +93,7 @@ var routes = [
         path: "/sales-invoice",
         name: "Create Invoices",
         icon: "",
-        component: SalesInvoice,
+        component: CreateIncoiceDynamic,
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },

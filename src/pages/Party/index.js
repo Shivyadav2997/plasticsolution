@@ -65,6 +65,7 @@ const Party = () => {
     {
       title: "Name",
       data: "b_name",
+      className: "all",
     },
     {
       title: "Owner",
