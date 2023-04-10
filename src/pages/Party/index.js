@@ -363,7 +363,7 @@ const Party = () => {
           <Loader loading={loading} />
         ) : (
           <>
-            {/* <Row>
+            <Row>
               <div className="col">
                 <CustomTable
                   cols={columns}
@@ -375,13 +375,7 @@ const Party = () => {
                   editClick={editClick}
                 />
               </div>
-            </Row> */}
-            <ReactPDF.PDFDownloadLink
-              document={<MyDocument />}
-              className="bg-red"
-            >
-              Test
-            </ReactPDF.PDFDownloadLink>
+            </Row>
           </>
         )}
       </Container>

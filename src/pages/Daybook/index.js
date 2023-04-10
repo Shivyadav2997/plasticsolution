@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import CustomPDFDownloader from "components/Custom/CustomPDFDownloader";
+import { pdfFromReact } from "generate-pdf-from-react-html";
 
 const DayBook = () => {
   const [curDate, setCurDate] = useState(new Date());
@@ -94,14 +95,23 @@ const DayBook = () => {
           <Button className="btn-md btn-outline-primary" onClick={nextClick}>
             Next
           </Button>
-          <CustomPDFDownloader
-            downloadFileName="CustomPdf"
-            rootElementId="testId2"
-            inputRef={inputRef}
-          />
+
+          <button
+            onClick={() => {
+              dispatch(setLoader(true));
+              setTimeout(() => {
+                pdfFromReact("#testId", "My-file", "p", true, true);
+              }, 700);
+              setTimeout(() => {
+                dispatch(setLoader(false));
+              }, 2000);
+            }}
+          >
+            Download PDF
+          </button>
         </Col>
       </Row>
-      <Row>
+      <Row id="testId">
         <Col>
           <Card className="shadow">
             <CardBody>
