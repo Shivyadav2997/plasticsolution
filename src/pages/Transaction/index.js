@@ -24,8 +24,18 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
 const Transaction = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
+
   const [transactions, setTransactions] = useState({
     payment: [],
     recive: [],
@@ -42,6 +52,7 @@ const Transaction = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [transId, setTransId] = useState(null);
   const [addType, setAddType] = useState(1);
+  const dispatch = useDispatch();
 
   const formRef = useRef(null);
 
@@ -55,12 +66,16 @@ const Transaction = () => {
   const deleteTransaction = async () => {
     if (transId != null) {
       handleShowConfirmation();
-      setLoading(true);
+      dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
         type: "transection",
         id: transId,
       });
-      toast(resp.message);
+      Toast.fire({
+        icon: resp.data.sucess == 1 ? "success" : "error",
+        title: resp.message,
+      });
+      dispatch(setLoader(false));
       if (resp.data.sucess == 1) {
         getTransactions();
         setTransId(null);
@@ -170,15 +185,20 @@ const Transaction = () => {
 
   const addTransaction = async (payload) => {
     let resp = null;
-    handleToggle();
-    setLoading(true);
+
+    dispatch(setLoader(true));
     if (addType == 1) {
       resp = await transactionRecieveAdd(user.token, payload);
     } else {
       resp = await transactionPaymentAdd(user.token, payload);
     }
-    toast(resp.message);
+    Toast.fire({
+      icon: resp.data.sucess == 1 ? "success" : "error",
+      title: resp.message,
+    });
+    dispatch(setLoader(false));
     if (resp.data.sucess == 1) {
+      handleToggle();
       getTransactions();
     }
   };

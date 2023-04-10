@@ -16,8 +16,19 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
 
 const Expense = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
+
   const [expenses, setExpenses] = useState({
     all: [],
     monthly: [],
@@ -31,7 +42,7 @@ const Expense = () => {
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [expenseId, setExpenseId] = useState(null);
-
+  const dispatch = useDispatch();
   const formRef = useRef(null);
 
   const handleShowConfirmation = () => {
@@ -44,12 +55,16 @@ const Expense = () => {
   const deleteExpense = async () => {
     if (expenseId != null) {
       handleShowConfirmation();
-      setLoading(true);
+      dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
         type: "expenses",
         id: expenseId,
       });
-      toast(resp.message);
+      Toast.fire({
+        icon: "success",
+        title: resp.message,
+      });
+      dispatch(setLoader(false));
       if (resp.data.sucess == 1) {
         getExpenses();
         setExpenseId(null);
@@ -148,11 +163,15 @@ const Expense = () => {
   }, [filterDate]);
 
   const addExpense = async (payload) => {
-    handleToggle();
-    setLoading(true);
+    dispatch(setLoader(true));
     let resp = await expenseAdd(user.token, payload);
-    toast(resp.message);
+    Toast.fire({
+      icon: resp.data.sucess == 1 ? "success" : "error",
+      title: resp.message,
+    });
+    dispatch(setLoader(false));
     if (resp.data.sucess == 1) {
+      handleToggle();
       getExpenses();
     }
   };

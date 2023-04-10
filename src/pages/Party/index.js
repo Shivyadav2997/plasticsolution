@@ -131,7 +131,7 @@ const Party = () => {
   const deleteParty = async () => {
     if (party != null) {
       handleShowConfirmation();
-      setLoading(true);
+      dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
         type: "party",
         id: party.id,
@@ -144,6 +144,7 @@ const Party = () => {
         });
         getParties();
         setParty(null);
+        dispatch(setLoader(false));
       } else {
         Toast.fire({
           icon: "error",
