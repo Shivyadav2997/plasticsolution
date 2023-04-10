@@ -1,5 +1,5 @@
 import Index from "views/Index.js";
-import Profile from "views/examples/Profile.js";
+// import Profile from "views/examples/Profile.js";
 import Register from "views/examples/Register.js";
 import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
@@ -21,6 +21,7 @@ import CreateIncoiceDynamic from "pages/Sales/CreateIncoiceDynamic.js";
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
 import Account from "pages/Account";
+import Profile from "pages/Profile";
 
 var routes = [
   {
@@ -165,13 +166,13 @@ var routes = [
   //   layout: "/admin",
   //   iconCmp: FaFileInvoiceDollar,
   // },
-  // {
-  //   path: "/setting",
-  //   name: "Setting",
-  //   icon: "ni ni-settings text-yellow",
-  //   component: Profile,
-  //   layout: "/admin",
-  // },
+  {
+    path: "/profile",
+    name: "Setting",
+    icon: "ni ni-settings text-yellow",
+    component: Profile,
+    layout: "/admin",
+  },
   {
     path: "/contact-us",
     name: "Contact Us",
