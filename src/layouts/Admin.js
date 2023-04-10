@@ -86,6 +86,7 @@ const Admin = (props) => {
           className="main-content bg-gradient-lightDefault"
           style={{ minHeight: "100vh" }}
           ref={mainContent}
+          id="mainDiv"
         >
           <AdminNavbar
             {...props}

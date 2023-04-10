@@ -69,7 +69,6 @@ input[type="number"] {
 }
 .daybookTable td {
   border: 1px solid black !important;
-  border-left: 0px !important;
 }
 .daybookTable .borderright0 {
   border-right: 0px !important;

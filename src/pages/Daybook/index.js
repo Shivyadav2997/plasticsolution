@@ -10,14 +10,16 @@ import {
 } from "reactstrap";
 import { format, parse, add, sub } from "date-fns";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { daybookGet } from "api/api";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import CustomPDFDownloader from "components/Custom/CustomPDFDownloader";
 
 const DayBook = () => {
   const [curDate, setCurDate] = useState(new Date());
+  const inputRef = useRef(null);
   const [daybookData, setDaybookData] = useState({
     credit: [],
     debit: [],
@@ -92,6 +94,11 @@ const DayBook = () => {
           <Button className="btn-md btn-outline-primary" onClick={nextClick}>
             Next
           </Button>
+          <CustomPDFDownloader
+            downloadFileName="CustomPdf"
+            rootElementId="testId2"
+            inputRef={inputRef}
+          />
         </Col>
       </Row>
       <Row>
@@ -102,6 +109,7 @@ const DayBook = () => {
                 className="align-items-center table-flush daybookTable"
                 responsive
                 style={{ width: "100%" }}
+                ref={inputRef}
               >
                 <thead className="thead-dark">
                   <tr>
