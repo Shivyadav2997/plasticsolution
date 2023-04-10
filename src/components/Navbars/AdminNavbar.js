@@ -30,11 +30,11 @@ const AdminNavbar = (props) => {
     dispatch(logout());
     history.push("/auth/login");
   };
-  function getFinancialYear(nextYear = false) {
+  function getFinancialYear(pastYear = false) {
     var fiscalyear = "";
     var today = new Date();
-    if (nextYear) {
-      today = new Date(new Date().setFullYear(today.getFullYear() + 1));
+    if (pastYear) {
+      today = new Date(new Date().setFullYear(today.getFullYear() - 1));
     }
     if (today.getMonth() + 1 <= 3) {
       fiscalyear =
@@ -72,9 +72,11 @@ const AdminNavbar = (props) => {
             </FormGroup>
           </Form> */}
           <FormGroup className="mb-0 mr-1 ml-auto d-none d-md-block">
-            <Input type="select">
-              <option value={1}>{getFinancialYear()}</option>
+            <Input type="select" size="sm">
               <option value={2}>{getFinancialYear(true)}</option>
+              <option value={1} selected>
+                {getFinancialYear()}
+              </option>
             </Input>
           </FormGroup>
           <Nav className="align-items-center d-none d-md-flex" navbar>
