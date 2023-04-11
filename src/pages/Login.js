@@ -96,7 +96,7 @@ const Login = () => {
             size="md"
             onClick={handleForgot}
           >
-            Save
+            Reset Password
           </Button>
         }
       >
@@ -113,7 +113,8 @@ const Login = () => {
           />
         </Form> */}
         <CustomInputWoutFormik
-          label="User Name"
+          // label="User Name"
+          placeholder="Username"
           type="text"
           value={forgotUName}
           onChange={(e) => {
