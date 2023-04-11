@@ -40,9 +40,9 @@ export const userSlice = createSlice({
   reducers: {
     login: (state, { payload }) => {
       state.user = payload;
-      state.user = getFinancialYear();
+      state.fyear = getFinancialYear();
       sessionStorage.setItem("userData", JSON.stringify(payload));
-      sessionStorage.setItem("fyear", state.user);
+      sessionStorage.setItem("fyear", state.fyear);
     },
     logout: (state, { payload }) => {
       logoutApi();
