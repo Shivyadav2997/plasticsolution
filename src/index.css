@@ -62,24 +62,29 @@ input[type="number"] {
 }
 .daybookTable td,
 .daybookTable th {
-  border-bottom: 1px groove;
   padding: 0 rem;
   font-size: 0.75rem !important;
   padding: 0.5rem !important;
 }
 .daybookTable td {
-  border: 1px solid black !important;
+  /* border-top: 1px solid black !important; */
+  border-right: 1px solid black !important;
+  border-bottom: 1px groove !important;
   border-left: 0px !important;
+  color: black !important;
 }
 .daybookTable .borderright0 {
   border-right: 0px !important;
+}
+.daybookTable .bl-2 {
+  border-left: 2px solid black !important;
 }
 ._loading_overlay_overhelay {
   z-index: 9999 !important;
 }
 
 .main-content .navbar-brand img {
-  height: 30px;
+  height: 55px;
 }
 html {
   min-height: 100%;

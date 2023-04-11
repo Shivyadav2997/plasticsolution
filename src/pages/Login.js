@@ -182,7 +182,7 @@ const Login = () => {
                   // }}
                   onClick={loginSubmit}
                 >
-                  Sign in
+                  Login
                 </Button>
               </div>
             </Form>
