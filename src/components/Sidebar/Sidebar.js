@@ -25,6 +25,7 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
+import FinancialYear from "components/Custom/FinancialYear";
 var ps;
 
 const Sidebar = (props) => {
@@ -46,26 +47,6 @@ const Sidebar = (props) => {
   const closeCollapse = () => {
     setCollapseOpen(false);
   };
-
-  function getFinancialYear(pastYear = false) {
-    var fiscalyear = "";
-    var today = new Date();
-    if (pastYear) {
-      today = new Date(new Date().setFullYear(today.getFullYear() - 1));
-    }
-    if (today.getMonth() + 1 <= 3) {
-      fiscalyear =
-        (today.getFullYear() - 1).toString().substring(2, 4) +
-        "-" +
-        today.getFullYear().toString().substring(2, 4);
-    } else {
-      fiscalyear =
-        today.getFullYear().toString().substring(2, 4) +
-        "-" +
-        (today.getFullYear() + 1).toString().substring(2, 4);
-    }
-    return fiscalyear;
-  }
 
   const logoutClick = () => {
     dispatch(logout());
@@ -186,14 +167,7 @@ const Sidebar = (props) => {
         ) : (
           "Account Digital"
         )}
-        <FormGroup className="mb-0 mr-1 ml-auto d-md-none">
-          <Input type="select" size="sm">
-            <option value={2}>{getFinancialYear(true)}</option>
-            <option value={1} selected>
-              {getFinancialYear()}
-            </option>
-          </Input>
-        </FormGroup>
+        <FinancialYear className="mb-0 mr-1 ml-auto d-md-none" />
         {/* User */}
         <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>

@@ -15,12 +15,12 @@ import {
 const AdminNavbar = () => {
   return (
     <>
-      <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md">
-        <Container className="px-4">
-          <NavbarBrand to="/" tag={Link}>
+      {/* <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md">
+        <Container className="px-4"> */}
+      {/* <NavbarBrand to="/" tag={Link}>
             <img alt="..." src={require("../../assets/img/brand/logo.png")} />
-          </NavbarBrand>
-          {/* <button className="navbar-toggler" id="navbar-collapse-main">
+          </NavbarBrand> */}
+      {/* <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
           </button>
           <UncontrolledCollapse navbar toggler="#navbar-collapse-main">
@@ -77,8 +77,8 @@ const AdminNavbar = () => {
               </NavItem>
             </Nav>
           </UncontrolledCollapse> */}
-        </Container>
-      </Navbar>
+      {/* </Container>
+      </Navbar> */}
     </>
   );
 };

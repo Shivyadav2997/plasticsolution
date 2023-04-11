@@ -93,7 +93,7 @@ const Login = () => {
       </CustomModal>
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
-          <CardBody className="px-lg-5 py-lg-5">
+          <CardBody className="">
             <div className="text-center text-muted mb-4">
               <small>Log in to start your session </small>
             </div>
@@ -168,7 +168,7 @@ const Login = () => {
               <small>Forgot password?</small>
             </a>
           </Col>
-          <Col className="text-right" xs="6">
+          {/* <Col className="text-right" xs="6">
             <a
               className="text-dark"
               href="#pablo"
@@ -176,7 +176,7 @@ const Login = () => {
             >
               <small>Contact : 9662779868</small>
             </a>
-          </Col>
+          </Col> */}
         </Row>
       </Col>
     </>

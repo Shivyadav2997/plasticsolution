@@ -17,3 +17,5 @@ export const homeLinkAction = "home_link";
 export const accountListAction = "account_list";
 export const creditDebitListAction = "creditdebit_list";
 export const daybookAction = "daybook";
+export const forgotPassAction = "forgot_pass";
+export const yearChangeAction = "yr_chng";
