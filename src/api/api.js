@@ -387,11 +387,10 @@ const daybookGet = async (token, payload) => {
   }
 };
 
-const forgotPassSend = async (token, payload) => {
+const forgotPassSend = async (payload) => {
   try {
     const resp = await axios.get(
-      baseUrl +
-        `?action=${forgotPassAction}&token=${token}&${getParams(payload)}`
+      baseUrl + `?action=${forgotPassAction}&${getParams(payload)}`
     );
 
     return {

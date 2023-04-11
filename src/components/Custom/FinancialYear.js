@@ -7,10 +7,10 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const FinancialYear = ({ className }) => {
-  const { fyear } = useSelector((store) => store.user);
+  const { fyear, user } = useSelector((store) => store.user);
   const changeYear = async (e) => {
     dispatch(setLoader(true));
-    await yearChange({ d: e.target.value });
+    await yearChange({ token: user.token, d: e.target.value });
     dispatch(setFyear(e.target.value));
   };
 

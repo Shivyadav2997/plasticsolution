@@ -14,13 +14,23 @@ import {
   Col,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
-import { login } from "features/User/UserSlice";
+import { login, setLoader } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { loginApi } from "api/api";
+import { loginApi, forgotPassSend } from "api/api";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import CustomModal from "components/Custom/CustomModal";
+import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+
 const Login = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   const dispatch = useDispatch();
   const history = useHistory();
   const [uname, setUname] = useState("");
@@ -28,6 +38,7 @@ const Login = () => {
   const [errorUname, setErrorUname] = useState("");
   const [errorPass, setErrorPass] = useState();
   const [show, setShow] = useState(false);
+  const [forgotUName, setForgotUName] = useState("");
   const unameRef = useRef(null);
   const loginSubmit = async () => {
     if (uname === "") {
@@ -54,14 +65,21 @@ const Login = () => {
     }
   }, [unameRef.current]);
   const handleToggle = async () => {
-    if (!show) {
-      setShow(true);
-    } else {
-      setShow(false);
-    }
+    setShow(!show);
+    setForgotUName("");
   };
-  const handleForgot = () => {
-    setShow(true);
+  const handleForgot = async () => {
+    if (forgotUName !== "") {
+      dispatch(setLoader(true));
+
+      const resp = await forgotPassSend({ mo: forgotUName });
+      handleToggle();
+      dispatch(setLoader(false));
+      Toast.fire({
+        icon: resp.data.success == 1 ? "success" : "error",
+        title: resp.data.msg,
+      });
+    }
   };
   return (
     <>
@@ -76,19 +94,31 @@ const Login = () => {
             color="primary"
             block
             size="md"
-            onClick={() => console.log("minu")}
+            onClick={handleForgot}
           >
             Save
           </Button>
         }
       >
-        <Input
-          placeholder="User Name"
+        {/* <Form>
+          <Input
+            placeholder="User Name"
+            value={forgotUName}
+            type="text"
+            onChange={(e) => {
+              setErrorUname(e.target.value);
+            }}
+            required
+            
+          />
+        </Form> */}
+        <CustomInputWoutFormik
+          label="User Name"
           type="text"
+          value={forgotUName}
           onChange={(e) => {
-            console.log("e");
+            setForgotUName(e.target.value);
           }}
-          autoFocus
         />
       </CustomModal>
       <Col lg="5" md="7">
@@ -161,9 +191,8 @@ const Login = () => {
           <Col xs="6">
             <a
               className="text-dark"
-              href="#pablo"
               // onClick={(e) => e.preventDefault()}
-              onClick={handleForgot}
+              onClick={() => setShow(true)}
             >
               <small>Forgot password?</small>
             </a>

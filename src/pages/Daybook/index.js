@@ -23,6 +23,7 @@ const DayBook = () => {
     debit: [],
     sale: [],
     puchase: [],
+    expenses: [],
   });
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -197,6 +198,15 @@ const DayBook = () => {
                     </td>
                     <td colSpan={2}></td>
                   </tr>
+                  {daybookData.expenses.map((exp) => {
+                    return (
+                      <tr className="text-center">
+                        <td>{exp.amount}</td>
+                        <td className="borderright0"> {exp.desc}</td>
+                        <td colSpan={2}></td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </CardBody>
