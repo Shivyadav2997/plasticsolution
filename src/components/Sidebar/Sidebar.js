@@ -58,7 +58,7 @@ const Sidebar = (props) => {
       if (prop.layout === "/admin") {
         if (prop.hasChild) {
           return (
-            <NavItem>
+            <NavItem key={key}>
               <NavLink
                 onClick={() => {
                   const updStates = { ...submenuOpen };

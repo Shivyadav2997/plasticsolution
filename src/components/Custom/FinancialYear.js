@@ -43,14 +43,17 @@ const FinancialYear = ({ className }) => {
   }, []);
   return (
     <FormGroup className={className}>
-      <Input type="select" size="sm" onChange={(e) => changeYear(e)}>
-        {years.map((x) => {
+      <Input
+        type="select"
+        bsSize="sm"
+        onChange={(e) => changeYear(e)}
+        defaultValue={fyear}
+      >
+        {years.map((x, key) => {
           return (
-            <>
-              <option value={x} selected={x == fyear}>
-                {x}
-              </option>
-            </>
+            <option value={x} key={key}>
+              {x}
+            </option>
           );
         })}
       </Input>

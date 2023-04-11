@@ -495,9 +495,9 @@ const Index = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dashboardData?.sale_list?.map((sale) => {
+                  {dashboardData?.sale_list?.map((sale, index) => {
                     return (
-                      <tr>
+                      <tr key={index}>
                         <td>{sale.party}</td>
                         <td>{sale.withoutamt}</td>
                         <td>{sale.billamt}</td>
@@ -560,9 +560,9 @@ const Index = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dashboardData?.purchase_list?.map((purchase) => {
+                  {dashboardData?.purchase_list?.map((purchase, index) => {
                     return (
-                      <tr>
+                      <tr key={index}>
                         <td>{purchase.party}</td>
                         <td>{purchase.withoutamt}</td>
                         <td>{purchase.billamt}</td>
