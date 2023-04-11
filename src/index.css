@@ -74,6 +74,13 @@ input[type="number"] {
 .daybookTable .borderright0 {
   border-right: 0px !important;
 }
-._loading_overlay_overlay {
+._loading_overlay_overhelay {
   z-index: 9999 !important;
+}
+
+.main-content .navbar-brand img {
+  height: 30px;
+}
+html {
+  min-height: 100%;
 }

@@ -16,11 +16,13 @@ import {
   Container,
   Media,
 } from "reactstrap";
+import { yearChange } from "api/api";
 
 import { useDispatch } from "react-redux";
 import { logout } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import FinancialYear from "components/Custom/FinancialYear";
 const AdminNavbar = (props) => {
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -30,25 +32,7 @@ const AdminNavbar = (props) => {
     dispatch(logout());
     history.push("/auth/login");
   };
-  function getFinancialYear(pastYear = false) {
-    var fiscalyear = "";
-    var today = new Date();
-    if (pastYear) {
-      today = new Date(new Date().setFullYear(today.getFullYear() - 1));
-    }
-    if (today.getMonth() + 1 <= 3) {
-      fiscalyear =
-        (today.getFullYear() - 1).toString().substring(2, 4) +
-        "-" +
-        today.getFullYear().toString().substring(2, 4);
-    } else {
-      fiscalyear =
-        today.getFullYear().toString().substring(2, 4) +
-        "-" +
-        (today.getFullYear() + 1).toString().substring(2, 4);
-    }
-    return fiscalyear;
-  }
+
   return (
     <>
       <Navbar className="navbar-top navbar-dark" id="navbar-main">
@@ -71,14 +55,7 @@ const AdminNavbar = (props) => {
               </InputGroup>
             </FormGroup>
           </Form> */}
-          <FormGroup className="mb-0 mr-1 ml-auto d-none d-md-block">
-            <Input type="select" size="sm">
-              <option value={2}>{getFinancialYear(true)}</option>
-              <option value={1} selected>
-                {getFinancialYear()}
-              </option>
-            </Input>
-          </FormGroup>
+          <FinancialYear className="mb-0 mr-1 ml-auto d-none d-md-block" />
           <Nav className="align-items-center d-none d-md-flex" navbar>
             <UncontrolledDropdown nav>
               <DropdownToggle className="pr-0" nav>
