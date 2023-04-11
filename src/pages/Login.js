@@ -19,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { loginApi } from "api/api";
 import { toast } from "react-toastify";
+import CustomModal from "components/Custom/CustomModal";
 const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -26,6 +27,7 @@ const Login = () => {
   const [pass, setPass] = useState("");
   const [errorUname, setErrorUname] = useState("");
   const [errorPass, setErrorPass] = useState();
+  const [show, setShow] = useState(false);
   const unameRef = useRef(null);
   const loginSubmit = async () => {
     if (uname === "") {
@@ -51,9 +53,44 @@ const Login = () => {
       unameRef.current.focus();
     }
   }, [unameRef.current]);
-
+  const handleToggle = async () => {
+    if (!show) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  };
+  const handleForgot = () => {
+    setShow(true);
+  };
   return (
     <>
+      <CustomModal
+        show={show}
+        title={`Forgot Password`}
+        handleToggle={handleToggle}
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={() => console.log("minu")}
+          >
+            Save
+          </Button>
+        }
+      >
+        <Input
+          placeholder="User Name"
+          type="text"
+          onChange={(e) => {
+            console.log("e");
+          }}
+          autoFocus
+        />
+      </CustomModal>
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
           <CardBody className="px-lg-5 py-lg-5">
@@ -125,7 +162,8 @@ const Login = () => {
             <a
               className="text-dark"
               href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              // onClick={(e) => e.preventDefault()}
+              onClick={handleForgot}
             >
               <small>Forgot password?</small>
             </a>
