@@ -78,7 +78,10 @@ const DayBook = () => {
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row className="text-center mb-2">
-        <Col sm="12">
+        <Col
+          sm="12"
+          className="d-flex justify-content-center align-items-center"
+        >
           <Button className="btn-md btn-outline-primary" onClick={todayClick}>
             Today
           </Button>
@@ -87,13 +90,13 @@ const DayBook = () => {
           </Button>
           <Input
             type="date"
-            className="d-inline mr-2"
+            className=" mr-2"
             style={{ width: "max-content" }}
             bsSize="sm"
-            // value={}
             value={format(curDate, "yyyy-MM-dd")}
             onChange={(e) => setCurDate(e.target.valueAsDate)}
           />
+
           <Button className="btn-md btn-outline-primary" onClick={nextClick}>
             Next
           </Button>

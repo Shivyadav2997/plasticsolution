@@ -4,6 +4,7 @@ const initialState = {
   user: null,
   loading: false,
   fyear: "",
+  collapseSidebar: false,
 };
 
 try {
@@ -58,9 +59,13 @@ export const userSlice = createSlice({
       sessionStorage.setItem("fyear", payload);
       window.location.reload();
     },
+    toggleSidebar: (state, { payload }) => {
+      state.collapseSidebar = payload;
+    },
   },
 });
 
-export const { login, logout, setLoader, setFyear } = userSlice.actions;
+export const { login, logout, setLoader, setFyear, toggleSidebar } =
+  userSlice.actions;
 
 export default userSlice.reducer;

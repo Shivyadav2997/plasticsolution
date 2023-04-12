@@ -38,7 +38,7 @@ const CustomDatePicker = ({ startDate, endDate, onCallback, text }) => {
     >
       {/* {children} */}
 
-      <button className="btn btn-outline-primary btn-md">
+      <button className="btn btn-outline-primary btn-md mb-1">
         <div>
           <i className="ni ni-calendar-grid-58" />
           <span>{text}</span>

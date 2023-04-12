@@ -116,31 +116,31 @@ const Index = (props) => {
                 style={{ background: "none" }}
               >
                 <Button
-                  className="btn-md btn-outline-success"
+                  className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => sendReport(1)}
                 >
                   <FaWhatsapp size={18} color="success" /> Daily Report
                 </Button>
                 <Button
-                  className="btn-md btn-outline-primary"
+                  className="btn-md btn-outline-primary mb-1 ml-0"
                   onClick={() => sendReport(2)}
                 >
                   <FaDatabase size={18} color="primary" /> Get Stock
                 </Button>
                 <Button
-                  className="btn-md btn-outline-danger"
+                  className="btn-md btn-outline-danger mb-1 ml-0"
                   onClick={() => sendReport(3)}
                 >
                   <FaWallet size={18} color="danger" /> Debit Ledger
                 </Button>
                 <Button
-                  className="btn-md btn-outline-success"
+                  className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => sendReport(4)}
                 >
                   <FaWallet size={18} color="success" /> Credit Ledger
                 </Button>
                 <Button
-                  className="btn-md btn-outline-info"
+                  className="btn-md btn-outline-info mb-1 ml-0"
                   onClick={() => sendReport(5)}
                 >
                   <FaWallet size={18} color="info" /> Full Ledger
@@ -155,19 +155,19 @@ const Index = (props) => {
                 style={{ background: "none" }}
               >
                 <Button
-                  className="btn-md btn-outline-primary"
+                  className="btn-md btn-outline-primary mb-1 ml-0"
                   onClick={() => history.push("/admin/sales-invoice")}
                 >
                   <FaShoppingCart size={18} color="primary" /> Sale
                 </Button>
                 <Button
-                  className="btn-md btn-outline-info"
+                  className="btn-md btn-outline-info mb-1 ml-0"
                   onClick={() => history.push("/admin/purchase-invoice")}
                 >
                   <FaShoppingCart size={18} color="info" /> Purchase
                 </Button>
                 <Button
-                  className="btn-md btn-outline-success"
+                  className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => history.push("/admin/day-book")}
                 >
                   <FaWallet size={18} color="success" /> DayBook

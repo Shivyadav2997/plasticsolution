@@ -424,13 +424,13 @@ const Transaction = () => {
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Row sm="2" xs="1" className="mb-2">
           <Col>
-            <Row className="ml-0">
+            <Row className="ml-0 mb-1">
               <CustomDatePicker
                 onCallback={dateSelect}
                 text="Transaction By Date"
               />
               <Button
-                className="btn-md btn-outline-primary"
+                className="btn-md btn-outline-primary mb-1 ml-0"
                 onClick={() => setFilterDate({ st: "", et: "" })}
               >
                 All Transactions
@@ -445,7 +445,7 @@ const Transaction = () => {
             </Row>
           </Col>
           <Col>
-            <Row className="justify-content-md-end mr-0">
+            <Row className="justify-content-md-end mr-0  ml-0">
               <Button
                 className="btn-md btn-outline-success"
                 onClick={() => {

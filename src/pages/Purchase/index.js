@@ -387,7 +387,7 @@ const Purchase = () => {
                 </Row>
               </Col>
               <Col>
-                <Row className="justify-content-end mr-0">
+                <Row className="justify-content-end mr-0 ml-0">
                   <Button className="btn-md btn-outline-primary">
                     Create Purchase Bill
                   </Button>
@@ -424,7 +424,7 @@ const Purchase = () => {
                     text="Purchases By Date"
                   />
                   <Button
-                    className="btn-md btn-outline-primary"
+                    className="btn-md btn-outline-primary mb-1"
                     onClick={() => setFilterDate({ st: "", et: "" })}
                   >
                     All Purchase
@@ -439,7 +439,7 @@ const Purchase = () => {
                 </Row>
               </Col>
               <Col>
-                <Row className="justify-content-md-end mr-0">
+                <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
                     onClick={() => {

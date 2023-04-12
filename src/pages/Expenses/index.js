@@ -334,7 +334,7 @@ const Expense = () => {
                 text="Expenses By Date"
               />
               <Button
-                className="btn-md btn-outline-primary"
+                className="btn-md btn-outline-primary mb-1"
                 onClick={() => setFilterDate({ st: "", et: "" })}
               >
                 All Expenses
@@ -349,7 +349,7 @@ const Expense = () => {
             </Row>
           </Col>
           <Col>
-            <Row className="justify-content-md-end mr-0">
+            <Row className="justify-content-md-end mr-0 ml-0">
               <Button
                 className="btn-md btn-outline-primary"
                 onClick={() => {
