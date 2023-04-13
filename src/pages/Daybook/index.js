@@ -9,13 +9,11 @@ import {
   Card,
 } from "reactstrap";
 import { format, parse, add, sub } from "date-fns";
-import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { useState, useEffect, useRef } from "react";
 import { daybookGet } from "api/api";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
-import CustomPDFDownloader from "components/Custom/CustomPDFDownloader";
 import { pdfFromReact } from "generate-pdf-from-react-html";
 
 const DayBook = () => {
@@ -103,26 +101,12 @@ const DayBook = () => {
           <Button className="btn-md btn-outline-primary" onClick={nextClick}>
             Next
           </Button>
-
-          <button
-            onClick={() => {
-              dispatch(setLoader(true));
-              setTimeout(() => {
-                pdfFromReact("#testId", "My-file", "p", true, true);
-              }, 700);
-              setTimeout(() => {
-                dispatch(setLoader(false));
-              }, 2000);
-            }}
-          >
-            Download PDF
-          </button>
         </Col>
       </Row>
-      <Row id="testId">
+      <Row>
         <Col>
           <Card className="shadow">
-            <CardBody>
+            <CardBody id="dayybookTable">
               <Table
                 className="align-items-center table-flush daybookTable"
                 responsive
@@ -241,6 +225,22 @@ const DayBook = () => {
                 </tbody>
               </Table>
             </CardBody>
+            <Button
+              className="btn-md btn-outline-primary"
+              onClick={() => {
+                dispatch(setLoader(true));
+                setTimeout(() => {
+                  pdfFromReact("#dayybookTable", "daybook", "p", true, true);
+                }, 700);
+                setTimeout(() => {
+                  dispatch(setLoader(false));
+                }, 2000);
+              }}
+              style={{ width: "fit-content" }}
+              size="sm"
+            >
+              Download PDF
+            </Button>
           </Card>
         </Col>
       </Row>
