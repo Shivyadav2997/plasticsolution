@@ -22,6 +22,7 @@ import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
 import Account from "pages/Account";
 import Profile from "pages/Profile";
+import ViewTest from "pages/View";
 
 var routes = [
   {
@@ -193,6 +194,13 @@ var routes = [
     icon: "ni ni-circle-08 text-pink",
     component: Login,
     layout: "/auth",
+  },
+  {
+    path: "/view",
+    name: "View",
+    icon: "ni ni-circle-08 text-pink",
+    component: ViewTest,
+    layout: "/admin",
   },
 ];
 export default routes;

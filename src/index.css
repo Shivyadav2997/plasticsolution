@@ -84,6 +84,7 @@ input[type="number"] {
 .main-content .navbar-brand img {
   height: 55px;
 }
+
 html {
   min-height: 100%;
 }
@@ -98,14 +99,17 @@ html {
 }
 
 .navbar-close-custom {
-  max-width: 50px !important;
-  transition: max-width 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+  /* max-width: 100px !important; */
+  transition: max-width 0.3s linear;
 }
-
+.sidebarNameHide {
+  opacity: 0;
+  transition: opacity 0.3s linear;
+}
 .navbar-close-custom img {
   margin-left: -10px !important;
   width: 30px !important;
-  transition: margin-left 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+  transition: margin-left 0.3s linear;
 }
 
 .main-content-open {
@@ -132,4 +136,13 @@ html {
     max-width: 250px !important;
     z-index: 9999;
   }
+}
+.invoice {
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125) !important;
+  position: relative;
+}
+.ledger-table td,
+.ledger-table th {
+  font-size: 1rem !important;
 }

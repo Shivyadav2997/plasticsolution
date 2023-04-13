@@ -80,7 +80,9 @@ const Sidebar = (props) => {
                     <prop.iconCmp style={{ fontSize: "18px" }} />
                   )}
                 </i>
-                <div>{prop.name}</div>
+                <div className={` ${collapseSidebar ? "" : "sidebarNameHide"}`}>
+                  {prop.name}
+                </div>
               </NavLink>
               <Collapse isOpen={submenuOpen[prop.state]}>
                 <Nav>
@@ -102,7 +104,13 @@ const Sidebar = (props) => {
                             )}
                           </i>
                           {/* {collapseSidebar ? prop2.name : ""} */}
-                          {prop2.name}
+                          <div
+                            className={` ${
+                              collapseSidebar ? "" : "sidebarNameHide"
+                            }`}
+                          >
+                            {prop2.name}
+                          </div>
                         </NavLink>
                       </NavItem>
                     );
@@ -125,7 +133,9 @@ const Sidebar = (props) => {
                     <prop.iconCmp style={{ fontSize: "18px" }} />
                   )}
                 </i>
-                {prop.name}
+                <div className={` ${collapseSidebar ? "" : "sidebarNameHide"}`}>
+                  {prop.name}
+                </div>
               </NavLink>
             </NavItem>
           );
