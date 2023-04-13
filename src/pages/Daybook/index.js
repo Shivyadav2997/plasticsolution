@@ -230,7 +230,7 @@ const DayBook = () => {
               onClick={() => {
                 dispatch(setLoader(true));
                 setTimeout(() => {
-                  pdfFromReact("#dayybookTable", "daybook", "p", true, true);
+                  pdfFromReact("#dayybookTable", "daybook", "p", true, false);
                 }, 700);
                 setTimeout(() => {
                   dispatch(setLoader(false));

@@ -51,9 +51,9 @@ const Sidebar = (props) => {
   const closeCollapse = () => {
     // setCollapseOpen((data) => !data);
 
-    if (!isHovered || window.innerWidth < 576) {
-      dispatch(toggleSidebar(false));
-    }
+    // if (!isHovered || window.innerWidth < 576) {
+    dispatch(toggleSidebar(false));
+    // }
   };
 
   const logoutClick = () => {
