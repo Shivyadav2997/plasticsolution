@@ -367,6 +367,288 @@ const ViewTest = () => {
         </Col>
       </Row>
     </>,
+    <>
+      <Row>
+        <Col xs="12">
+          <div className=" p-3 mb-3">
+            <div className="invoice">
+              <Col xs="12" responsive>
+                <Table style={{ width: "100%" }} className="ledger-table">
+                  <tbody>
+                    <tr>
+                      <td colSpan={2} style={{ width: "50%" }}>
+                        <b>Credit</b>
+                      </td>
+                      <td colSpan={2} style={{ width: "50%" }}>
+                        <b>Debit</b>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td style={{ width: "10%" }}> 5000</td>
+                      <td style={{ width: "40%" }}>
+                        <br />
+                        17-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        8000.00
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.10 Tax &nbsp;360.00
+                        <br />
+                        PRODUCT 1-200&nbsp;&nbsp;17-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 13500.00</td>
+                      <td style={{ width: "40%" }}>
+                        Purchase Bill No.10 Tax &nbsp;1620.00
+                        <br />
+                        PRODUCT 1-900&nbsp;&nbsp;17-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        350.00
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.50 Tax &nbsp;18.00
+                        <br />
+                        PRODUCT 1-10&nbsp;&nbsp;17-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 9000.00</td>
+                      <td style={{ width: "40%" }}>
+                        Purchase Bill No.10 Tax &nbsp;100
+                        <br />
+                        PRODUCT 1-1000&nbsp;&nbsp;30-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        3500
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        <br />
+                        19-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 50.00</td>
+                      <td style={{ width: "40%" }}>
+                        Purchase Bill No.B001 Tax &nbsp;15
+                        <br />
+                        PRODUCT 1-10&nbsp;&nbsp;PRODUCT 1-10&nbsp;&nbsp;08-04-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        8000.00
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.10 Tax &nbsp;360.00
+                        <br />
+                        PRODUCT 1-200&nbsp;&nbsp;19-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> </td>
+                      <td style={{ width: "40%" }}> </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        20000.00
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.10 Tax &nbsp;1800.00
+                        <br />
+                        PRODUCT 1-1000&nbsp;&nbsp;21-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> </td>
+                      <td style={{ width: "40%" }}> </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        4000.00
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.50 Tax &nbsp;1000
+                        <br />
+                        PRODUCT 1-1000&nbsp;&nbsp;30-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> </td>
+                      <td style={{ width: "40%" }}> </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        100
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        <br />
+                        08-04-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>27,550</th>
+
+                      <th></th>
+
+                      <th>43,950</th>
+
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <th colspan="2">
+                        Cls. Balance &nbsp;&nbsp;
+                        <button class="btn btn-default">
+                          <b>₹ 16,400.00&nbsp;Dr </b>
+                        </button>
+                      </th>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Col>
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </>,
+    <>
+      <Row>
+        <Col xs="12">
+          <div className=" p-3 mb-3">
+            <div className="invoice">
+              <Col xs="12" responsive>
+                <Table style={{ width: "100%" }} className="ledger-table">
+                  <tbody>
+                    <tr>
+                      <td colSpan={2} style={{ width: "50%" }}>
+                        <b>Credit</b>
+                      </td>
+                      <td colSpan={2} style={{ width: "50%" }}>
+                        <b>Debit</b>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td style={{ width: "10%" }}> 10620</td>
+                      <td style={{ width: "40%" }}>
+                        Purchase Bill No.10 Tax &nbsp;1620.00
+                        <br />
+                        PRODUCT 1-900&nbsp;&nbsp;17-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        8142
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        <br />
+                        17-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 360</td>
+                      <td style={{ width: "40%" }}>
+                        <br />
+                        21-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        2360
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.10 Tax &nbsp;360.00
+                        <br />
+                        PRODUCT 1-200&nbsp;&nbsp;17-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 3800</td>
+                      <td style={{ width: "40%" }}>
+                        <br />
+                        21-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        118
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.50 Tax &nbsp;18.00
+                        <br />
+                        PRODUCT 1-10&nbsp;&nbsp;17-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 1100</td>
+                      <td style={{ width: "40%" }}>
+                        Purchase Bill No.10 Tax &nbsp;100
+                        <br />
+                        PRODUCT 1-1000&nbsp;&nbsp;30-01-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        2360
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.10 Tax &nbsp;360.00
+                        <br />
+                        PRODUCT 1-200&nbsp;&nbsp;19-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> 165</td>
+                      <td style={{ width: "40%" }}>
+                        Purchase Bill No.B001 Tax &nbsp;15
+                        <br />
+                        PRODUCT 1-10&nbsp;&nbsp;PRODUCT 1-10&nbsp;&nbsp;08-04-23
+                      </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        11800
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.10 Tax &nbsp;1800.00
+                        <br />
+                        PRODUCT 1-1000&nbsp;&nbsp;21-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> </td>
+                      <td style={{ width: "40%" }}> </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        11000
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.50 Tax &nbsp;1000
+                        <br />
+                        PRODUCT 1-1000&nbsp;&nbsp;30-01-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "10%" }}> </td>
+                      <td style={{ width: "40%" }}> </td>
+                      <td style={{ borderLeft: "1px dotted", width: "10%" }}>
+                        66000
+                      </td>
+                      <td style={{ width: "40%" }}>
+                        Sale Bill No.1 Tax &nbsp;6000
+                        <br />
+                        PRODUCT 1-1200&nbsp;&nbsp;28-03-23
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>16,045</th>
+
+                      <th></th>
+
+                      <th>101,780</th>
+
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <th colspan="2">
+                        Cls. Balance &nbsp;&nbsp;
+                        <Button class="btn btn-default">
+                          <b>₹ 85,735.00&nbsp;Dr </b>
+                        </Button>
+                      </th>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Col>
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </>,
   ];
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
