@@ -103,7 +103,6 @@ const CreateIncoiceDynamic = () => {
     setTotalWAmt(sub1);
     setTotal(sub1 + sub2 + gst);
 
-    // console.log(rowsInput);
     const curData = [...rows];
     curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
     setRows(curData);

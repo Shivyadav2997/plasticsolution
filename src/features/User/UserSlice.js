@@ -57,7 +57,6 @@ export const userSlice = createSlice({
     setFyear: (state, { payload }) => {
       state.fyear = payload;
       sessionStorage.setItem("fyear", payload);
-      window.location.reload();
     },
     toggleSidebar: (state, { payload }) => {
       state.collapseSidebar = payload;

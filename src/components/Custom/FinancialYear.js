@@ -10,11 +10,11 @@ const FinancialYear = ({ className }) => {
   const { fyear, user } = useSelector((store) => store.user);
   const [curYear, setCurYear] = useState(fyear);
   const changeYear = async (e) => {
-    console.log("eeeee", e.target.value);
     setCurYear(e.target.value);
     dispatch(setLoader(true));
     await yearChange({ token: user.token, d: e.target.value });
     dispatch(setFyear(e.target.value));
+    dispatch(setLoader(false));
   };
 
   const [years, setYears] = useState([]);

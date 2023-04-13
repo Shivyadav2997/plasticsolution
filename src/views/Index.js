@@ -33,6 +33,7 @@ const Index = (props) => {
   let history = useHistory();
 
   const dispatch = useDispatch();
+  const { user, fyear } = useSelector((store) => store.user);
 
   var Toast = Swal.mixin({
     toast: true,
@@ -103,8 +104,7 @@ const Index = (props) => {
 
   useEffect(() => {
     getDashboardData();
-  }, []);
-  const { user } = useSelector((store) => store.user);
+  }, [fyear]);
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>

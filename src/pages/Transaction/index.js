@@ -46,7 +46,7 @@ const Transaction = () => {
   const childRef2 = useRef(null);
   const childRef3 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -181,7 +181,7 @@ const Transaction = () => {
 
   useEffect(() => {
     getTransactions();
-  }, [filterDate]);
+  }, [filterDate, fyear]);
 
   const addTransaction = async (payload) => {
     let resp = null;

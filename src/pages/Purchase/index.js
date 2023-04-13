@@ -27,7 +27,7 @@ const Purchase = () => {
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
   const [monthPurchases, setMonthPurchases] = useState([]);
@@ -206,7 +206,7 @@ const Purchase = () => {
 
   useEffect(() => {
     getData();
-  }, [filterDate, selMonth]);
+  }, [filterDate, selMonth, fyear]);
 
   //   const addExpense = async (payload) => {
   //     handleToggle();

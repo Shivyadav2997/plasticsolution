@@ -48,6 +48,14 @@ const Sidebar = (props) => {
     dispatch(toggleSidebar(!collapseSidebar));
   };
 
+  const closeCollapse = () => {
+    // setCollapseOpen((data) => !data);
+
+    if (!isHovered || window.innerWidth < 576) {
+      dispatch(toggleSidebar(false));
+    }
+  };
+
   const logoutClick = () => {
     dispatch(logout());
     history.push("/auth/login");
@@ -82,7 +90,7 @@ const Sidebar = (props) => {
                         <NavLink
                           to={prop2.layout + prop2.path}
                           tag={NavLinkRRD}
-                          // onClick={closeCollapse}
+                          onClick={closeCollapse}
                           activeClassName="active"
                           className={`${
                             collapseSidebar ? "pl-5" : "collapsedSidebarSub"
@@ -109,7 +117,7 @@ const Sidebar = (props) => {
               <NavLink
                 to={prop.layout + prop.path}
                 tag={NavLinkRRD}
-                // onClick={closeCollapse}
+                onClick={closeCollapse}
                 activeClassName="active"
               >
                 <i className={prop.icon}>
@@ -254,8 +262,18 @@ const Sidebar = (props) => {
         {/* Navigation */}
         <Nav
           navbar
-          onMouseEnter={() => dispatch(toggleSidebar(true))}
-          onMouseLeave={() => dispatch(toggleSidebar(false))}
+          onMouseEnter={() => {
+            if (window.innerWidth >= 576) {
+              setIsHovered(true);
+            }
+            dispatch(toggleSidebar(true));
+          }}
+          onMouseLeave={() => {
+            if (window.innerWidth >= 576) {
+              setIsHovered(false);
+            }
+            dispatch(toggleSidebar(false));
+          }}
         >
           {createLinks(routes)}
           <FinancialYear className="mb-0 mr-1 d-sm-none" />

@@ -28,7 +28,7 @@ const Party = () => {
   });
 
   const [parties, setParties] = useState([]);
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [party, setParty] = useState(null);
@@ -206,7 +206,7 @@ const Party = () => {
 
   useEffect(() => {
     getParties();
-  }, []);
+  }, [fyear]);
 
   return (
     <>

@@ -12,11 +12,14 @@ import { useSelector } from "react-redux";
 import SidebarNew from "components/Sidebar/SidebarNew";
 import Index from "pages/ContactUs";
 import Party from "pages/Party";
+import { setFyear } from "features/User/UserSlice";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-  const { loading, collapseSidebar } = useSelector((store) => store.user);
+  const { loading, collapseSidebar, fyear } = useSelector(
+    (store) => store.user
+  );
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;

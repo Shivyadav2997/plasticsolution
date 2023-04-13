@@ -18,7 +18,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 const Profile = () => {
   const { user } = useSelector((store) => store.user);
-  console.log("us", user);
+
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row>

@@ -15,7 +15,6 @@ import { useSelector } from "react-redux";
 import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
 const Index = () => {
   const { user } = useSelector((store) => store.user);
-  console.log("us", user);
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row>
