@@ -26,6 +26,7 @@ const DayBook = () => {
     debit: [],
     sale: [],
     puchase: [],
+    expenses: [],
   });
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -52,8 +53,12 @@ const DayBook = () => {
           <tr className="text-center">
             <td>{array1.length > index ? array1[index]["amount"] : ""}</td>
             <td>{array1.length > index ? array1[index]["desc"] : ""}</td>
-            <td>{array2.length > index ? array2[index]["amount"] : ""}</td>
-            <td>{array2.length > index ? array2[index]["desc"] : ""}</td>
+            <td className="bl-2">
+              {array2.length > index ? array2[index]["amount"] : ""}
+            </td>
+            <td className="borderright0">
+              {array2.length > index ? array2[index]["desc"] : ""}
+            </td>
           </tr>,
         ];
       }
@@ -76,7 +81,10 @@ const DayBook = () => {
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row className="text-center mb-2">
-        <Col sm="12">
+        <Col
+          sm="12"
+          className="d-flex justify-content-center align-items-center"
+        >
           <Button className="btn-md btn-outline-primary" onClick={todayClick}>
             Today
           </Button>
@@ -85,13 +93,13 @@ const DayBook = () => {
           </Button>
           <Input
             type="date"
-            className="d-inline mr-2"
+            className=" mr-2"
             style={{ width: "max-content" }}
             bsSize="sm"
-            // value={}
             value={format(curDate, "yyyy-MM-dd")}
             onChange={(e) => setCurDate(e.target.valueAsDate)}
           />
+
           <Button className="btn-md btn-outline-primary" onClick={nextClick}>
             Next
           </Button>
@@ -123,9 +131,12 @@ const DayBook = () => {
               >
                 <thead className="thead-dark">
                   <tr>
-                    <td colSpan="4" className="text-center bg-info">
-                      <h2>
-                        <strong>DayBook {format(curDate, "dd-MM-yyyy")}</strong>
+                    <td
+                      colSpan="4"
+                      className="text-center bg-info borderright0"
+                    >
+                      <h2 className="text-white">
+                        DayBook {format(curDate, "dd-MM-yyyy")}
                       </h2>
                     </td>
                   </tr>
@@ -135,21 +146,24 @@ const DayBook = () => {
                     <td colSpan="2" className="font-weight-bolder text-center">
                       Credit (Recieve)
                     </td>
-                    <td colSpan="2" className="font-weight-bolder text-center">
+                    <td
+                      colSpan="2"
+                      className="font-weight-bolder text-center borderright0 bl-2"
+                    >
                       Debit (Payment)
                     </td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center" width="12.5%">
                       Amount
                     </td>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className=" text-center" width="37.5%">
                       Description
                     </td>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center bl-2" width="12.5%">
                       Amount
                     </td>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center borderright0" width="37.5%">
                       Description
                     </td>
                   </tr>
@@ -161,27 +175,30 @@ const DayBook = () => {
                   )}
                   {/* {getRowsFromArray(daybookData.credit, daybookData.debit).length} */}
                   <tr>
-                    <td colSpan={4}></td>
+                    <td colSpan={4} className="borderright0"></td>
                   </tr>
                   <tr>
                     <td colSpan="2" className="font-weight-bolder text-center">
                       Purchase
                     </td>
-                    <td colSpan="2" className="font-weight-bolder text-center">
+                    <td
+                      colSpan="2"
+                      className="font-weight-bolder text-center borderright0 bl-2"
+                    >
                       Sale
                     </td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center" width="12.5%">
                       Amount
                     </td>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center " width="37.5%">
                       Description
                     </td>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center bl-2" width="12.5%">
                       Amount
                     </td>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center borderright0" width="37.5%">
                       Description
                     </td>
                   </tr>
@@ -192,7 +209,7 @@ const DayBook = () => {
                   )}
                   {/* {getRowsFromArray(daybookData.purchase, daybookData.sale).length} */}
                   <tr>
-                    <td colSpan={4}></td>
+                    <td colSpan={4} className="borderright0"></td>
                   </tr>
                   <tr>
                     <td
@@ -201,20 +218,26 @@ const DayBook = () => {
                     >
                       Expenses
                     </td>
-                    <td colSpan={2}></td>
+                    <td colSpan={2} className="borderright0"></td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bolder text-center" width="25%">
+                    <td className="text-center" width="12.5%">
                       Amount
                     </td>
-                    <td
-                      className="font-weight-bolder text-center  borderright0"
-                      width="25%"
-                    >
+                    <td className="text-center  borderright0" width="37.5%">
                       Description
                     </td>
-                    <td colSpan={2}></td>
+                    <td colSpan={2} className="borderright0"></td>
                   </tr>
+                  {daybookData.expenses.map((exp) => {
+                    return (
+                      <tr className="text-center">
+                        <td>{exp.amount}</td>
+                        <td className="borderright0"> {exp.desc}</td>
+                        <td colSpan={2} className="borderright0"></td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </CardBody>

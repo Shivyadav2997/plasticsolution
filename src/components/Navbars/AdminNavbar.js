@@ -16,45 +16,40 @@ import {
   Container,
   Media,
 } from "reactstrap";
+import { yearChange } from "api/api";
 
 import { useDispatch } from "react-redux";
-import { logout } from "features/User/UserSlice";
+import { logout, toggleSidebar } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import FinancialYear from "components/Custom/FinancialYear";
 const AdminNavbar = (props) => {
-  const { user } = useSelector((store) => store.user);
+  const { user, collapseSidebar } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const toggleCollapse = () => {
+    // setCollapseOpen((data) => !data);
+    dispatch(toggleSidebar(!collapseSidebar));
+  };
   const logoutClick = () => {
     dispatch(logout());
     history.push("/auth/login");
   };
-  function getFinancialYear(nextYear = false) {
-    var fiscalyear = "";
-    var today = new Date();
-    if (nextYear) {
-      today = new Date(new Date().setFullYear(today.getFullYear() + 1));
-    }
-    if (today.getMonth() + 1 <= 3) {
-      fiscalyear =
-        (today.getFullYear() - 1).toString().substring(2, 4) +
-        "-" +
-        today.getFullYear().toString().substring(2, 4);
-    } else {
-      fiscalyear =
-        today.getFullYear().toString().substring(2, 4) +
-        "-" +
-        (today.getFullYear() + 1).toString().substring(2, 4);
-    }
-    return fiscalyear;
-  }
+
   return (
     <>
       <Navbar className="navbar-top navbar-dark" id="navbar-main">
         <Container fluid>
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={toggleCollapse}
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
           <Link
-            className="h4 mb-0 text-dark text-uppercase d-none d-lg-inline-block"
+            className="h4 mb-0 text-dark text-uppercase d-inline-block"
             to="/"
           >
             {props.brandText}
@@ -71,20 +66,15 @@ const AdminNavbar = (props) => {
               </InputGroup>
             </FormGroup>
           </Form> */}
-          <FormGroup className="mb-0 mr-1 ml-auto d-none d-md-block">
-            <Input type="select">
-              <option value={1}>{getFinancialYear()}</option>
-              <option value={2}>{getFinancialYear(true)}</option>
-            </Input>
-          </FormGroup>
-          <Nav className="align-items-center d-none d-md-flex" navbar>
+          <FinancialYear className="mb-0 mr-1 ml-auto d-none d-sm-block " />
+          <Nav className="align-items-center d-flex" navbar>
             <UncontrolledDropdown nav>
               <DropdownToggle className="pr-0" nav>
                 <Media className="align-items-center">
                   <span className="avatar avatar-sm rounded-circle">
                     <img alt="..." src={user.logo} />
                   </span>
-                  <Media className="ml-2 d-none d-lg-block">
+                  <Media className="ml-2 d-block">
                     <span className="mb-0 text-sm font-weight-bold text-dark">
                       {user.name}
                     </span>

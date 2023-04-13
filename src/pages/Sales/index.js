@@ -28,7 +28,7 @@ const Sales = () => {
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
   const [monthSales, setmonthSales] = useState([]);
@@ -203,7 +203,7 @@ const Sales = () => {
 
   useEffect(() => {
     getData();
-  }, [filterDate, selMonth]);
+  }, [filterDate, selMonth, fyear]);
 
   //   const addExpense = async (payload) => {
   //     handleToggle();
@@ -417,7 +417,7 @@ const Sales = () => {
                     text="Sales By Date"
                   />
                   <Button
-                    className="btn-md btn-outline-primary"
+                    className="btn-md btn-outline-primary mb-1"
                     onClick={() => setFilterDate({ st: "", et: "" })}
                   >
                     All Sales
@@ -432,7 +432,7 @@ const Sales = () => {
                 </Row>
               </Col>
               <Col>
-                <Row className="justify-content-md-end mr-0">
+                <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
                     onClick={() => {

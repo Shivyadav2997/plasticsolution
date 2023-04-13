@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
@@ -23,49 +23,38 @@ import {
   Input,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
+import { toggleSidebar } from "features/User/UserSlice";
 import { logout } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
+import FinancialYear from "components/Custom/FinancialYear";
+
 var ps;
 
 const Sidebar = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { user } = useSelector((store) => store.user);
+  const { user, collapseSidebar } = useSelector((store) => store.user);
   let allStates = { sales: false, purchase: false };
-  const [collapseOpen, setCollapseOpen] = useState();
+
   const [submenuOpen, setSubMenuOpen] = useState(allStates);
+  const [isHovered, setIsHovered] = useState(false);
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
   // toggles collapse between opened and closed (true/false)
   const toggleCollapse = () => {
-    setCollapseOpen((data) => !data);
-  };
-  // closes the collapse
-  const closeCollapse = () => {
-    setCollapseOpen(false);
+    // setCollapseOpen((data) => !data);
+    dispatch(toggleSidebar(!collapseSidebar));
   };
 
-  function getFinancialYear(nextYear = false) {
-    var fiscalyear = "";
-    var today = new Date();
-    if (nextYear) {
-      today = new Date(new Date().setFullYear(today.getFullYear() + 1));
+  const closeCollapse = () => {
+    // setCollapseOpen((data) => !data);
+
+    if (!isHovered || window.innerWidth < 576) {
+      dispatch(toggleSidebar(false));
     }
-    if (today.getMonth() + 1 <= 3) {
-      fiscalyear =
-        (today.getFullYear() - 1).toString().substring(2, 4) +
-        "-" +
-        today.getFullYear().toString().substring(2, 4);
-    } else {
-      fiscalyear =
-        today.getFullYear().toString().substring(2, 4) +
-        "-" +
-        (today.getFullYear() + 1).toString().substring(2, 4);
-    }
-    return fiscalyear;
-  }
+  };
 
   const logoutClick = () => {
     dispatch(logout());
@@ -77,7 +66,7 @@ const Sidebar = (props) => {
       if (prop.layout === "/admin") {
         if (prop.hasChild) {
           return (
-            <NavItem>
+            <NavItem key={key}>
               <NavLink
                 onClick={() => {
                   const updStates = { ...submenuOpen };
@@ -91,7 +80,7 @@ const Sidebar = (props) => {
                     <prop.iconCmp style={{ fontSize: "18px" }} />
                   )}
                 </i>
-                {prop.name}
+                <div>{prop.name}</div>
               </NavLink>
               <Collapse isOpen={submenuOpen[prop.state]}>
                 <Nav>
@@ -103,13 +92,16 @@ const Sidebar = (props) => {
                           tag={NavLinkRRD}
                           onClick={closeCollapse}
                           activeClassName="active"
-                          className="pl-5"
+                          className={`${
+                            collapseSidebar ? "pl-5" : "collapsedSidebarSub"
+                          }`}
                         >
                           <i className={prop2.icon}>
                             {prop2.iconCmp && (
                               <prop2.iconCmp style={{ fontSize: "18px" }} />
                             )}
                           </i>
+                          {/* {collapseSidebar ? prop2.name : ""} */}
                           {prop2.name}
                         </NavLink>
                       </NavItem>
@@ -161,21 +153,16 @@ const Sidebar = (props) => {
 
   return (
     <Navbar
-      className="navbar-vertical fixed-left navbar-light bg-white "
-      expand="md"
+      className={`${
+        collapseSidebar ? "navbar-open-custom" : "navbar-close-custom"
+      } navbar-vertical fixed-left navbar-light bg-white navbar-expand-xs`}
       id="sidenav-main"
     >
-      <Container fluid>
+      <Container fluid style={{ justifyContent: "unset" }}>
         {/* Toggler */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          onClick={toggleCollapse}
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
+
         {/* Brand */}
-        {logo ? (
+        {logo && collapseSidebar ? (
           <NavbarBrand className="pt-0" {...navbarBrandProps}>
             <img
               alt={logo.imgAlt}
@@ -183,17 +170,23 @@ const Sidebar = (props) => {
               src={logo.imgSrc}
             />
           </NavbarBrand>
-        ) : (
+        ) : collapseSidebar ? (
           "Account Digital"
+        ) : (
+          <NavbarBrand
+            className="pt-0"
+            {...navbarBrandProps}
+            style={{ textAlign: "unset" }}
+          >
+            <img
+              alt={logo.imgAlt}
+              src={require("../../assets/img/brand/favicon.png")}
+            />
+          </NavbarBrand>
         )}
-        <FormGroup className="mb-0 mr-1 ml-auto d-md-none">
-          <Input type="select">
-            <option value={1}>{getFinancialYear()}</option>
-            <option value={2}>{getFinancialYear(true)}</option>
-          </Input>
-        </FormGroup>
+        {/* <FinancialYear className="mb-0 mr-1 ml-auto d-md-none" /> */}
         {/* User */}
-        <Nav className="align-items-center d-md-none">
+        {/* <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>
             <DropdownToggle nav className="nav-link-icon">
               <i className="ni ni-bell-55" />
@@ -241,45 +234,50 @@ const Sidebar = (props) => {
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
-        </Nav>
+        </Nav> */}
         {/* Collapse */}
-        <Collapse navbar isOpen={collapseOpen}>
-          {/* Collapse header */}
-          <div className="navbar-collapse-header">
-            <Row>
-              {logo ? (
-                <Col className="collapse-brand" xs="6">
-                  {logo.innerLink ? (
-                    <Link to={logo.innerLink}>
-                      <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      Account Digital
-                    </Link>
-                  ) : (
-                    <a href={logo.outterLink}>
-                      <img alt={logo.imgAlt} src={logo.imgSrc} />
-                      Account Digital
-                    </a>
-                  )}
-                </Col>
-              ) : null}
-              <Col className="collapse-close" xs="6">
-                <button
-                  className="navbar-toggler"
-                  type="button"
-                  onClick={toggleCollapse}
-                >
-                  <span />
-                  <span />
-                </button>
+
+        {/* <div className="navbar-collapse-header">
+          <Row>
+            {logo ? (
+              <Col className="collapse-brand" xs="6">
+                {logo.innerLink ? (
+                  <Link to={logo.innerLink}>
+                    <img alt={logo.imgAlt} src={logo.imgSrc} />
+                    Account Digital
+                  </Link>
+                ) : (
+                  <a href={logo.outterLink}>
+                    <img alt={logo.imgAlt} src={logo.imgSrc} />
+                    Account Digital
+                  </a>
+                )}
               </Col>
-            </Row>
-          </div>
-          {/* <hr className="my-3 d-md-block d-none" />
+            ) : null}
+          </Row>
+        </div> */}
+        {/* <hr className="my-3 d-md-block d-none" />
           <h3 className="d-flex justify-content-center mb-0">{user.name}</h3>
           <hr className="my-3" /> */}
-          {/* Navigation */}
-          <Nav navbar>{createLinks(routes)}</Nav>
-        </Collapse>
+        {/* Navigation */}
+        <Nav
+          navbar
+          onMouseEnter={() => {
+            if (window.innerWidth >= 576) {
+              setIsHovered(true);
+            }
+            dispatch(toggleSidebar(true));
+          }}
+          onMouseLeave={() => {
+            if (window.innerWidth >= 576) {
+              setIsHovered(false);
+            }
+            dispatch(toggleSidebar(false));
+          }}
+        >
+          {createLinks(routes)}
+          <FinancialYear className="mb-0 mr-1 d-sm-none" />
+        </Nav>
       </Container>
     </Navbar>
   );

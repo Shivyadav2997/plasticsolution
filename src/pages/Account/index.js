@@ -32,7 +32,7 @@ const Party = () => {
   const [accounts, setAccounts] = useState([]);
   const [creditDebit, setCreditDebit] = useState([]);
   const [showAccount, setShowAccount] = useState(true);
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -111,7 +111,6 @@ const Party = () => {
   const getCreditDebitList = async () => {
     setLoading(true);
     const data = await creditDebitListGet(user.token);
-    console.log(data);
     setCreditDebit(data.data.account_list);
     setLoading(false);
   };
@@ -122,7 +121,7 @@ const Party = () => {
     } else {
       getCreditDebitList();
     }
-  }, [showAccount]);
+  }, [showAccount, fyear]);
 
   return (
     <>

@@ -13,8 +13,12 @@ import {
 import logo from "assets/img/brand/logo.png";
 import { useSelector } from "react-redux";
 import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
-const Index = () => {
+import { CustomInput } from "components/Custom/CustomInput";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+const Profile = () => {
   const { user } = useSelector((store) => store.user);
+
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row>
@@ -29,43 +33,31 @@ const Index = () => {
                 className="text-center"
                 style={{ fontSize: "21px", marginTop: "5px" }}
               >
-                {/* AccountDigi */}
+                VISHVA DEMO
               </h3>
-              <p className="text-center text-muted"></p>
+              <p className="text-center text-muted">
+                Vishva
+                <b>
+                  <br />
+                  Renew 284 Days Left
+                </b>
+              </p>
               <ListGroup>
                 <ListGroupItem className="border-left-0 border-right-0">
-                  <b>Mobile No.</b>
-                  <span className="float-right">
-                    9662779868
-                    <br></br>
-                    <Button
-                      className="btn-neutral btn-icon btn-sm"
-                      color="success"
-                    >
-                      <a
-                        className="ml-1"
-                        href={`whatsapp://send?phone=9662779868`}
-                      >
-                        <FaWhatsapp size={18} />
-                      </a>
-                    </Button>
-                    <Button
-                      className="btn-neutral btn-icon btn-sm"
-                      color="default"
-                    >
-                      <a href={`tel:9662779868`}>
-                        <FaPhoneAlt size={16} />
-                      </a>
-                    </Button>
-                  </span>
+                  <b>Mobile No. 7984404605</b>
+                  <a className="float-right">Create Date : 17-Jan-2023</a>
                 </ListGroupItem>
                 <ListGroupItem className="border-left-0 border-right-0">
                   <b>Email</b>
-                  <a className="float-right">lakkadjignesh@gmail.com</a>
+                </ListGroupItem>
+                <ListGroupItem className="border-left-0 border-right-0">
+                  <b>Gst No.</b>
                 </ListGroupItem>
                 <ListGroupItem className="border-left-0 border-right-0">
                   <b>City</b>
-                  <a className="float-right">Rajkot</a>
+                </ListGroupItem>
+                <ListGroupItem className="border-left-0 border-right-0">
+                  <b>Address</b>
                 </ListGroupItem>
               </ListGroup>
             </CardBody>
@@ -76,4 +68,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Profile;

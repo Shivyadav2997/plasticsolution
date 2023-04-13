@@ -24,8 +24,18 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
 const Transaction = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
+
   const [transactions, setTransactions] = useState({
     payment: [],
     recive: [],
@@ -36,12 +46,13 @@ const Transaction = () => {
   const childRef2 = useRef(null);
   const childRef3 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [transId, setTransId] = useState(null);
   const [addType, setAddType] = useState(1);
+  const dispatch = useDispatch();
 
   const formRef = useRef(null);
 
@@ -55,12 +66,16 @@ const Transaction = () => {
   const deleteTransaction = async () => {
     if (transId != null) {
       handleShowConfirmation();
-      setLoading(true);
+      dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
         type: "transection",
         id: transId,
       });
-      toast(resp.message);
+      Toast.fire({
+        icon: resp.data.sucess == 1 ? "success" : "error",
+        title: resp.message,
+      });
+      dispatch(setLoader(false));
       if (resp.data.sucess == 1) {
         getTransactions();
         setTransId(null);
@@ -166,19 +181,24 @@ const Transaction = () => {
 
   useEffect(() => {
     getTransactions();
-  }, [filterDate]);
+  }, [filterDate, fyear]);
 
   const addTransaction = async (payload) => {
     let resp = null;
-    handleToggle();
-    setLoading(true);
+
+    dispatch(setLoader(true));
     if (addType == 1) {
       resp = await transactionRecieveAdd(user.token, payload);
     } else {
       resp = await transactionPaymentAdd(user.token, payload);
     }
-    toast(resp.message);
+    Toast.fire({
+      icon: resp.data.sucess == 1 ? "success" : "error",
+      title: resp.message,
+    });
+    dispatch(setLoader(false));
     if (resp.data.sucess == 1) {
+      handleToggle();
       getTransactions();
     }
   };
@@ -404,13 +424,13 @@ const Transaction = () => {
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Row sm="2" xs="1" className="mb-2">
           <Col>
-            <Row className="ml-0">
+            <Row className="ml-0 mb-1">
               <CustomDatePicker
                 onCallback={dateSelect}
                 text="Transaction By Date"
               />
               <Button
-                className="btn-md btn-outline-primary"
+                className="btn-md btn-outline-primary mb-1 ml-0"
                 onClick={() => setFilterDate({ st: "", et: "" })}
               >
                 All Transactions
@@ -425,7 +445,7 @@ const Transaction = () => {
             </Row>
           </Col>
           <Col>
-            <Row className="justify-content-md-end mr-0">
+            <Row className="justify-content-md-end mr-0  ml-0">
               <Button
                 className="btn-md btn-outline-success"
                 onClick={() => {

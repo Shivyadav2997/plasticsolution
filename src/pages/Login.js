@@ -14,18 +14,31 @@ import {
   Col,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
-import { login } from "features/User/UserSlice";
+import { login, setLoader } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { loginApi } from "api/api";
+import { loginApi, forgotPassSend } from "api/api";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import CustomModal from "components/Custom/CustomModal";
+import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+
 const Login = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   const dispatch = useDispatch();
   const history = useHistory();
   const [uname, setUname] = useState("");
   const [pass, setPass] = useState("");
   const [errorUname, setErrorUname] = useState("");
   const [errorPass, setErrorPass] = useState();
+  const [show, setShow] = useState(false);
+  const [forgotUName, setForgotUName] = useState("");
   const unameRef = useRef(null);
   const loginSubmit = async () => {
     if (uname === "") {
@@ -51,12 +64,67 @@ const Login = () => {
       unameRef.current.focus();
     }
   }, [unameRef.current]);
+  const handleToggle = async () => {
+    setShow(!show);
+    setForgotUName("");
+  };
+  const handleForgot = async () => {
+    if (forgotUName !== "") {
+      dispatch(setLoader(true));
 
+      const resp = await forgotPassSend({ mo: forgotUName });
+      handleToggle();
+      dispatch(setLoader(false));
+      Toast.fire({
+        icon: resp.data.success == 1 ? "success" : "error",
+        title: resp.data.msg,
+      });
+    }
+  };
   return (
     <>
+      <CustomModal
+        show={show}
+        title={`Forgot Password`}
+        handleToggle={handleToggle}
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={handleForgot}
+          >
+            Reset Password
+          </Button>
+        }
+      >
+        {/* <Form>
+          <Input
+            placeholder="User Name"
+            value={forgotUName}
+            type="text"
+            onChange={(e) => {
+              setErrorUname(e.target.value);
+            }}
+            required
+            
+          />
+        </Form> */}
+        <CustomInputWoutFormik
+          // label="User Name"
+          placeholder="Username"
+          type="text"
+          value={forgotUName}
+          onChange={(e) => {
+            setForgotUName(e.target.value);
+          }}
+        />
+      </CustomModal>
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
-          <CardBody className="px-lg-5 py-lg-5">
+          <CardBody className="">
             <div className="text-center text-muted mb-4">
               <small>Log in to start your session </small>
             </div>
@@ -114,7 +182,7 @@ const Login = () => {
                   // }}
                   onClick={loginSubmit}
                 >
-                  Sign in
+                  Login
                 </Button>
               </div>
             </Form>
@@ -124,13 +192,13 @@ const Login = () => {
           <Col xs="6">
             <a
               className="text-dark"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              // onClick={(e) => e.preventDefault()}
+              onClick={() => setShow(true)}
             >
               <small>Forgot password?</small>
             </a>
           </Col>
-          <Col className="text-right" xs="6">
+          {/* <Col className="text-right" xs="6">
             <a
               className="text-dark"
               href="#pablo"
@@ -138,7 +206,7 @@ const Login = () => {
             >
               <small>Contact : 9662779868</small>
             </a>
-          </Col>
+          </Col> */}
         </Row>
       </Col>
     </>

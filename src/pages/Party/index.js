@@ -61,7 +61,7 @@ const Party = () => {
   });
 
   const [parties, setParties] = useState([]);
-  const { user } = useSelector((store) => store.user);
+  const { user, fyear } = useSelector((store) => store.user);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [party, setParty] = useState(null);
@@ -164,7 +164,7 @@ const Party = () => {
   const deleteParty = async () => {
     if (party != null) {
       handleShowConfirmation();
-      setLoading(true);
+      dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
         type: "party",
         id: party.id,
@@ -177,6 +177,7 @@ const Party = () => {
         });
         getParties();
         setParty(null);
+        dispatch(setLoader(false));
       } else {
         Toast.fire({
           icon: "error",
@@ -239,7 +240,7 @@ const Party = () => {
 
   useEffect(() => {
     getParties();
-  }, []);
+  }, [fyear]);
 
   return (
     <>

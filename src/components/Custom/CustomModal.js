@@ -5,11 +5,11 @@ const CustomModal = ({ children, handleToggle, show, title, footer }) => {
   return (
     <>
       <Modal isOpen={show} toggle={handleToggle}>
-        <div class="modal-header">
-          <h3 class="modal-title">{title}</h3>
+        <div className="modal-header">
+          <h3 className="modal-title">{title}</h3>
           <button
             type="button"
-            class="close"
+            className="close"
             aria-label="Close"
             onClick={handleToggle}
           >

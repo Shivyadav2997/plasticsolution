@@ -1,7 +1,8 @@
 import React from "react";
 import { useLocation, Route, Switch, Redirect } from "react-router-dom";
 // reactstrap components
-import { Container, Row, Col } from "reactstrap";
+import { Container, Row, Col, NavbarBrand } from "reactstrap";
+import { Link } from "react-router-dom";
 
 // core components
 import AuthNavbar from "components/Navbars/AuthNavbar.js";
@@ -48,20 +49,21 @@ const Auth = (props) => {
         <div className="header py-7">
           <Container>
             <div className="header-body text-center">
-              <Row className="justify-content-center">
-                <Col lg="5" md="6">
-                  <h1 className="text-primary">Login</h1>
-                  {/* <p className="text-lead text-light">
-                    Use these awesome forms to login or create new account in
-                    your project for free.
-                  </p> */}
+              <Row className="justify-content-center pb-2">
+                <Col>
+                  <NavbarBrand to="/" tag={Link}>
+                    <img
+                      alt="..."
+                      src={require("../assets/img/brand/logo.png")}
+                    />
+                  </NavbarBrand>
                 </Col>
               </Row>
             </div>
           </Container>
         </div>
         {/* Page content */}
-        <Container className="mt--7 pb-5">
+        <Container className="mt--7">
           <Row className="justify-content-center">
             <Switch>
               {getRoutes(routes)}

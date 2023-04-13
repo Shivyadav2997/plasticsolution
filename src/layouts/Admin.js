@@ -9,11 +9,17 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import LoadingOverlay from "react-loading-overlay";
 import routes from "routes.js";
 import { useSelector } from "react-redux";
+import SidebarNew from "components/Sidebar/SidebarNew";
+import Index from "pages/ContactUs";
+import Party from "pages/Party";
+import { setFyear } from "features/User/UserSlice";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-  const { loading } = useSelector((store) => store.user);
+  const { loading, collapseSidebar, fyear } = useSelector(
+    (store) => store.user
+  );
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
@@ -82,9 +88,27 @@ const Admin = (props) => {
             imgAlt: "...",
           }}
         />
+        {/* <SidebarNew
+          {...props}
+          routes={routes}
+          logo={{
+            innerLink: "/admin/index",
+            imgSrc: require("../assets/img/brand/logo.png"),
+            imgAlt: "...",
+          }}
+        /> */}
+        {/* <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Party />} />
+          </Routes> */}
+        {/* </SidebarNew> */}
         <div
-          className="main-content bg-gradient-lightDefault"
-          style={{ minHeight: "100vh" }}
+          className={`${
+            collapseSidebar ? "main-content-open" : "main-content-close"
+          } main-content bg-gradient-lightDefault`}
+          style={{
+            minHeight: "100vh",
+          }}
           ref={mainContent}
           id="mainDiv"
         >

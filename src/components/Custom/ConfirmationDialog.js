@@ -12,8 +12,8 @@ const ConfirmationDialog = ({
   return (
     <>
       <Modal isOpen={show} toggle={handleToggle}>
-        <div class="modal-header">
-          <h3 class="modal-title">{title}</h3>
+        <div className="modal-header">
+          <h3 className="modal-title">{title}</h3>
         </div>
         <ModalBody className="pt-0">{children}</ModalBody>
         <ModalFooter>

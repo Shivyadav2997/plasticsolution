@@ -33,6 +33,7 @@ const Index = (props) => {
   let history = useHistory();
 
   const dispatch = useDispatch();
+  const { user, fyear } = useSelector((store) => store.user);
 
   var Toast = Swal.mixin({
     toast: true,
@@ -103,8 +104,7 @@ const Index = (props) => {
 
   useEffect(() => {
     getDashboardData();
-  }, []);
-  const { user } = useSelector((store) => store.user);
+  }, [fyear]);
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
@@ -116,31 +116,31 @@ const Index = (props) => {
                 style={{ background: "none" }}
               >
                 <Button
-                  className="btn-md btn-outline-success"
+                  className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => sendReport(1)}
                 >
                   <FaWhatsapp size={18} color="success" /> Daily Report
                 </Button>
                 <Button
-                  className="btn-md btn-outline-primary"
+                  className="btn-md btn-outline-primary mb-1 ml-0"
                   onClick={() => sendReport(2)}
                 >
                   <FaDatabase size={18} color="primary" /> Get Stock
                 </Button>
                 <Button
-                  className="btn-md btn-outline-danger"
+                  className="btn-md btn-outline-danger mb-1 ml-0"
                   onClick={() => sendReport(3)}
                 >
                   <FaWallet size={18} color="danger" /> Debit Ledger
                 </Button>
                 <Button
-                  className="btn-md btn-outline-success"
+                  className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => sendReport(4)}
                 >
                   <FaWallet size={18} color="success" /> Credit Ledger
                 </Button>
                 <Button
-                  className="btn-md btn-outline-info"
+                  className="btn-md btn-outline-info mb-1 ml-0"
                   onClick={() => sendReport(5)}
                 >
                   <FaWallet size={18} color="info" /> Full Ledger
@@ -155,19 +155,19 @@ const Index = (props) => {
                 style={{ background: "none" }}
               >
                 <Button
-                  className="btn-md btn-outline-primary"
+                  className="btn-md btn-outline-primary mb-1 ml-0"
                   onClick={() => history.push("/admin/sales-invoice")}
                 >
                   <FaShoppingCart size={18} color="primary" /> Sale
                 </Button>
                 <Button
-                  className="btn-md btn-outline-info"
+                  className="btn-md btn-outline-info mb-1 ml-0"
                   onClick={() => history.push("/admin/purchase-invoice")}
                 >
                   <FaShoppingCart size={18} color="info" /> Purchase
                 </Button>
                 <Button
-                  className="btn-md btn-outline-success"
+                  className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => history.push("/admin/day-book")}
                 >
                   <FaWallet size={18} color="success" /> DayBook
@@ -495,9 +495,9 @@ const Index = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dashboardData?.sale_list?.map((sale) => {
+                  {dashboardData?.sale_list?.map((sale, index) => {
                     return (
-                      <tr>
+                      <tr key={index}>
                         <td>{sale.party}</td>
                         <td>{sale.withoutamt}</td>
                         <td>{sale.billamt}</td>
@@ -560,9 +560,9 @@ const Index = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dashboardData?.purchase_list?.map((purchase) => {
+                  {dashboardData?.purchase_list?.map((purchase, index) => {
                     return (
-                      <tr>
+                      <tr key={index}>
                         <td>{purchase.party}</td>
                         <td>{purchase.withoutamt}</td>
                         <td>{purchase.billamt}</td>

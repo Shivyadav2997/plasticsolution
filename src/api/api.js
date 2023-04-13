@@ -20,6 +20,8 @@ import {
   accountListAction,
   creditDebitListAction,
   daybookAction,
+  forgotPassAction,
+  yearChangeAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -385,6 +387,42 @@ const daybookGet = async (token, payload) => {
   }
 };
 
+const forgotPassSend = async (payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${forgotPassAction}&${getParams(payload)}`
+    );
+
+    return {
+      data: resp.data,
+      message: "Api success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const yearChange = async (payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${yearChangeAction}&${getParams(payload)}`
+    );
+
+    return {
+      data: resp.data,
+      message: "Api success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -407,4 +445,6 @@ export {
   accountListGet,
   creditDebitListGet,
   daybookGet,
+  forgotPassSend,
+  yearChange,
 };

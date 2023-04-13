@@ -62,17 +62,74 @@ input[type="number"] {
 }
 .daybookTable td,
 .daybookTable th {
-  border-bottom: 1px groove;
   padding: 0 rem;
   font-size: 0.75rem !important;
   padding: 0.5rem !important;
 }
 .daybookTable td {
-  border: 1px solid black !important;
+  border-right: 1px solid black !important;
+  border-bottom: 1px groove rgba(0, 0, 0, 0.05) !important;
+  border-left: 0px !important;
 }
 .daybookTable .borderright0 {
   border-right: 0px !important;
 }
-._loading_overlay_overlay {
+.daybookTable .bl-2 {
+  border-left: 2px solid black !important;
+}
+._loading_overlay_overhelay {
   z-index: 9999 !important;
+}
+
+.main-content .navbar-brand img {
+  height: 55px;
+}
+html {
+  min-height: 100%;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280,0,0,0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+.navbar-open-custom {
+  max-width: 250px !important;
+  transition: max-width 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.navbar-close-custom {
+  max-width: 50px !important;
+  transition: max-width 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.navbar-close-custom img {
+  margin-left: -10px !important;
+  width: 30px !important;
+  transition: margin-left 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.main-content-open {
+  margin-left: 250px !important;
+  transition: margin-left 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.main-content-close {
+  margin-left: 50px !important;
+  transition: margin-left 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.collapsedSidebarSub {
+  padding: 0.65rem 1.5rem !important;
+}
+@media (max-width: 575.98px) {
+  .main-content-open,
+  .main-content-close {
+    margin-left: 0px !important;
+    transition: margin-left 0.3s linear, opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .navbar-open-custom {
+    max-width: 250px !important;
+    z-index: 9999;
+  }
 }

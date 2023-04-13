@@ -51,7 +51,6 @@ const CreateInvoice = () => {
     calCulateTotal(rowsInput);
   };
 
-  // console.log("1", allData);
   const getTransactionParties = async () => {
     var data = await transactionPartyGet(user.token);
     if (data.data) {
@@ -60,8 +59,6 @@ const CreateInvoice = () => {
   };
 
   const calCulateTotal = (rowsInput) => {
-    // const rowsInput = [...rowsData];
-
     for (let index = 0; index < rowsInput.length; index++) {
       if (rowsInput[index]["bRate"] && rowsInput[index]["uQty"]) {
         rowsInput[index]["bAmt"] =
