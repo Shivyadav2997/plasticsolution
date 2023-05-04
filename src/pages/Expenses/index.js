@@ -6,7 +6,12 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { expensesListGet, deleteRecord, expenseAdd } from "api/api";
+import {
+  expensesListGet,
+  deleteRecord,
+  expenseAdd,
+  bankListGet,
+} from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
@@ -44,6 +49,19 @@ const Expense = () => {
   const [expenseId, setExpenseId] = useState(null);
   const dispatch = useDispatch();
   const formRef = useRef(null);
+  const [banks, setbanks] = useState([]);
+
+  const getbanks = async () => {
+    dispatch(setLoader(true));
+    var data = await bankListGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      var data2 = data.data;
+      setbanks(data2);
+    } else {
+      setbanks([]);
+    }
+  };
 
   const handleShowConfirmation = () => {
     if (showDelete) {
@@ -79,7 +97,7 @@ const Expense = () => {
 
   const handleToggle = async () => {
     if (!show) {
-      //await getTransactionParties().then(() => setShow(true));
+      await getbanks();
       setShow(true);
     } else {
       setShow(false);
@@ -285,12 +303,16 @@ const Expense = () => {
                   type="select"
                   label="Expense Mode"
                   options={[
-                    { label: "Select Mode", value: "" },
-                    { label: "Cash", value: "Cash" },
-                    { label: "Bank", value: "Bank" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
+                    <option value="">Select Mode</option>,
+                    <option value="0">Cash</option>,
+                    ...banks.map((opt) => {
+                      return (
+                        <option value={opt.id}>
+                          {opt.bank_name}-{opt.ac_holder}
+                        </option>
+                      );
+                    }),
+                  ]}
                 />
                 <CustomInput
                   placeholder="Amount"

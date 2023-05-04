@@ -63,6 +63,7 @@ const Bank = () => {
     {
       title: "BankName",
       data: "bank_name",
+      className: "all",
     },
     {
       title: "Holder",
@@ -115,18 +116,20 @@ const Bank = () => {
   };
 
   const handleToggle = async () => {
-    if (!show) {
-      setShow(true);
-    } else {
-      setShow(false);
+    if (show) {
+      setBank(null);
     }
+    setShow(!show);
   };
 
   const validate = Yup.object({
     bank_name: Yup.string().required("Required"),
     ac_holder: Yup.string().required("Required"),
     ac: Yup.string().required("Required"),
-    op: Yup.string().required("Required"),
+    op: Yup.number().when("ac", {
+      is: bank == null,
+      then: Yup.number().required("Required"),
+    }),
     ifsc: Yup.string().required("Required"),
     branch: Yup.string().required("Required"),
     description: Yup.string().required("Required"),
@@ -208,7 +211,7 @@ const Bank = () => {
                 bank_name: bank?.bank_name,
                 ac_holder: bank?.ac_holder,
                 ac: bank?.ac,
-                op: bank?.op,
+                op: "",
                 ifsc: bank?.ifsc,
                 branch: bank?.branch,
                 description: bank?.description,
@@ -249,7 +252,11 @@ const Bank = () => {
                       options={[
                         <option value="">Select Bank</option>,
                         ...bankNames.map((opt) => {
-                          return <option value={opt.name}>{opt.name}</option>;
+                          return (
+                            <option value={opt.name.toUpperCase()}>
+                              {opt.name.toUpperCase()}
+                            </option>
+                          );
                         }),
                       ]}
                     />
@@ -278,12 +285,14 @@ const Bank = () => {
                       name="branch"
                       type="text"
                     />
-                    <CustomInput
-                      placeholder="Opening Balance"
-                      label="Opening Balance"
-                      name="op"
-                      type="number"
-                    />
+                    {bank == null && (
+                      <CustomInput
+                        placeholder="Opening Balance"
+                        label="Opening Balance"
+                        name="op"
+                        type="number"
+                      />
+                    )}
                     <CustomInput
                       placeholder="Description"
                       label="Description"

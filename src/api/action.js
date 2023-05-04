@@ -25,3 +25,4 @@ export const bankNameAction = "bank_name";
 export const bankListAction = "bank_list";
 export const bankAddAction = "add_bank";
 export const bankUpdateAction = "update_bank";
+export const balanceUpdateAction = "deposit";

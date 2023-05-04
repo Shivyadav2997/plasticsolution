@@ -5,7 +5,7 @@
 }
 
 table.dataTable tbody th,
-table.dataTable tbody td {
+table.dataTable tbody td:not(:first-child) {
   padding: 5px 10px !important;
 }
 
@@ -14,7 +14,7 @@ table.dataTable td {
   box-sizing: initial;
 }
 
-.card .table td,
+.card .table td:not(:first-child),
 .card .table th {
   padding-left: 1rem !important;
   padding-right: 1rem !important;

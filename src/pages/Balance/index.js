@@ -6,7 +6,12 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { balanceListGet, balanceEntryListGet } from "api/api";
+import {
+  balanceListGet,
+  balanceEntryListGet,
+  bankListGet,
+  balanceUpdate,
+} from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
@@ -29,9 +34,10 @@ const Balance = () => {
     timer: 1500,
   });
 
+  const [banks, setbanks] = useState([]);
   const [balances, setbalances] = useState([]);
   const [balanceEntries, setbalanceEntries] = useState([]);
-
+  const [addType, setAddType] = useState(1);
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const { user, fyear } = useSelector((store) => store.user);
@@ -39,6 +45,7 @@ const Balance = () => {
   const [showBalEntry, setshowBalEntry] = useState(false);
   const dispatch = useDispatch();
   const formRef = useRef(null);
+  const [show, setShow] = useState(false);
 
   var colDefs = [
     // {
@@ -55,6 +62,10 @@ const Balance = () => {
     // },
   ];
 
+  const handleToggle = async () => {
+    setShow(!show);
+  };
+
   const columns = [
     {
       title: "No",
@@ -63,6 +74,7 @@ const Balance = () => {
     {
       title: "Type",
       data: "Type",
+      className: "all",
     },
     {
       title: "Balance",
@@ -129,6 +141,56 @@ const Balance = () => {
     setLoading(false);
   };
 
+  const validate = Yup.object({
+    amount: Yup.number().required("Required"),
+    description: Yup.string().required("Required"),
+    balance_mode: Yup.string().required("Required"),
+    date: Yup.date().required("Required"),
+  });
+
+  const getbanks = async () => {
+    dispatch(setLoader(true));
+    var data = await bankListGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      var data2 = data.data;
+      setbanks(data2);
+    } else {
+      setbanks([]);
+    }
+  };
+
+  const addBalance = async (payload) => {
+    let resp = null;
+
+    dispatch(setLoader(true));
+    if (addType == 1) {
+      resp = await balanceUpdate(user.token, {
+        type: "Withdrawal",
+        ...payload,
+      });
+    } else {
+      resp = await balanceUpdate(user.token, {
+        type: "Deposit",
+        ...payload,
+      });
+    }
+    Toast.fire({
+      icon: resp.data.success == 1 ? "success" : "error",
+      title:
+        resp.data.success == 1
+          ? addType == 1
+            ? "Withdrawal Added Successfully"
+            : "Deposit Added Successfully"
+          : "Something wen't wrong",
+    });
+    dispatch(setLoader(false));
+    if (resp.data.success == 1) {
+      handleToggle();
+      getBalances();
+    }
+  };
+
   useEffect(() => {
     setbalanceEntries([]);
     setbalances([]);
@@ -136,6 +198,7 @@ const Balance = () => {
       getBalanceEntries();
     } else {
       getBalances();
+      getbanks();
     }
   }, [showBalEntry, fyear]);
 
@@ -144,6 +207,88 @@ const Balance = () => {
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         {!showBalEntry ? (
           <>
+            <CustomModal
+              show={show}
+              handleToggle={handleToggle}
+              title={addType == 1 ? "Withdrawl" : "Deposit"}
+              footer={
+                <Button
+                  type="submit"
+                  className="mr-1"
+                  color="primary"
+                  block
+                  size="md"
+                  onClick={() => {
+                    formRef.current.handleSubmit();
+                  }}
+                >
+                  Save
+                </Button>
+              }
+            >
+              <Formik
+                initialValues={{
+                  amount: "",
+                  description: "",
+                  date: format(new Date(), "yyyy-MM-dd"),
+                  balance_mode: "",
+                }}
+                validationSchema={validate}
+                onSubmit={(values) => {
+                  addBalance(values);
+                }}
+                validateOnBlur={false}
+                validateOnChange={false}
+                innerRef={formRef}
+              >
+                {(formik) => (
+                  <div>
+                    <Form>
+                      <CustomInput
+                        name="balance_mode"
+                        type="select"
+                        label="Bank"
+                        options={[
+                          <option value="">Select Bank</option>,
+                          <option value="0">Cash</option>,
+                          ...banks.map((opt) => {
+                            return (
+                              <option value={opt.id}>
+                                {opt.bank_name}-{opt.ac_holder}
+                              </option>
+                            );
+                          }),
+                        ]}
+                      />
+                      <CustomInput
+                        placeholder={
+                          addType == 1 ? "Withdrawl Amount" : "Deposit Amount"
+                        }
+                        name="amount"
+                        type="number"
+                        label={
+                          addType == 1 ? "Withdrawl Amount" : "Deposit Amount"
+                        }
+                      />
+
+                      <CustomInput
+                        placeholder=""
+                        name="date"
+                        type="date"
+                        label="Date"
+                      />
+
+                      <CustomInput
+                        placeholder="Description"
+                        label="Description"
+                        name="description"
+                        type="text"
+                      />
+                    </Form>
+                  </div>
+                )}
+              </Formik>
+            </CustomModal>
             <Row sm="2" xs="1" className="mb-2">
               <Col>
                 <Row className="ml-0">
@@ -157,10 +302,22 @@ const Balance = () => {
               </Col>
               <Col>
                 <Row className="justify-content-md-end mr-0  ml-0">
-                  <Button className="btn-md btn-outline-success">
+                  <Button
+                    className="btn-md btn-outline-success"
+                    onClick={() => {
+                      setAddType(2);
+                      handleToggle();
+                    }}
+                  >
                     Deposit
                   </Button>
-                  <Button className="btn-md btn-outline-danger">
+                  <Button
+                    className="btn-md btn-outline-danger"
+                    onClick={() => {
+                      setAddType(1);
+                      handleToggle();
+                    }}
+                  >
                     Withdrawl
                   </Button>
                 </Row>

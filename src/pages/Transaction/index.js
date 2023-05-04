@@ -13,6 +13,7 @@ import {
   transactionRecieveAdd,
   transactionPaymentAdd,
   deleteRecord,
+  bankListGet,
 } from "api/api";
 import { Input } from "reactstrap";
 import $ from "jquery";
@@ -41,6 +42,7 @@ const Transaction = () => {
     recive: [],
     transection: [],
   });
+  const [banks, setbanks] = useState([]);
   const [parties, setParties] = useState([]);
   const childRef = useRef(null);
   const childRef2 = useRef(null);
@@ -99,6 +101,7 @@ const Transaction = () => {
   const handleToggle = async () => {
     if (!show) {
       await getTransactionParties();
+      await getbanks();
       setShow(true);
     } else {
       setShow(false);
@@ -180,6 +183,18 @@ const Transaction = () => {
       setTransactions({ payment: [], recive: [], transection: [] });
     }
     setLoading(false);
+  };
+
+  const getbanks = async () => {
+    dispatch(setLoader(true));
+    var data = await bankListGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      var data2 = data.data;
+      setbanks(data2);
+    } else {
+      setbanks([]);
+    }
   };
 
   useEffect(() => {
@@ -390,12 +405,16 @@ const Transaction = () => {
                   type="select"
                   label="Mode"
                   options={[
-                    { label: "Select Mode", value: "" },
-                    { label: "Cash", value: "cash" },
-                    { label: "Bank", value: "bank" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
+                    <option value="">Select Mode</option>,
+                    <option value="0">Cash</option>,
+                    ...banks.map((opt) => {
+                      return (
+                        <option value={opt.id}>
+                          {opt.bank_name}-{opt.ac_holder}
+                        </option>
+                      );
+                    }),
+                  ]}
                 />
 
                 <CustomInput
