@@ -19,18 +19,21 @@ import {
 import { yearChange } from "api/api";
 
 import { useDispatch } from "react-redux";
-import { logout, toggleSidebar } from "features/User/UserSlice";
+import { logout, toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import FinancialYear from "components/Custom/FinancialYear";
 const AdminNavbar = (props) => {
-  const { user, collapseSidebar } = useSelector((store) => store.user);
+  const { user, collapseSidebar, isSidebarOpen } = useSelector(
+    (store) => store.user
+  );
   const dispatch = useDispatch();
   const history = useHistory();
 
   const toggleCollapse = () => {
     // setCollapseOpen((data) => !data);
     dispatch(toggleSidebar(!collapseSidebar));
+    dispatch(keepSidebar(!isSidebarOpen));
   };
   const logoutClick = () => {
     dispatch(logout());

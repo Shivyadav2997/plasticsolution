@@ -23,21 +23,23 @@ import {
   Input,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
-import { toggleSidebar } from "features/User/UserSlice";
+import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import { logout } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import FinancialYear from "components/Custom/FinancialYear";
+import { BiChevronDown, BiChevronUp, BiChevronRight } from "react-icons/bi";
 
 var ps;
 
 const Sidebar = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { user, collapseSidebar } = useSelector((store) => store.user);
+  const { user, collapseSidebar, isSidebarOpen } = useSelector(
+    (store) => store.user
+  );
   let allStates = { sales: false, purchase: false };
 
   const [submenuOpen, setSubMenuOpen] = useState(allStates);
-  const [isHovered, setIsHovered] = useState(false);
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -51,7 +53,8 @@ const Sidebar = (props) => {
   const closeCollapse = () => {
     // setCollapseOpen((data) => !data);
 
-    if (!isHovered || window.innerWidth < 576) {
+    if (window.innerWidth < 576 || !isSidebarOpen) {
+      // if (!isHovered || window.innerWidth < 576) {
       dispatch(toggleSidebar(false));
     }
   };
@@ -83,6 +86,11 @@ const Sidebar = (props) => {
                 <div className={` ${collapseSidebar ? "" : "sidebarNameHide"}`}>
                   {prop.name}
                 </div>
+                <BiChevronRight
+                  className={`sidebarDropIcon ${
+                    submenuOpen[prop.state] ? "open" : ""
+                  }`}
+                />
               </NavLink>
               <Collapse isOpen={submenuOpen[prop.state]}>
                 <Nav>
@@ -273,16 +281,18 @@ const Sidebar = (props) => {
         <Nav
           navbar
           onMouseEnter={() => {
-            if (window.innerWidth >= 576) {
-              setIsHovered(true);
-            }
+            // if (window.innerWidth >= 576) {
+            //   setIsHovered(true);
+            // }
             dispatch(toggleSidebar(true));
           }}
           onMouseLeave={() => {
-            if (window.innerWidth >= 576) {
-              setIsHovered(false);
+            // if (window.innerWidth >= 576) {
+            //   setIsHovered(false);
+            // }
+            if (!isSidebarOpen) {
+              dispatch(toggleSidebar(false));
             }
-            dispatch(toggleSidebar(false));
           }}
         >
           {createLinks(routes)}

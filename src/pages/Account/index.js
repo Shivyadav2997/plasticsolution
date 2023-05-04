@@ -13,7 +13,7 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Loader from "components/Custom/Loader";
-import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
+import { FaWhatsapp, FaPhoneAlt, FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
@@ -37,6 +37,15 @@ const Party = () => {
 
   const dispatch = useDispatch();
 
+  const viewInvoice = (cellData, rowData, row, col) => {
+    console.log(rowData);
+  };
+  const sendWhatsapp = (cellData, rowData, row, col) => {
+    console.log(rowData);
+  };
+  const sendWhatsappPdf = (cellData, rowData, row, col) => {
+    console.log(rowData);
+  };
   const columns = [
     {
       title: "No",
@@ -57,6 +66,51 @@ const Party = () => {
     {
       title: "Total",
       data: "total",
+    },
+    {
+      title: "Action",
+      data: null,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            {" "}
+            <div className="d-flex gap-10">
+              <div>
+                <Button
+                  className="btn-outline-primary btn-icon btn-sm"
+                  color="default"
+                  onClick={() => viewInvoice(cellData, rowData, row, col)}
+                >
+                  <span>
+                    <FaEye size={12} />
+                  </span>
+                </Button>
+              </div>
+              <div>
+                <Button
+                  className="btn-outline-info btn-icon btn-sm"
+                  onClick={() => sendWhatsapp(cellData, rowData, row, col)}
+                >
+                  <span>
+                    <FaWhatsapp size={12} />
+                  </span>
+                </Button>
+              </div>
+              <div>
+                <Button
+                  className="btn-outline-success btn-icon btn-sm"
+                  onClick={() => sendWhatsappPdf(cellData, rowData, row, col)}
+                >
+                  <span>
+                    <FaWhatsapp size={12} /> Pdf
+                  </span>
+                </Button>
+              </div>
+            </div>
+          </>
+        );
+      },
     },
   ];
 
@@ -128,9 +182,9 @@ const Party = () => {
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         {showAccount ? (
           <>
-            <Row sm="2" className="mb-2">
+            <Row sm="2" xs="1" className="mb-2">
               <Col>
-                <Row className="ml-0">
+                <Row className="ml-0 mb-1">
                   <Button
                     className="btn-md btn-outline-primary"
                     onClick={() => setShowAccount(false)}
@@ -140,7 +194,7 @@ const Party = () => {
                 </Row>
               </Col>
               <Col>
-                <Row className="justify-content-end mr-0">
+                <Row className="justify-content-end mr-0 ml-0">
                   <Button className="btn-md btn-outline-success">
                     Add Credit
                   </Button>
@@ -150,6 +204,7 @@ const Party = () => {
                 </Row>
               </Col>
             </Row>
+
             {loading ? (
               <Loader loading={loading} />
             ) : (

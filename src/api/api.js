@@ -22,6 +22,12 @@ import {
   daybookAction,
   forgotPassAction,
   yearChangeAction,
+  balanceAction,
+  balanceEntryAction,
+  bankListAction,
+  bankNameAction,
+  bankAddAction,
+  bankUpdateAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -43,6 +49,9 @@ const getParams = (payload) => {
 const getData = async (type) => {
   try {
     const resp = await axios.get(baseUrltest + type);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Data found success",
@@ -72,6 +81,9 @@ const loginApi = async (uname, pass) => {
 const logoutApi = async () => {
   try {
     const resp = await axios.get(baseUrl + `?action=${userLogoutAction}`);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return resp.data;
   } catch (error) {
     return {
@@ -86,6 +98,9 @@ const partyListGet = async (token) => {
     const resp = await axios.get(
       baseUrl + `?action=${partyListAction}&token=${token}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -103,7 +118,9 @@ const partyAdd = async (token, payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${partyAddAction}&token=${token}&${getParams(payload)}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -122,6 +139,9 @@ const partyEdit = async (token, payload) => {
       baseUrl +
         `?action=${partyEditAction}&token=${token}&${getParams(payload)}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -139,6 +159,9 @@ const deleteRecord = async (token, payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${deleteAction}&token=${token}&${getParams(payload)}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -157,6 +180,9 @@ const transactionListget = async (token, st = "", en = "") => {
       baseUrl +
         `?action=${transactionListAction}&token=${token}&st=${st}&en=${en}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -174,6 +200,9 @@ const transactionPartyGet = async (token, payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${transactionPartyAction}&token=${token}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -194,7 +223,9 @@ const transactionRecieveAdd = async (token, payload) => {
           payload
         )}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -215,7 +246,9 @@ const transactionPaymentAdd = async (token, payload) => {
           payload
         )}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -233,6 +266,9 @@ const expensesListGet = async (token, st = "", en = "") => {
     const resp = await axios.get(
       baseUrl + `?action=${expensesListAction}&token=${token}&st=${st}&en=${en}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -251,7 +287,9 @@ const expenseAdd = async (token, payload) => {
       baseUrl +
         `?action=${expenseAddAction}&token=${token}&${getParams(payload)}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,
@@ -270,6 +308,9 @@ const purchaseListGet = async (token, st = "", en = "", m = "") => {
       baseUrl +
         `?action=${purchaseListAction}&token=${token}&st=${st}&en=${en}&m=${m}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -288,6 +329,9 @@ const saleListGet = async (token, st = "", en = "", m = "") => {
       baseUrl +
         `?action=${saleListAction}&token=${token}&st=${st}&en=${en}&m=${m}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -305,6 +349,9 @@ const dashboardDataGet = async (token) => {
     const resp = await axios.get(
       baseUrl + `?action=${homeAction}&token=${token}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -322,6 +369,9 @@ const dashboardSendReport = async (token, type) => {
     const resp = await axios.get(
       baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -339,6 +389,9 @@ const accountListGet = async (token) => {
     const resp = await axios.get(
       baseUrl + `?action=${accountListAction}&token=${token}`
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api call success",
@@ -356,7 +409,9 @@ const creditDebitListGet = async (token) => {
     const resp = await axios.get(
       baseUrl + `?action=${creditDebitListAction}&token=${token}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api success",
@@ -374,7 +429,9 @@ const daybookGet = async (token, payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${daybookAction}&token=${token}&${getParams(payload)}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api success",
@@ -392,7 +449,9 @@ const forgotPassSend = async (payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${forgotPassAction}&${getParams(payload)}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api success",
@@ -410,10 +469,245 @@ const yearChange = async (payload) => {
     const resp = await axios.get(
       baseUrl + `?action=${yearChangeAction}&${getParams(payload)}`
     );
-
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: "Api success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productListGet = async (token) => {
+  try {
+    // const resp = await axios.get(
+    //   baseUrl + `?action=${partyListAction}&token=${token}`
+    // );
+    // if (resp.data.login == 0) {
+    //   window.location.href = `${window.location.origin}/auth/login`;
+    // }
+    return {
+      // data: resp.data,
+      data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productAdd = async (token, payload) => {
+  try {
+    // const resp = await axios.get(
+    //   baseUrl + `?action=${partyAddAction}&token=${token}&${getParams(payload)}`
+    // );
+    // if (resp.data.login == 0) {
+    //   window.location.href = `${window.location.origin}/auth/login`;
+    // }
+    return {
+      data: [],
+      message: "Api call success",
+    };
+    // return {
+    //   data: resp.data,
+    //   message: resp.data.msg,
+    // };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productEdit = async (token, payload) => {
+  try {
+    // const resp = await axios.get(
+    //   baseUrl +
+    //     `?action=${partyEditAction}&token=${token}&${getParams(payload)}`
+    // );
+    // if (resp.data.login == 0) {
+    //   window.location.href = `${window.location.origin}/auth/login`;
+    // }
+    return {
+      data: [],
+      message: "Api call success",
+    };
+    // return {
+    //   data: resp.data,
+    //   message: resp.data.msg,
+    // };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productStockGet = async (token) => {
+  try {
+    // const resp = await axios.get(
+    //   baseUrl + `?action=${partyListAction}&token=${token}`
+    // );
+    // if (resp.data.login == 0) {
+    //   window.location.href = `${window.location.origin}/auth/login`;
+    // }
+    return {
+      // data: resp.data,
+      data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productionGet = async (token) => {
+  try {
+    // const resp = await axios.get(
+    //   baseUrl + `?action=${partyListAction}&token=${token}`
+    // );
+    // if (resp.data.login == 0) {
+    //   window.location.href = `${window.location.origin}/auth/login`;
+    // }
+    return {
+      // data: resp.data,
+      data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const bankListGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${bankListAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const bankNameGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${bankNameAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const balanceListGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${balanceAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const balanceEntryListGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${balanceEntryAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const bankAdd = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${bankAddAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const bankUpdate = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${bankUpdateAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
     };
   } catch (error) {
     return {
@@ -447,4 +741,15 @@ export {
   daybookGet,
   forgotPassSend,
   yearChange,
+  productListGet,
+  productAdd,
+  productEdit,
+  productStockGet,
+  productionGet,
+  balanceListGet,
+  balanceEntryListGet,
+  bankListGet,
+  bankNameGet,
+  bankAdd,
+  bankUpdate,
 };

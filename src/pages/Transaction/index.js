@@ -89,14 +89,17 @@ const Transaction = () => {
   };
 
   const getTransactionParties = async () => {
+    dispatch(setLoader(true));
     var data = await transactionPartyGet(user.token);
+    dispatch(setLoader(false));
     if (data.data) {
       setParties(data.data);
     }
   };
   const handleToggle = async () => {
     if (!show) {
-      await getTransactionParties().then(() => setShow(true));
+      await getTransactionParties();
+      setShow(true);
     } else {
       setShow(false);
     }

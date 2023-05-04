@@ -8,15 +8,16 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import LoadingOverlay from "react-loading-overlay";
 import routes from "routes.js";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SidebarNew from "components/Sidebar/SidebarNew";
 import Index from "pages/ContactUs";
 import Party from "pages/Party";
-import { setFyear } from "features/User/UserSlice";
+import { toggleSidebar } from "features/User/UserSlice";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
+  const dispatch = useDispatch();
   const { loading, collapseSidebar, fyear } = useSelector(
     (store) => store.user
   );
@@ -110,6 +111,7 @@ const Admin = (props) => {
             minHeight: "100vh",
           }}
           ref={mainContent}
+          onTouchStart={() => dispatch(toggleSidebar(false))}
         >
           <AdminNavbar
             {...props}

@@ -15,9 +15,13 @@ import { daybookGet } from "api/api";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import { isDate } from "moment";
 
 const DayBook = () => {
   const [curDate, setCurDate] = useState(new Date());
+  const [curDateString, setCurDateString] = useState(
+    format(new Date(), "yyyy-MM-dd")
+  );
   const [daybookData, setDaybookData] = useState({
     credit: [],
     debit: [],
@@ -72,39 +76,86 @@ const DayBook = () => {
   };
 
   useEffect(() => {
-    getDaybookData();
+    if (curDate != null) {
+      getDaybookData();
+    } else {
+      setDaybookData({
+        credit: [],
+        debit: [],
+        sale: [],
+        puchase: [],
+        expenses: [],
+      });
+    }
   }, [curDate]);
 
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
-      <Row className="text-center mb-2">
-        <Col
-          sm="12"
-          className="d-flex justify-content-center align-items-center"
+      <Row className="text-center mb-2 justify-content-center align-items-center d-none d-sm-flex">
+        <Button className="btn-md btn-outline-primary" onClick={todayClick}>
+          Today
+        </Button>
+        <Button
+          className="btn-md btn-outline-primary </Row>"
+          onClick={prevClick}
         >
-          <Button className="btn-md btn-outline-primary" onClick={todayClick}>
+          Previous
+        </Button>
+        <Input
+          type="date"
+          className="mr-2"
+          style={{ width: "max-content" }}
+          value={curDateString}
+          onChange={(e) => {
+            setCurDateString(e.target.value);
+            if (e.target.value) {
+              setCurDate(e.target.valueAsDate);
+            } else {
+              setCurDate(null);
+            }
+          }}
+        />
+        <Button className=" btn-md btn-outline-primary" onClick={nextClick}>
+          Next
+        </Button>
+      </Row>
+      <Row className="text-center mb-2 justify-content-between align-items-center d-flex d-sm-none">
+        <Col xs={4}>
+          <Button className="btn-sm btn-outline-primary" onClick={todayClick}>
             Today
           </Button>
-          <Button className="btn-md btn-outline-primary" onClick={prevClick}>
+        </Col>
+        <Col xs={4}>
+          <Button className="btn-sm btn-outline-primary" onClick={prevClick}>
             Previous
           </Button>
-          <Input
-            type="date"
-            className=" mr-2"
-            style={{ width: "max-content" }}
-            bsSize="sm"
-            value={format(curDate, "yyyy-MM-dd")}
-            onChange={(e) => setCurDate(e.target.valueAsDate)}
-          />
-
-          <Button className="btn-md btn-outline-primary" onClick={nextClick}>
+        </Col>
+        <Col xs={4}>
+          <Button className="btn-sm btn-outline-primary" onClick={nextClick}>
             Next
           </Button>
         </Col>
       </Row>
+      <Row className="text-center mb-2 justify-content-center align-items-center d-flex d-sm-none">
+        <Input
+          type="date"
+          className="mr-2"
+          style={{ width: "max-content" }}
+          bsSize="sm"
+          value={curDateString}
+          onChange={(e) => {
+            setCurDateString(e.target.value);
+            if (e.target.value) {
+              setCurDate(e.target.valueAsDate);
+            } else {
+              setCurDate(null);
+            }
+          }}
+        />
+      </Row>
       <Row>
         <Col>
-          <Card className="shadow">
+          <Card className="shadow daybookCard">
             <CardBody>
               <Table
                 className="align-items-center table-flush daybookTable"
@@ -118,7 +169,8 @@ const DayBook = () => {
                       className="text-center bg-info borderright0"
                     >
                       <h2 className="text-white">
-                        DayBook {format(curDate, "dd-MM-yyyy")}
+                        DayBook{" "}
+                        {curDate == null ? "" : format(curDate, "dd-MM-yyyy")}
                       </h2>
                     </td>
                   </tr>

@@ -19,6 +19,32 @@ table.dataTable td {
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }
+
+.daybookCard .table td,
+.daybookCard .table th {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.daybookTable td,
+.daybookTable th {
+  padding: 0rem;
+  font-size: 0.75rem !important;
+  padding: 0.5rem !important;
+}
+
+.daybookTable td {
+  border-right: 1px solid black !important;
+  border-bottom: 1px groove rgba(0, 0, 0, 0.05) !important;
+  border-left: 0px !important;
+}
+.daybookTable .borderright0 {
+  border-right: 0px !important;
+}
+.daybookTable .bl-2 {
+  border-left: 2px solid black !important;
+}
+
 .btn-md {
   padding: 0.45rem 1.2rem !important;
 }
@@ -60,27 +86,14 @@ input[type="number"] {
 .dashboardTable th {
   font-size: 1rem !important;
 }
-.daybookTable td,
-.daybookTable th {
-  padding: 0 rem;
-  font-size: 0.75rem !important;
-  padding: 0.5rem !important;
-}
-.daybookTable td {
-  border-right: 1px solid black !important;
-  border-bottom: 1px groove rgba(0, 0, 0, 0.05) !important;
-  border-left: 0px !important;
-}
-.daybookTable .borderright0 {
-  border-right: 0px !important;
-}
-.daybookTable .bl-2 {
-  border-left: 2px solid black !important;
-}
-._loading_overlay_overhelay {
+
+._loading_overlay_overlay {
   z-index: 9999 !important;
 }
 
+.main-content {
+  min-height: 90vh;
+}
 .main-content .navbar-brand img {
   height: 55px;
 }
@@ -125,6 +138,32 @@ html {
 .collapsedSidebarSub {
   padding: 0.65rem 1.5rem !important;
 }
+.invoice {
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125) !important;
+  position: relative;
+}
+.ledger-table td,
+.ledger-table th {
+  font-size: 1rem !important;
+}
+
+.sidebarDropIcon {
+  position: absolute;
+  left: 85%;
+  font-size: 1.5rem !important;
+  transition: -webkit-transform ease-in-out 0.3s;
+  transition: transform ease-in-out 0.3s;
+  transition: transform ease-in-out 0.3s, -webkit-transform ease-in-out 0.3s;
+}
+.sidebarDropIcon.open {
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+}
+body,
+#root {
+  height: 100vh;
+}
 @media (max-width: 575.98px) {
   .main-content-open,
   .main-content-close {
@@ -136,13 +175,4 @@ html {
     max-width: 250px !important;
     z-index: 9999;
   }
-}
-.invoice {
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.125) !important;
-  position: relative;
-}
-.ledger-table td,
-.ledger-table th {
-  font-size: 1rem !important;
 }

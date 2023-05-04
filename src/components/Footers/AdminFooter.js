@@ -9,7 +9,7 @@ const Footer = () => {
             © {new Date().getFullYear()}
             <a
               className="font-weight-bold ml-1"
-              href="#"
+              href="http://prishasoftware.com/"
               rel="noopener noreferrer"
               target="_blank"
             >

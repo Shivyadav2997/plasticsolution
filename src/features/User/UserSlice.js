@@ -5,6 +5,7 @@ const initialState = {
   loading: false,
   fyear: "",
   collapseSidebar: false,
+  isSidebarOpen: false,
 };
 
 try {
@@ -61,10 +62,19 @@ export const userSlice = createSlice({
     toggleSidebar: (state, { payload }) => {
       state.collapseSidebar = payload;
     },
+    keepSidebar: (state, { payload }) => {
+      state.isSidebarOpen = payload;
+    },
   },
 });
 
-export const { login, logout, setLoader, setFyear, toggleSidebar } =
-  userSlice.actions;
+export const {
+  login,
+  logout,
+  setLoader,
+  setFyear,
+  toggleSidebar,
+  keepSidebar,
+} = userSlice.actions;
 
 export default userSlice.reducer;

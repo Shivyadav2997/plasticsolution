@@ -7,7 +7,7 @@ import Login from "pages/Login.js";
 import { MdAccountBox } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { GiExpense, GiFactory } from "react-icons/gi";
-import { AiFillBook, AiOutlineDropbox } from "react-icons/ai";
+import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
@@ -16,13 +16,19 @@ import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
 import Purchase from "pages/Purchase";
-import SalesInvoice from "pages/Sales/CreateInvoice.js";
-import CreateIncoiceDynamic from "pages/Sales/CreateIncoiceDynamic.js";
+import CreateInvoice from "pages/Sales/CreateInvoice.js";
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
 import Account from "pages/Account";
+import Balance from "pages/Balance";
+import Bank from "pages/Bank";
 import Profile from "pages/Profile";
 import ViewTest from "pages/View";
+import ProductList from "pages/Product";
+import ProductStock from "pages/Product/stock";
+import Production from "pages/Production";
+import { FaBalanceScale } from "react-icons/fa";
+import { BsBank } from "react-icons/bs";
 
 var routes = [
   {
@@ -46,6 +52,22 @@ var routes = [
     component: Account,
     layout: "/admin",
     iconCmp: GrTransaction,
+  },
+  {
+    path: "/balance",
+    name: "Balance",
+    icon: "text-primary",
+    component: Balance,
+    layout: "/admin",
+    iconCmp: FaBalanceScale,
+  },
+  {
+    path: "/bank",
+    name: "Bank",
+    icon: "text-yellow",
+    component: Bank,
+    layout: "/admin",
+    iconCmp: AiOutlineBank,
   },
   {
     path: "/transaction",
@@ -95,7 +117,7 @@ var routes = [
         path: "/sales-invoice",
         name: "Create Invoices",
         icon: "",
-        component: CreateIncoiceDynamic,
+        component: CreateInvoice,
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },
@@ -128,7 +150,7 @@ var routes = [
         path: "/purchase-invoice",
         name: "Create Invoices",
         icon: "",
-        component: SalesInvoice,
+        component: CreateInvoice,
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },
@@ -144,18 +166,36 @@ var routes = [
   },
 
   // {
-  //   path: "/product",
   //   name: "Product",
   //   icon: "text-red",
-  //   component: Tables,
   //   layout: "/admin",
   //   iconCmp: AiOutlineDropbox,
+  //   hasChild: true,
+  //   state: "product",
+  //   childRoutes: [
+  //     {
+  //       path: "/product-list",
+  //       name: "Product List",
+  //       icon: "",
+  //       component: ProductList,
+  //       layout: "/admin",
+  //       iconCmp: RiCheckboxBlankCircleLine,
+  //     },
+  //     {
+  //       path: "/product-stock",
+  //       name: "Product Stock",
+  //       icon: "",
+  //       component: ProductStock,
+  //       layout: "/admin",
+  //       iconCmp: RiCheckboxBlankCircleLine,
+  //     },
+  //   ],
   // },
   // {
   //   path: "/production",
   //   name: "Production",
   //   icon: "text-primary",
-  //   component: Index,
+  //   component: Production,
   //   layout: "/admin",
   //   iconCmp: GiFactory,
   // },
@@ -195,12 +235,12 @@ var routes = [
     component: Login,
     layout: "/auth",
   },
-  {
-    path: "/view",
-    name: "View",
-    icon: "ni ni-circle-08 text-pink",
-    component: ViewTest,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/view",
+  //   name: "View",
+  //   icon: "ni ni-circle-08 text-pink",
+  //   component: ViewTest,
+  //   layout: "/admin",
+  // },
 ];
 export default routes;

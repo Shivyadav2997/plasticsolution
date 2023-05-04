@@ -15,7 +15,11 @@ const ViewTest = () => {
           <div className=" p-3 mb-3">
             <div className="invoice">
               <Col xs="12" responsive>
-                <Table style={{ width: "100%" }} className="ledger-table">
+                <Table
+                  style={{ width: "100%" }}
+                  className="ledger-table"
+                  responsive={true}
+                >
                   <tbody>
                     <tr>
                       <td colSpan={4} style={{ width: "50%" }}>
@@ -107,7 +111,7 @@ const ViewTest = () => {
                       <th colspan="1">₹ 102,135&nbsp;Dr </th>
                     </tr>
                     <tr>
-                      <th>
+                      <th colSpan="3">
                         Cls. Balance &nbsp;&nbsp;
                         <Button class="btn btn-default">
                           <b>₹ 102,135.00&nbsp;Dr </b>

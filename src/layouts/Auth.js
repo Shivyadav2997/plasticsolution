@@ -9,11 +9,12 @@ import AuthNavbar from "components/Navbars/AuthNavbar.js";
 import AuthFooter from "components/Footers/AuthFooter.js";
 
 import routes from "routes.js";
-
+import { useSelector, useDispatch } from "react-redux";
+import LoadingOverlay from "react-loading-overlay";
 const Auth = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-
+  const { loading } = useSelector((store) => store.user);
   React.useEffect(() => {
     document.body.classList.add("bg-lightDefault");
     return () => {
@@ -44,35 +45,39 @@ const Auth = (props) => {
 
   return (
     <>
-      <div className="main-content" ref={mainContent}>
-        <AuthNavbar />
-        <div className="header py-7">
-          <Container>
-            <div className="header-body text-center">
-              <Row className="justify-content-center pb-2">
-                <Col>
-                  <NavbarBrand to="/" tag={Link}>
-                    <img
-                      alt="..."
-                      src={require("../assets/img/brand/logo.png")}
-                    />
-                  </NavbarBrand>
-                </Col>
-              </Row>
+      <LoadingOverlay active={loading} spinner>
+        <div style={{ minHeight: "100vh" }}>
+          <div className="main-content" ref={mainContent}>
+            <AuthNavbar />
+            <div className="header py-7">
+              <Container>
+                <div className="header-body text-center">
+                  <Row className="justify-content-center pb-2">
+                    <Col>
+                      <NavbarBrand to="/" tag={Link}>
+                        <img
+                          alt="..."
+                          src={require("../assets/img/brand/logo.png")}
+                        />
+                      </NavbarBrand>
+                    </Col>
+                  </Row>
+                </div>
+              </Container>
             </div>
-          </Container>
+            {/* Page content */}
+            <Container className="mt--7">
+              <Row className="justify-content-center">
+                <Switch>
+                  {getRoutes(routes)}
+                  <Redirect from="*" to="/auth/login" />
+                </Switch>
+              </Row>
+            </Container>
+          </div>
+          <AuthFooter />
         </div>
-        {/* Page content */}
-        <Container className="mt--7">
-          <Row className="justify-content-center">
-            <Switch>
-              {getRoutes(routes)}
-              <Redirect from="*" to="/auth/login" />
-            </Switch>
-          </Row>
-        </Container>
-      </div>
-      <AuthFooter />
+      </LoadingOverlay>
     </>
   );
 };

@@ -48,7 +48,9 @@ const Login = () => {
       setErrorPass("Password is required");
     }
     if (uname && pass) {
+      dispatch(setLoader(true));
       const loginResponse = await loginApi(uname, pass);
+      dispatch(setLoader(false));
       if (loginResponse.sucess) {
         dispatch(login(loginResponse));
         history.push("/admin/index");
