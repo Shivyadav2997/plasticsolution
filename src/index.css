@@ -5,8 +5,9 @@
 }
 
 table.dataTable tbody th,
-table.dataTable tbody td:not(:first-child) {
-  padding: 5px 10px !important;
+table.dataTable tbody td {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
 }
 
 table.dataTable th,
@@ -14,10 +15,14 @@ table.dataTable td {
   box-sizing: initial;
 }
 
-.card .table td:not(:first-child),
+.card .table td,
+.card .table th {
+  padding-right: 1rem !important;
+}
+
+.card .table td:not(.all):not(:first-child),
 .card .table th {
   padding-left: 1rem !important;
-  padding-right: 1rem !important;
 }
 
 .daybookCard .table td,

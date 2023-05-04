@@ -118,6 +118,8 @@ const Bank = () => {
   const handleToggle = async () => {
     if (show) {
       setBank(null);
+    } else {
+      await getBankNames();
     }
     setShow(!show);
   };
@@ -180,7 +182,6 @@ const Bank = () => {
 
   useEffect(() => {
     getbanks();
-    getBankNames();
   }, [fyear]);
 
   return (

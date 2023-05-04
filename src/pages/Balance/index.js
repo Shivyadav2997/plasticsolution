@@ -63,6 +63,9 @@ const Balance = () => {
   ];
 
   const handleToggle = async () => {
+    if (!show) {
+      getbanks();
+    }
     setShow(!show);
   };
 
@@ -198,7 +201,6 @@ const Balance = () => {
       getBalanceEntries();
     } else {
       getBalances();
-      getbanks();
     }
   }, [showBalEntry, fyear]);
 
