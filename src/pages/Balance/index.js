@@ -11,6 +11,7 @@ import {
   balanceEntryListGet,
   bankListGet,
   balanceUpdate,
+  deleteRecord,
 } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -36,6 +37,8 @@ const Balance = () => {
 
   const [banks, setbanks] = useState([]);
   const [balances, setbalances] = useState([]);
+  const [balance, setBalance] = useState(null);
+  const [showDelete, setShowDelete] = useState(false);
   const [balanceEntries, setbalanceEntries] = useState([]);
   const [addType, setAddType] = useState(1);
   const childRef = useRef(null);
@@ -62,6 +65,13 @@ const Balance = () => {
     // },
   ];
 
+  const handleShowConfirmation = () => {
+    if (showDelete) {
+      setBalance(null);
+    }
+    setShowDelete(!showDelete);
+  };
+
   const handleToggle = async () => {
     if (!show) {
       getbanks();
@@ -82,10 +92,6 @@ const Balance = () => {
     {
       title: "Balance",
       data: "Balance",
-    },
-    {
-      title: "Action",
-      data: null,
     },
   ];
 
@@ -194,6 +200,37 @@ const Balance = () => {
     }
   };
 
+  const deleteBalance = async () => {
+    if (balance != null) {
+      handleShowConfirmation();
+      dispatch(setLoader(true));
+      const resp = await deleteRecord(user.token, {
+        type: "bank_entry",
+        id: balance.id,
+      });
+
+      if (resp.data.sucess == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
+        getBalanceEntries();
+        setBalance(null);
+        dispatch(setLoader(false));
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
+      }
+    }
+  };
+
+  const deleteClick = (cellData, rowData, row, col) => {
+    setBalance(cellData);
+    handleShowConfirmation();
+  };
+
   useEffect(() => {
     setbalanceEntries([]);
     setbalances([]);
@@ -206,6 +243,15 @@ const Balance = () => {
 
   return (
     <>
+      <ConfirmationDialog
+        show={showDelete}
+        handleToggle={handleShowConfirmation}
+        title="Delete"
+        handleOkay={deleteBalance}
+        handleCancel={handleShowConfirmation}
+      >
+        Are You Sure you want to delete this ?
+      </ConfirmationDialog>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         {!showBalEntry ? (
           <>
@@ -341,9 +387,9 @@ const Balance = () => {
                           title="Balance"
                           withCard={true}
                           hasEdit={false}
+                          hasDelete={false}
                           custom={true}
                           ref={childRef}
-                          // deleteClick={deleteClick}
                         />
                       </div>
                     </Row>
@@ -385,7 +431,7 @@ const Balance = () => {
                             hasEdit={false}
                             custom={true}
                             ref={childRef2}
-                            // deleteClick={deleteClick}
+                            deleteClick={deleteClick}
                           />
                         </div>
                       </div>

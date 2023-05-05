@@ -6,7 +6,13 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { bankListGet, bankNameGet, bankAdd, bankUpdate } from "api/api";
+import {
+  bankListGet,
+  bankNameGet,
+  bankAdd,
+  bankUpdate,
+  deleteRecord,
+} from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
@@ -31,7 +37,6 @@ const Bank = () => {
 
   const [banks, setbanks] = useState([]);
   const [bankNames, setBankNames] = useState([]);
-  const [balanceEntries, setbalanceEntries] = useState([]);
   const [show, setShow] = useState(false);
   const [bank, setBank] = useState(null);
   const childRef = useRef(null);
@@ -39,6 +44,7 @@ const Bank = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const formRef = useRef(null);
+  const [showDelete, setShowDelete] = useState(false);
 
   var colDefs = [
     // {
@@ -175,6 +181,44 @@ const Bank = () => {
     }
   };
 
+  const handleShowConfirmation = () => {
+    if (showDelete) {
+      setBank(null);
+    }
+    setShowDelete(!showDelete);
+  };
+
+  const deleteClick = (cellData, rowData, row, col) => {
+    setBank(cellData);
+    handleShowConfirmation();
+  };
+
+  const deleteBalance = async () => {
+    if (bank != null) {
+      handleShowConfirmation();
+      dispatch(setLoader(true));
+      const resp = await deleteRecord(user.token, {
+        type: "bank",
+        id: bank.id,
+      });
+
+      if (resp.data.sucess == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
+        getbanks();
+        setBank(null);
+        dispatch(setLoader(false));
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
+      }
+    }
+  };
+
   const editClick = (cellData, rowData, row, col) => {
     setBank(cellData);
     handleToggle();
@@ -186,6 +230,15 @@ const Bank = () => {
 
   return (
     <>
+      <ConfirmationDialog
+        show={showDelete}
+        handleToggle={handleShowConfirmation}
+        title="Delete"
+        handleOkay={deleteBalance}
+        handleCancel={handleShowConfirmation}
+      >
+        Are You Sure you want to delete this ?
+      </ConfirmationDialog>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <>
           <CustomModal
@@ -335,7 +388,7 @@ const Bank = () => {
                         withCard={true}
                         custom={true}
                         ref={childRef}
-                        // deleteClick={deleteClick}
+                        deleteClick={deleteClick}
                         editClick={editClick}
                       />
                     </div>
