@@ -103,6 +103,7 @@ const Balance = () => {
     {
       title: "Mode",
       data: "mode",
+      className: "all",
     },
     {
       title: "Deposit",
@@ -152,7 +153,7 @@ const Balance = () => {
 
   const validate = Yup.object({
     amount: Yup.number().required("Required"),
-    description: Yup.string().required("Required"),
+    // description: Yup.string().required("Required"),
     balance_mode: Yup.string().required("Required"),
     date: Yup.date().required("Required"),
   });

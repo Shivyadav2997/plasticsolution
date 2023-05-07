@@ -5,7 +5,13 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
-import { creditDebitListGet, accountListGet } from "api/api";
+import {
+  creditDebitListGet,
+  accountListGet,
+  transactionPartyGet,
+  bankListGet,
+  addCreditDebit,
+} from "api/api";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -17,6 +23,7 @@ import { FaWhatsapp, FaPhoneAlt, FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import { format, parse } from "date-fns";
 
 const Party = () => {
   var Toast = Swal.mixin({
@@ -29,14 +36,17 @@ const Party = () => {
 
   const childRef = useRef(null);
   const childRef2 = useRef(null);
+  const [parties, setParties] = useState([]);
   const [accounts, setAccounts] = useState([]);
+  const [banks, setbanks] = useState([]);
   const [creditDebit, setCreditDebit] = useState([]);
   const [showAccount, setShowAccount] = useState(true);
   const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
-
+  const [show, setShow] = useState(false);
+  const [addType, setAddType] = useState(1);
   const dispatch = useDispatch();
-
+  const formRef = useRef(null);
   const viewInvoice = (cellData, rowData, row, col) => {
     console.log(rowData);
   };
@@ -46,6 +56,44 @@ const Party = () => {
   const sendWhatsappPdf = (cellData, rowData, row, col) => {
     console.log(rowData);
   };
+
+  const validate = Yup.object({
+    pid: Yup.string().required("Required"),
+    amount: Yup.number().required("Required"),
+    billtype: Yup.string().required("Required"),
+    date: Yup.date().required("Required"),
+  });
+
+  const getbanks = async () => {
+    dispatch(setLoader(true));
+    var data = await bankListGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      var data2 = data.data;
+      setbanks(data2);
+    } else {
+      setbanks([]);
+    }
+  };
+
+  const getTransactionParties = async () => {
+    dispatch(setLoader(true));
+    var data = await transactionPartyGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setParties(data.data);
+    }
+  };
+
+  const handleToggle = async () => {
+    if (!show) {
+      await getTransactionParties();
+      await getbanks();
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  };
   const columns = [
     {
       title: "No",
@@ -54,6 +102,7 @@ const Party = () => {
     {
       title: "Party Name",
       data: "party",
+      className: "all",
     },
     {
       title: "Without Outstanding",
@@ -111,6 +160,7 @@ const Party = () => {
           </>
         );
       },
+      className: "all",
     },
   ];
 
@@ -122,6 +172,7 @@ const Party = () => {
     {
       title: "Party Name",
       data: "party",
+      className: "all",
     },
     {
       title: "Type",
@@ -155,6 +206,37 @@ const Party = () => {
 
   var colDefs = [];
 
+  const addRecord = async (payload) => {
+    let resp = null;
+
+    dispatch(setLoader(true));
+    if (addType == 1) {
+      resp = await addCreditDebit(user.token, {
+        type: "credit",
+        ...payload,
+      });
+    } else {
+      resp = await addCreditDebit(user.token, {
+        type: "debit",
+        ...payload,
+      });
+    }
+    Toast.fire({
+      icon: resp.data.success == 1 ? "success" : "error",
+      title:
+        resp.data.success == 1
+          ? addType == 1
+            ? "Credit Added Successfully"
+            : "Debit Added Successfully"
+          : "Something wen't wrong",
+    });
+    dispatch(setLoader(false));
+    if (resp.data.success == 1) {
+      handleToggle();
+      getAccounts();
+    }
+  };
+
   const getAccounts = async () => {
     setLoading(true);
     const data = await accountListGet(user.token);
@@ -179,6 +261,140 @@ const Party = () => {
 
   return (
     <>
+      <CustomModal
+        show={show}
+        title={addType == 1 ? "Credt" : "Debit"}
+        handleToggle={handleToggle}
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={() => formRef.current.handleSubmit()}
+          >
+            Save
+          </Button>
+        }
+      >
+        <Formik
+          initialValues={{
+            pid: "",
+            wAmount: "",
+            bAmount: "",
+            amount: "",
+            billtype: "",
+            date: format(new Date(), "yyyy-MM-dd"),
+            description: "",
+          }}
+          validationSchema={validate}
+          onSubmit={(values) => {
+            addRecord(values);
+          }}
+          innerRef={formRef}
+          validateOnBlur={false}
+          validateOnChange={false}
+        >
+          {(formik) => (
+            <div>
+              <Form>
+                <CustomInput
+                  name="pid"
+                  type="select"
+                  label="Party"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    const party = parties.find((x) => x.pid == e.target.value);
+                    formik.setFieldValue(
+                      "wAmount",
+                      party ? party.withoutamt : ""
+                    );
+                    formik.setFieldValue("bAmount", party ? party.billamt : "");
+                  }}
+                  options={[
+                    <option value="">Select Party</option>,
+                    ...parties.map((opt) => {
+                      return <option value={opt.pid}>{opt.b_name}</option>;
+                    }),
+                  ]}
+                />
+
+                <Row xs="2">
+                  <Col>
+                    <CustomInput
+                      placeholder=""
+                      name="wAmount"
+                      type="text"
+                      label="Without Amt. (Outstanding)"
+                      disabled
+                    />
+                  </Col>
+                  <Col>
+                    <CustomInput
+                      placeholder=""
+                      name="bAmount"
+                      type="text"
+                      label="Bill Amt. (Outstanding)"
+                      disabled
+                    />
+                  </Col>
+                </Row>
+
+                <CustomInput
+                  placeholder={addType == 1 ? "Credit Amount" : "Debit Amount"}
+                  name="amount"
+                  type="number"
+                  label={addType == 1 ? "Credit Amount" : "Debit Amount"}
+                />
+
+                <CustomInput
+                  name="billtype"
+                  type="select"
+                  label="Type"
+                  options={[
+                    { label: "Select Type", value: "" },
+                    { label: "WithoutAmt", value: "WithoutAmt" },
+                    { label: "BillAmt", value: "BillAmt" },
+                  ].map((opt) => {
+                    return <option value={opt.value}>{opt.label}</option>;
+                  })}
+                />
+                {/* 
+                <CustomInput
+                  name="mode"
+                  type="select"
+                  label="Mode"
+                  options={[
+                    <option value="">Select Mode</option>,
+                    <option value="0">Cash</option>,
+                    ...banks.map((opt) => {
+                      return (
+                        <option value={opt.id}>
+                          {opt.bank_name}-{opt.ac_holder}
+                        </option>
+                      );
+                    }),
+                  ]}
+                /> */}
+
+                <CustomInput
+                  placeholder=""
+                  name="date"
+                  type="date"
+                  label="Date"
+                />
+                <CustomInput
+                  placeholder="Description"
+                  name="description"
+                  type="textarea"
+                  label="Note"
+                />
+              </Form>
+            </div>
+          )}
+        </Formik>
+      </CustomModal>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         {showAccount ? (
           <>
@@ -195,10 +411,22 @@ const Party = () => {
               </Col>
               <Col>
                 <Row className="justify-content-end mr-0 ml-0">
-                  <Button className="btn-md btn-outline-success">
+                  <Button
+                    className="btn-md btn-outline-success"
+                    onClick={() => {
+                      setAddType(1);
+                      handleToggle();
+                    }}
+                  >
                     Add Credit
                   </Button>
-                  <Button className="btn-md btn-outline-danger">
+                  <Button
+                    className="btn-md btn-outline-danger"
+                    onClick={() => {
+                      setAddType(2);
+                      handleToggle();
+                    }}
+                  >
                     Add Debit
                   </Button>
                 </Row>

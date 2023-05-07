@@ -29,6 +29,13 @@ import {
   bankAddAction,
   bankUpdateAction,
   balanceUpdateAction,
+  productListAction,
+  productAddAction,
+  productUnitAction,
+  productStockAction,
+  productStockEntryAction,
+  creditDebitAction,
+  addUseStock,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -487,15 +494,36 @@ const yearChange = async (payload) => {
 
 const productListGet = async (token) => {
   try {
-    // const resp = await axios.get(
-    //   baseUrl + `?action=${partyListAction}&token=${token}`
-    // );
-    // if (resp.data.login == 0) {
-    //   window.location.href = `${window.location.origin}/auth/login`;
-    // }
+    const resp = await axios.get(
+      baseUrl + `?action=${productListAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
-      // data: resp.data,
+      data: resp.data,
+      // data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
       data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productUnitGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${productUnitAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      // data: [],
       message: "Api call success",
     };
   } catch (error) {
@@ -508,20 +536,21 @@ const productListGet = async (token) => {
 
 const productAdd = async (token, payload) => {
   try {
-    // const resp = await axios.get(
-    //   baseUrl + `?action=${partyAddAction}&token=${token}&${getParams(payload)}`
-    // );
-    // if (resp.data.login == 0) {
-    //   window.location.href = `${window.location.origin}/auth/login`;
-    // }
-    return {
-      data: [],
-      message: "Api call success",
-    };
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${productAddAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     // return {
-    //   data: resp.data,
-    //   message: resp.data.msg,
+    //   data: [],
+    //   message: "Api call success",
     // };
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
   } catch (error) {
     return {
       data: [],
@@ -557,15 +586,36 @@ const productEdit = async (token, payload) => {
 
 const productStockGet = async (token) => {
   try {
-    // const resp = await axios.get(
-    //   baseUrl + `?action=${partyListAction}&token=${token}`
-    // );
-    // if (resp.data.login == 0) {
-    //   window.location.href = `${window.location.origin}/auth/login`;
-    // }
+    const resp = await axios.get(
+      baseUrl + `?action=${productStockAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
-      // data: resp.data,
+      data: resp.data,
+      // data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
       data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const productStockEntryGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${productStockEntryAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      // data: [],
       message: "Api call success",
     };
   } catch (error) {
@@ -739,6 +789,47 @@ const bankUpdate = async (token, payload) => {
   }
 };
 
+const addCreditDebit = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${creditDebitAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const addUseProductStock = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${addUseStock}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -764,9 +855,11 @@ export {
   forgotPassSend,
   yearChange,
   productListGet,
+  productUnitGet,
   productAdd,
   productEdit,
   productStockGet,
+  productStockEntryGet,
   productionGet,
   balanceListGet,
   balanceEntryListGet,
@@ -775,4 +868,6 @@ export {
   bankAdd,
   bankUpdate,
   balanceUpdate,
+  addCreditDebit,
+  addUseProductStock,
 };

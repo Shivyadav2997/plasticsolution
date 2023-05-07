@@ -133,14 +133,14 @@ const Bank = () => {
   const validate = Yup.object({
     bank_name: Yup.string().required("Required"),
     ac_holder: Yup.string().required("Required"),
-    ac: Yup.string().required("Required"),
-    op: Yup.number().when("ac", {
-      is: bank == null,
-      then: Yup.number().required("Required"),
-    }),
-    ifsc: Yup.string().required("Required"),
-    branch: Yup.string().required("Required"),
-    description: Yup.string().required("Required"),
+    // ac: Yup.string().required("Required"),
+    // op: Yup.number().when("ac", {
+    //   is: bank == null,
+    //   then: Yup.number().required("Required"),
+    // }),
+    // ifsc: Yup.string().required("Required"),
+    // branch: Yup.string().required("Required"),
+    // description: Yup.string().required("Required"),
   });
 
   const addBank = async (payload) => {

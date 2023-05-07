@@ -89,6 +89,7 @@ const Sales = () => {
     {
       title: "Name",
       data: "b_name",
+      className: "all",
     },
     {
       title: "BNo",
@@ -126,6 +127,7 @@ const Sales = () => {
     {
       title: "Month",
       data: "Month",
+      className: "all",
     },
     {
       title: "No",
@@ -148,6 +150,7 @@ const Sales = () => {
     {
       title: "Total",
       data: "total",
+      className: "all",
     },
   ];
 

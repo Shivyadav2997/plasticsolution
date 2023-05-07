@@ -5,7 +5,13 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
-import { productListGet, productAdd, productEdit, deleteRecord } from "api/api";
+import {
+  productListGet,
+  productAdd,
+  productEdit,
+  deleteRecord,
+  productUnitGet,
+} from "api/api";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -28,6 +34,7 @@ const ProductList = () => {
   });
 
   const [products, setProducts] = useState([]);
+  const [units, setUnits] = useState([]);
   const { user, fyear } = useSelector((store) => store.user);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -37,9 +44,20 @@ const ProductList = () => {
 
   const dispatch = useDispatch();
 
-  const handleToggle = () => {
+  const getProductUnits = async () => {
+    dispatch(setLoader(true));
+    var data = await productUnitGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setUnits(data.data);
+    }
+  };
+
+  const handleToggle = async () => {
     if (show) {
       setProduct(null);
+    } else {
+      await getProductUnits();
     }
     setShow(!show);
   };
@@ -50,11 +68,11 @@ const ProductList = () => {
     setShowDelete(!showDelete);
   };
   const validate = Yup.object({
-    name: Yup.string().required("Required"),
-    type: Yup.string().required("Required"),
+    item_name: Yup.string().required("Required"),
+    item_type: Yup.string().required("Required"),
     unit: Yup.string().required("Required"),
-    hns: Yup.number().required("Required"),
-    gst: Yup.string().required("Required"),
+    hsn: Yup.number().required("Required"),
+    // gst: Yup.string().required("Required"),
   });
 
   const columns = [
@@ -64,20 +82,20 @@ const ProductList = () => {
     },
     {
       title: "Item",
-      data: "item",
+      data: "item_name",
       className: "all",
     },
     {
       title: "Type",
-      data: "type",
+      data: "item_type",
     },
     {
       title: "Unit",
       data: "unit",
     },
     {
-      title: "HNS",
-      data: "hns",
+      title: "HSN",
+      data: "hsn",
     },
     {
       title: "GST %",
@@ -85,7 +103,7 @@ const ProductList = () => {
     },
     {
       title: "Description",
-      data: "desc",
+      data: "description",
     },
     {
       title: "Action",
@@ -98,7 +116,7 @@ const ProductList = () => {
       handleShowConfirmation();
       dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
-        type: "party",
+        type: "product",
         id: product.id,
       });
 
@@ -142,19 +160,19 @@ const ProductList = () => {
     dispatch(setLoader(false));
     handleToggle();
 
-    // if (resp.data.sucess == 1) {
-    //   Toast.fire({
-    //     icon: "success",
-    //     title: resp.message,
-    //   });
-    //   handleToggle();
-    //   getProducts();
-    // } else {
-    //   Toast.fire({
-    //     icon: "error",
-    //     title: resp.message,
-    //   });
-    // }
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: "Product Added Successfully",
+      });
+      handleToggle();
+      getProducts();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: "Something wen't wrong",
+      });
+    }
   };
 
   const editProduct = async (payload) => {
@@ -200,12 +218,12 @@ const ProductList = () => {
         >
           <Formik
             initialValues={{
-              name: "",
-              type: "",
-              unit: "",
-              hns: "",
-              gst: "",
-              desc: "",
+              item_name: product?.item_name,
+              item_type: product ? product.item_type : "Goods",
+              unit: product?.unit,
+              hsn: product?.hsn,
+              gst: product?.gst,
+              description: product?.description,
             }}
             validationSchema={validate}
             onSubmit={(values) => {
@@ -225,11 +243,11 @@ const ProductList = () => {
                   <CustomInput
                     placeholder="Item Name"
                     label="Item Name"
-                    name="name"
+                    name="item_name"
                     type="text"
                   />
                   <CustomInput
-                    name="type"
+                    name="item_type"
                     type="select"
                     label="Type"
                     options={[
@@ -243,16 +261,21 @@ const ProductList = () => {
                     name="unit"
                     type="select"
                     label="Unit"
-                    options={[{ label: "Select Unit", value: "" }].map(
-                      (opt) => {
-                        return <option value={opt.value}>{opt.label}</option>;
-                      }
-                    )}
+                    options={[
+                      <option value="">Select Unit</option>,
+                      ...units.map((opt) => {
+                        return (
+                          <option value={opt.code}>
+                            {opt.name}-{opt.code}
+                          </option>
+                        );
+                      }),
+                    ]}
                   />
                   <CustomInput
-                    placeholder="HNS"
-                    label="HNS"
-                    name="hns"
+                    placeholder="HSN"
+                    label="HSN"
+                    name="hsn"
                     type="number"
                   />
                   <CustomInput
@@ -264,7 +287,7 @@ const ProductList = () => {
                   <CustomInput
                     placeholder="Description"
                     label="Description"
-                    name="desc"
+                    name="description"
                     type="text"
                   />
                 </Form>
@@ -307,8 +330,8 @@ const ProductList = () => {
                   data={products}
                   //   columndefs={colDefs}
                   title="Product List"
-                  //   deleteClick={deleteClick}
-                  //   editClick={editClick}
+                  deleteClick={deleteClick}
+                  editClick={editClick}
                 />
               </div>
             </Row>

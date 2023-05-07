@@ -136,6 +136,7 @@ const Transaction = () => {
     {
       title: "Party",
       data: "pid",
+      className: "all",
     },
     {
       title: "Type",
@@ -301,7 +302,7 @@ const Transaction = () => {
     <>
       <CustomModal
         show={show}
-        title={`Recieve`}
+        title={addType == 1 ? `Recieve` : `Payment`}
         handleToggle={handleToggle}
         footer={
           <Button

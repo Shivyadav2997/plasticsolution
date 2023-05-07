@@ -165,32 +165,32 @@ var routes = [
     ],
   },
 
-  // {
-  //   name: "Product",
-  //   icon: "text-red",
-  //   layout: "/admin",
-  //   iconCmp: AiOutlineDropbox,
-  //   hasChild: true,
-  //   state: "product",
-  //   childRoutes: [
-  //     {
-  //       path: "/product-list",
-  //       name: "Product List",
-  //       icon: "",
-  //       component: ProductList,
-  //       layout: "/admin",
-  //       iconCmp: RiCheckboxBlankCircleLine,
-  //     },
-  //     {
-  //       path: "/product-stock",
-  //       name: "Product Stock",
-  //       icon: "",
-  //       component: ProductStock,
-  //       layout: "/admin",
-  //       iconCmp: RiCheckboxBlankCircleLine,
-  //     },
-  //   ],
-  // },
+  {
+    name: "Product",
+    icon: "text-red",
+    layout: "/admin",
+    iconCmp: AiOutlineDropbox,
+    hasChild: true,
+    state: "product",
+    childRoutes: [
+      {
+        path: "/product-list",
+        name: "Product List",
+        icon: "",
+        component: ProductList,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+      {
+        path: "/product-stock",
+        name: "Product Stock",
+        icon: "",
+        component: ProductStock,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+    ],
+  },
   // {
   //   path: "/production",
   //   name: "Production",

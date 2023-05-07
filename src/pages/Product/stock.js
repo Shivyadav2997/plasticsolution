@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
-import { productStockGet } from "api/api";
+import { productStockGet, productStockEntryGet, productListGet } from "api/api";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -17,6 +17,7 @@ import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import { format } from "date-fns";
 
 const ProductStock = () => {
   var Toast = Swal.mixin({
@@ -27,22 +28,33 @@ const ProductStock = () => {
     timer: 1500,
   });
 
-  const [products, setProducts] = useState([]);
+  const [productStockList, setProductStockList] = useState([]);
   const [productStock, setproductStock] = useState([]);
+  const [products, setProducts] = useState([]);
   const { user, fyear } = useSelector((store) => store.user);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAllStock, setShowAllStock] = useState(true);
+  const [addType, setAddType] = useState(1);
 
   const inputRef = useRef(null);
 
   const dispatch = useDispatch();
 
+  const getProducts = async () => {
+    dispatch(setLoader(true));
+    const data = await productListGet(user.token);
+    setProducts(data.data);
+    dispatch(setLoader(false));
+  };
+
   const handleToggle = () => {
     if (show) {
       setProduct(null);
+    } else {
+      getProducts();
     }
     setShow(!show);
   };
@@ -65,12 +77,16 @@ const ProductStock = () => {
     },
     {
       title: "Name",
-      data: "Name",
+      data: "name",
       className: "all",
     },
     {
       title: "Stock",
       data: "stock",
+    },
+    {
+      title: "Unit",
+      data: "unit",
     },
     {
       title: "Date",
@@ -88,12 +104,21 @@ const ProductStock = () => {
     },
     {
       title: "Name",
-      data: "Name",
+      data: "name",
       className: "all",
     },
     {
-      title: "Stock",
-      data: "stock",
+      title: "Type",
+      data: "type",
+    },
+    {
+      title: "Stock Type",
+      data: "stock_type",
+    },
+    {
+      title: "Qty",
+      data: "qty",
+      className: "all",
     },
     {
       title: "Date",
@@ -104,14 +129,14 @@ const ProductStock = () => {
   const getProductStock = async () => {
     setLoading(true);
     const data = await productStockGet(user.token);
-    setProducts(data.data);
+    setProductStockList(data.data);
     setLoading(false);
   };
 
   const getIndividualStock = async () => {
     setLoading(true);
-    const data = await productStockGet(user.token);
-    setProducts(data.data);
+    const data = await productStockEntryGet(user.token);
+    setproductStock(data.data);
     setLoading(false);
   };
 
@@ -149,9 +174,10 @@ const ProductStock = () => {
             >
               <Formik
                 initialValues={{
-                  product: "",
-                  date: "",
+                  product: product?.id,
+                  date: format(new Date(), "yyyy-MM-dd"),
                   qty: "",
+                  curStock: product?.stock,
                 }}
                 validationSchema={validate}
                 onSubmit={(values) => {
@@ -172,13 +198,16 @@ const ProductStock = () => {
                         name="unit"
                         type="select"
                         label="Product"
-                        options={[{ label: "Select Product", value: "" }].map(
-                          (opt) => {
+                        options={[
+                          <option value="">Select Product</option>,
+                          ...products.map((opt) => {
                             return (
-                              <option value={opt.value}>{opt.label}</option>
+                              <option value={opt.id ? opt.id : 1}>
+                                {opt.item_name}
+                              </option>
                             );
-                          }
-                        )}
+                          }),
+                        ]}
                       />
                       <CustomInput
                         placeholder="Quantity"
@@ -237,7 +266,7 @@ const ProductStock = () => {
                     <CustomTable
                       cols={columns}
                       dark={false}
-                      data={products}
+                      data={productStockList}
                       //   columndefs={colDefs}
                       title="Product Stock List"
                       //   deleteClick={deleteClick}
@@ -269,15 +298,12 @@ const ProductStock = () => {
                 <div className="col">
                   <div>
                     <CustomTable
-                      cols={columns}
+                      cols={columns2}
                       dark={false}
                       data={productStock}
-                      //   columndefs={colDefs}
                       title="Stock Entry"
                       hasEdit={false}
                       hasDelete={false}
-                      //   deleteClick={deleteClick}
-                      //   editClick={editClick}
                     />
                   </div>
                 </div>

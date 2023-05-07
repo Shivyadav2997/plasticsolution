@@ -127,6 +127,7 @@ const Expense = () => {
     {
       title: "Type",
       data: "type",
+      className: "all",
     },
     {
       title: "Mode",
@@ -154,10 +155,12 @@ const Expense = () => {
     {
       title: "Month",
       data: "Month",
+      className: "all",
     },
     {
       title: "Expenses Amount",
       data: "Amount",
+      className: "all",
     },
   ];
 
