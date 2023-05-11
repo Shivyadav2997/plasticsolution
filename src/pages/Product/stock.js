@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
-import { productStockGet, productStockEntryGet, productListGet } from "api/api";
+import { productStockGet, productStockEntryGet, productListGet,addUseProductStock,deleteRecord } from "api/api";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -13,7 +13,8 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Loader from "components/Custom/Loader";
-import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
+import { FaPlus,FaCopy } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
@@ -50,14 +51,48 @@ const ProductStock = () => {
     dispatch(setLoader(false));
   };
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     if (show) {
       setProduct(null);
     } else {
-      getProducts();
+      setAddType(1);
+      await getProducts();
     }
     setShow(!show);
   };
+  
+  const addUseProduct = async (productEdit,type) => {
+    if (!show) {
+      await getProducts();
+      setAddType(type)
+      setProduct(productEdit);
+    }
+    setShow(!show);
+  };
+  
+
+  
+  const addUseStock = async (payload) => {
+    dispatch(setLoader(true));
+    const resp = await addUseProductStock(user.token, payload);
+    dispatch(setLoader(false));
+    handleToggle();
+
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: addType == 1?"Stock Added Successfully":"Stock Used Successfully",
+      });
+      handleToggle();
+      getProductStock();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: "Something wen't wrong",
+      });
+    }
+  };
+
   const handleShowConfirmation = () => {
     if (showDelete) {
       setProduct(null);
@@ -65,10 +100,11 @@ const ProductStock = () => {
     setShowDelete(!showDelete);
   };
   const validate = Yup.object({
-    product: Yup.string().required("Required"),
+    productid: Yup.string().required("Required"),
     date: Yup.date().required("Required"),
     qty: Yup.number().required("Required"),
   });
+
 
   const columns = [
     {
@@ -95,6 +131,49 @@ const ProductStock = () => {
     {
       title: "Action",
       data: null,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            {" "}
+            <div className="d-flex gap-10">
+              <div>
+                <Button
+                  className="btn-outline-primary btn-icon btn-sm"
+                  color="default"
+                  onClick={() => addUseProduct(rowData,1)}
+                >
+                  <span>
+                    <FaPlus size={12} /> Add
+                  </span>
+                </Button>
+              </div>
+              <div>
+                <Button
+                  className="btn-outline-info btn-icon btn-sm"
+                  onClick={() => addUseProduct(rowData,2)}
+                >
+                  <span>
+                    <FaCopy size={12} /> Use
+                  </span>
+                </Button>
+              </div>
+              <div>
+                <Button
+                  className="btn-danger btn-icon btn-sm"
+                  onClick={() => deleteClick(cellData, rowData, row, col)}
+                >
+                  <span>
+                    <MdDelete size={16} />
+                  </span>
+                </Button>
+              </div>
+              
+            </div>
+          </>
+        );
+      },
+      className: "all",
     },
   ];
   const columns2 = [
@@ -140,6 +219,37 @@ const ProductStock = () => {
     setLoading(false);
   };
 
+  const deleteStock = async () => {
+    if (product != null) {
+      handleShowConfirmation();
+      dispatch(setLoader(true));
+      const resp = await deleteRecord(user.token, {
+        type: "product_stock",
+        id: product.id,
+      });
+
+      if (resp.data.sucess == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
+        getProductStock();
+        setProduct(null);
+        dispatch(setLoader(false));
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
+      }
+    }
+  };
+
+  const deleteClick = (cellData, rowData, row, col) => {
+    setProduct(cellData);
+    handleShowConfirmation();
+  };
+
   useEffect(() => {
     if (showAllStock) {
       getProductStock();
@@ -156,7 +266,7 @@ const ProductStock = () => {
             <CustomModal
               show={show}
               handleToggle={handleToggle}
-              title={`${product ? "Edit" : "Add"} Stock`}
+              title={`${addType==1 ? "Add" : "Use"} Stock`}
               footer={
                 <Button
                   type="submit"
@@ -174,18 +284,25 @@ const ProductStock = () => {
             >
               <Formik
                 initialValues={{
-                  product: product?.id,
+                  productid: Number(product?.id),
                   date: format(new Date(), "yyyy-MM-dd"),
                   qty: "",
                   curStock: product?.stock,
                 }}
                 validationSchema={validate}
                 onSubmit={(values) => {
-                  //   if (product) {
-                  //     editProduct({ id: product.id, ...values });
-                  //   } else {
-                  //     addProduct(values);
-                  //   }
+                  if(addType==1){
+                    addUseStock({
+                      type: "ADD",
+                      ...values,
+                    })
+                  }
+                  else{
+                    addUseStock({
+                      type: "USE",
+                      ...values,
+                    })
+                  }
                 }}
                 validateOnBlur={false}
                 validateOnChange={false}
@@ -195,20 +312,31 @@ const ProductStock = () => {
                   <div>
                     <Form>
                       <CustomInput
-                        name="unit"
+                        name="productid"
                         type="select"
                         label="Product"
+                        disabled={product != null}
                         options={[
                           <option value="">Select Product</option>,
                           ...products.map((opt) => {
                             return (
-                              <option value={opt.id ? opt.id : 1}>
+                              <option value={opt.id}>
                                 {opt.item_name}
                               </option>
                             );
                           }),
                         ]}
                       />
+                      {
+                        product!=null &&
+                        <CustomInput
+                        placeholder="Quantity"
+                        label="Stock"
+                        name="curStock"
+                        type="number"
+                        disabled={true}
+                      />
+                      }
                       <CustomInput
                         placeholder="Quantity"
                         label="Quantity"
@@ -230,7 +358,7 @@ const ProductStock = () => {
               show={showDelete}
               handleToggle={handleShowConfirmation}
               title="Delete"
-              //   handleOkay={deleteProduct}
+              handleOkay={deleteStock}
               handleCancel={handleShowConfirmation}
             >
               Are You Sure you want to delete this ?
@@ -267,10 +395,9 @@ const ProductStock = () => {
                       cols={columns}
                       dark={false}
                       data={productStockList}
-                      //   columndefs={colDefs}
                       title="Product Stock List"
-                      //   deleteClick={deleteClick}
-                      //   editClick={editClick}
+                      hasEdit={false}
+                      hasDelete={false}
                     />
                   </div>
                 </Row>

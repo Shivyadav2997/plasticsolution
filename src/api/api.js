@@ -36,6 +36,7 @@ import {
   productStockEntryAction,
   creditDebitAction,
   addUseStock,
+  viewaccountAction
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -830,6 +831,27 @@ const addUseProductStock = async (token, payload) => {
   }
 };
 
+const viewaccount = async (token,id, st = "", en = "") => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${viewaccountAction}&token=${token}&id=${id}&st=${st}&en=${en}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      // data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -870,4 +892,5 @@ export {
   balanceUpdate,
   addCreditDebit,
   addUseProductStock,
+  viewaccount
 };

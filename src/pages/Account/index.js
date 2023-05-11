@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   creditDebitListGet,
   accountListGet,
@@ -12,6 +13,7 @@ import {
   bankListGet,
   addCreditDebit,
 } from "api/api";
+import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -21,7 +23,6 @@ import * as Yup from "yup";
 import Loader from "components/Custom/Loader";
 import { FaWhatsapp, FaPhoneAlt, FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { format, parse } from "date-fns";
 
@@ -34,6 +35,7 @@ const Party = () => {
     timer: 1500,
   });
 
+  let history = useHistory();
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const [parties, setParties] = useState([]);
@@ -48,7 +50,8 @@ const Party = () => {
   const dispatch = useDispatch();
   const formRef = useRef(null);
   const viewInvoice = (cellData, rowData, row, col) => {
-    console.log(rowData);
+    const id = btoa(Number(rowData.pid));
+    history.push(`/admin/viewAccount/${id}`)
   };
   const sendWhatsapp = (cellData, rowData, row, col) => {
     console.log(rowData);

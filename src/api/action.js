@@ -33,3 +33,4 @@ export const productStockAction = "product_stock";
 export const productStockEntryAction = "product_stockentry";
 export const creditDebitAction = "credit_debit";
 export const addUseStock = "add_productstock";
+export const viewaccountAction = "viewaccount";

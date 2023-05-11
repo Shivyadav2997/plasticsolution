@@ -29,6 +29,7 @@ import ProductStock from "pages/Product/stock";
 import Production from "pages/Production";
 import { FaBalanceScale } from "react-icons/fa";
 import { BsBank } from "react-icons/bs";
+import ViewAccount from "pages/Account/view";
 
 var routes = [
   {
@@ -52,6 +53,15 @@ var routes = [
     component: Account,
     layout: "/admin",
     iconCmp: GrTransaction,
+  },
+  {
+    path: "/viewAccount/:id",
+    name: "Account",
+    icon: "text-success",
+    component: ViewAccount,
+    layout: "/admin",
+    iconCmp: GrTransaction,
+    wOutLink:true,
   },
   {
     path: "/balance",
