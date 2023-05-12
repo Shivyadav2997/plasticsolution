@@ -56,7 +56,7 @@ var routes = [
   },
   {
     path: "/viewAccount/:id",
-    name: "Account",
+    name: "ViewAccount",
     icon: "text-success",
     component: ViewAccount,
     layout: "/admin",

@@ -40,7 +40,31 @@ const ViewAccount = () => {
       filterDate.st,
       filterDate.et
     );
-    setAccountData(data.data)
+    if (data.data) {
+      var data2 = data.data;
+      setAccountData({
+        creditarray: data2.creditarray || [],
+        creditarraywith: data2.creditarraywith || [],
+        creditarraybill: data2.creditarraybill || [],
+        debitarray: data2.debitarray || [],
+        debitarraywith: data2.debitarraywith || [],
+        debitarraybill: data2.debitarraybill || [],
+        fullarray: data2.fullarray || [],
+        total1: data2.total1 || [],
+      })
+    } else {
+      setAccountData({
+        creditarray:[],
+        creditarraywith:[],
+        creditarraybill:[],
+        debitarray:[],
+        debitarraywith:[],
+        debitarraybill:[],
+        fullarray:[],
+        total1:[],
+      })
+    }
+    
     setLoading(false);
   };  
   
@@ -289,7 +313,7 @@ const ViewAccount = () => {
                 </thead>
 
                 <tbody>
-                {accountData.fullarray.map((val,index)=>{
+                    {accountData.fullarray.map((val,index)=>{
                         return getSecondTabData(val)
                     })}
                   <tr>
@@ -379,7 +403,7 @@ const ViewAccount = () => {
                     accountData.creditarraybill.map((val,index)=>{
                         return getFourthTabData(val,index,1)
                     })
-                    : accountData.creditarraybill.map((val,index)=>{
+                    : accountData.debitarraybill.map((val,index)=>{
                         return getFourthTabData(val,index,2)
                     })}
                     <tr>
@@ -413,31 +437,51 @@ const ViewAccount = () => {
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row sm="2" xs="1" className="mb-2">
-          <Col>
-            <Row className="ml-0 mb-1">
-              <CustomDatePicker
-                onCallback={dateSelect}
-                text="Ledger By Date"
-              />
-              <Button
-                className="btn-md btn-outline-primary mb-1 ml-0"
-                onClick={() => setFilterDate({ st: "", et: "" })}
-              >
-                Full Ledger
-              </Button>
+        <Col>
+          <Row className="ml-0">
+           <span className="pt-2 mr-2">WEBSTAR INFOWAY</span> 
+            <Button
+              className="btn-md btn-outline-danger"
+              //   onClick={() => setShowAccount(false)}
+            >
+              1232 Cls Bal
+            </Button>
+          </Row>
+        </Col>
+        <Col>
+          <Row className="justify-content-end mr-0">
+            <Button className="btn-md btn-outline-primary">
+              Account settlement
+            </Button>
+          </Row>
+        </Col>
+      </Row>
+      <Row sm="2" xs="1" className="mb-2">
+        <Col>
+          <Row className="ml-0 mb-1">
+            <CustomDatePicker
+              onCallback={dateSelect}
+              text="Ledger By Date"
+            />
+            <Button
+              className="btn-md btn-outline-primary mb-1 ml-0"
+              onClick={() => setFilterDate({ st: "", et: "" })}
+            >
+              Full Ledger
+            </Button>
 
-              <h1>
-                <span style={{ fontSize: "18px" }}>
-                  {filterDate.st != "" &&
-                    ` (${filterDate.st} to ${filterDate.et})`}
-                </span>{" "}
-              </h1>
-            </Row>
-          </Col>
-          <Col>
-            
-          </Col>
-        </Row>
+            <h1>
+              <span style={{ fontSize: "18px" }}>
+                {filterDate.st != "" &&
+                  ` (${filterDate.st} to ${filterDate.et})`}
+              </span>{" "}
+            </h1>
+          </Row>
+        </Col>
+        <Col>
+          
+        </Col>
+      </Row>
         {loading ? (
               <Loader loading={loading} />
             ) : (

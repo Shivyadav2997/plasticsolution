@@ -373,10 +373,10 @@ const dashboardDataGet = async (token) => {
   }
 };
 
-const dashboardSendReport = async (token, type) => {
+const dashboardSendReport = async (token, type,d) => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}`
+      baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}&d=${d}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;

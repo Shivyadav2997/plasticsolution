@@ -60,17 +60,19 @@ const Admin = (props) => {
       if (routes[i].hasChild) {
         for (let j = 0; j < routes[i].childRoutes.length; j++) {
           if (
-            props.location.pathname.indexOf(
+            path.indexOf(
               routes[i].childRoutes[j].layout + routes[i].childRoutes[j].path
             ) !== -1
           ) {
             return routes[i].childRoutes[j].name;
           }
         }
-      } else if (
-        props.location.pathname.indexOf(routes[i].layout + routes[i].path) !==
+      } else if ((
+        path.indexOf(routes[i].layout + routes[i].path) !==
         -1
-      ) {
+      )|| (routes[i].path.indexOf(":")!==-1 && 
+      path.substring(0,path.lastIndexOf("/")) == (routes[i].layout + routes[i].path).substring(0,path.lastIndexOf("/"))
+      )) {
         return routes[i].name;
       }
     }
