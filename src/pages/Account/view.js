@@ -88,10 +88,15 @@ const ViewAccount = () => {
     
   }
 
-  const getTotal = (array1,array2,name) => {
+  const getTotal = (array1,array2,name,isFormatted=true) => {
     let sum =  getSum(array1,name,false)
     sum -= getSum(array2,name,false)
-    return "₹ " + Math.abs(sum).toLocaleString('hi-IN') + `${sum<0?" Dr":" Cr"}`;
+    if(isFormatted){
+      return "₹ " + Math.abs(sum).toLocaleString('hi-IN') + `${sum<0?" Dr":" Cr"}`;
+    }
+    else{
+      return "₹ " + Math.abs(sum).toLocaleString('hi-IN');
+    }
   }
 
   const getSumSecondTab = (type,name) => {
@@ -268,10 +273,28 @@ const ViewAccount = () => {
                   </tbody>
                 </Table>
               </Col>
+              
             </div>
+            <Row sm="2" className="mb-2 p-3">
+                <Col>
+                  <Row>
+                    <Button className="btn-md">
+                    Print
+                    </Button>
+                  </Row>
+                </Col>
+                <Col style={{paddingRight:"unset"}}>
+                  <Row className="justify-content-end mr-0">
+                    <Button className="btn-md btn-outline-primary">
+                    Pdf & Image
+                    </Button>
+                  </Row>
+                </Col>
+              </Row>
           </div>
         </Col>
       </Row>
+      
     </>,
     <>
       <Row>
@@ -439,12 +462,11 @@ const ViewAccount = () => {
       <Row sm="2" xs="1" className="mb-2">
         <Col>
           <Row className="ml-0">
-           <span className="pt-2 mr-2">WEBSTAR INFOWAY</span> 
+           <span className="pt-2 mr-2">{sessionStorage.getItem("party")}</span> 
             <Button
               className="btn-md btn-outline-danger"
-              //   onClick={() => setShowAccount(false)}
             >
-              1232 Cls Bal
+              {getTotal(accountData.creditarray,accountData.debitarray,"total",false)} Cls Bal
             </Button>
           </Row>
         </Col>

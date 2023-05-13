@@ -50,6 +50,7 @@ const Party = () => {
   const dispatch = useDispatch();
   const formRef = useRef(null);
   const viewInvoice = (cellData, rowData, row, col) => {
+    sessionStorage.setItem("party",rowData.party)
     const id = btoa(Number(rowData.pid));
     history.push(`/admin/viewAccount/${id}`)
   };
