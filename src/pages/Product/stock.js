@@ -224,7 +224,7 @@ const ProductStock = () => {
       handleShowConfirmation();
       dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
-        type: "product_stock",
+        type: "productstock",
         id: product.id,
       });
 

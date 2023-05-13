@@ -12,6 +12,7 @@ import {
   transactionPartyGet,
   bankListGet,
   addCreditDebit,
+  deleteRecord
 } from "api/api";
 import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom/client";
@@ -42,13 +43,16 @@ const Party = () => {
   const [accounts, setAccounts] = useState([]);
   const [banks, setbanks] = useState([]);
   const [creditDebit, setCreditDebit] = useState([]);
+  const [deleteEntry, setDeleteEntry] = useState(null);
   const [showAccount, setShowAccount] = useState(true);
   const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const [addType, setAddType] = useState(1);
+  const [showDelete, setShowDelete] = useState(false);
   const dispatch = useDispatch();
   const formRef = useRef(null);
+
   const viewInvoice = (cellData, rowData, row, col) => {
     sessionStorage.setItem("party",rowData.party)
     const id = btoa(Number(rowData.pid));
@@ -61,6 +65,45 @@ const Party = () => {
     console.log(rowData);
   };
 
+  const handleShowConfirmation = () => {
+    if (showDelete) {
+      setDeleteEntry(null);
+    }
+    setShowDelete(!showDelete);
+  };
+  
+  const deleteCreditDebitEntry = async () => {
+    if (deleteEntry != null) {
+      handleShowConfirmation();
+      dispatch(setLoader(true));
+      const resp = await deleteRecord(user.token, {
+        type: "creditdebit",
+        id: deleteEntry.id,
+      });
+
+      if (resp.data.sucess == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
+        getCreditDebitList();
+        setDeleteEntry(null);
+        dispatch(setLoader(false));
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
+      }
+    }
+  };
+
+  const deleteClick = (cellData, rowData, row, col) => {
+    setDeleteEntry(cellData);
+    handleShowConfirmation();
+  };
+
+  
   const validate = Yup.object({
     pid: Yup.string().required("Required"),
     amount: Yup.number().required("Required"),
@@ -399,6 +442,15 @@ const Party = () => {
           )}
         </Formik>
       </CustomModal>
+      <ConfirmationDialog
+          show={showDelete}
+          handleToggle={handleShowConfirmation}
+          title="Delete"
+          handleOkay={deleteCreditDebitEntry}
+          handleCancel={handleShowConfirmation}
+        >
+          Are You Sure you want to delete this ?
+        </ConfirmationDialog>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         {showAccount ? (
           <>
@@ -483,6 +535,7 @@ const Party = () => {
                       title="CreditDebit List"
                       ref={childRef2}
                       hasEdit={false}
+                      deleteClick={deleteClick}
                     />
                   </div>
                 </div>

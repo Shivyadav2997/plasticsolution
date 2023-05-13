@@ -12,6 +12,8 @@ import CustomTab from "components/Custom/CustomTab";
 import Loader from "components/Custom/Loader";
 import { format } from "date-fns";
 import HTMLReactParser from "html-react-parser";
+import { pdfFromReact } from "generate-pdf-from-react-html";
+import { setLoader } from "features/User/UserSlice";
 
 const ViewAccount = () => {
 
@@ -190,22 +192,22 @@ const ViewAccount = () => {
   }
   const tabPan = [
     <>
-      <Row>
+      <Row id="firstTabTable">
         <Col xs="12">
           <div className=" p-3 mb-3">
-            <div className="invoice">
+            <div  className="invoice">
               <Col xs="12" responsive>
                 <Table
                   style={{ width: "100%" }}
                   className="ledger-table"
                   responsive={true}
                 >
-                  <tbody>
+                  <tbody  >
                     <tr>
-                      <td colSpan={4} style={{ width: "50%" }}>
+                      <td colSpan={4} >
                         <b>Credit</b>
                       </td>
-                      <td colSpan={4} style={{ width: "50%" }}>
+                      <td colSpan={4} >
                         <b>Debit</b>
                       </td>
                     </tr>
@@ -278,7 +280,17 @@ const ViewAccount = () => {
             <Row sm="2" className="mb-2 p-3">
                 <Col>
                   <Row>
-                    <Button className="btn-md">
+                    <Button className="btn-md"
+                    // onClick={()=>{
+                    //   dispatch(setLoader(true));
+                    //   setTimeout(() => {
+                    //     pdfFromReact("#firstTabTable", "firstTab", "landscape", true, false);
+                    //   }, 700);
+                    //   setTimeout(() => {
+                    //     dispatch(setLoader(false));
+                    //   }, 2000);
+                    // }}
+                    >
                     Print
                     </Button>
                   </Row>
@@ -353,6 +365,22 @@ const ViewAccount = () => {
                 </tbody>
               </Table>
             </Col>
+            <Row sm="2" className="mb-2 p-3">
+              <Col>
+                <Row>
+                  <Button className="btn-md">
+                  Print
+                  </Button>
+                </Row>
+              </Col>
+              <Col style={{paddingRight:"unset"}}>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md btn-outline-primary">
+                  Pdf & Image
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>
@@ -401,6 +429,22 @@ const ViewAccount = () => {
                 </Table>
               </Col>
             </div>
+            <Row sm="2" className="mb-2 p-3">
+              <Col>
+                <Row>
+                  <Button className="btn-md">
+                  Print
+                  </Button>
+                </Row>
+              </Col>
+              <Col style={{paddingRight:"unset"}}>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md btn-outline-primary">
+                  Pdf & Image
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>
@@ -451,6 +495,22 @@ const ViewAccount = () => {
                 </Table>
               </Col>
             </div>
+            <Row sm="2" className="mb-2 p-3">
+              <Col>
+                <Row>
+                  <Button className="btn-md">
+                  Print
+                  </Button>
+                </Row>
+              </Col>
+              <Col style={{paddingRight:"unset"}}>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md btn-outline-primary">
+                  Pdf & Image
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>
@@ -459,7 +519,7 @@ const ViewAccount = () => {
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
-      <Row sm="2" xs="1" className="mb-2">
+      <Row sm="2" xs="1" className="mb-2" >
         <Col>
           <Row className="ml-0">
            <span className="pt-2 mr-2">{sessionStorage.getItem("party")}</span> 
