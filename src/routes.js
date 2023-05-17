@@ -1,6 +1,6 @@
 import Index from "views/Index.js";
 // import Profile from "views/examples/Profile.js";
-import Register from "views/examples/Register.js";
+import Register from "pages/Register.js";
 import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
 import Login from "pages/Login.js";
@@ -218,10 +218,10 @@ var routes = [
   //   iconCmp: FaFileInvoiceDollar,
   // },
   {
-    path: "/profile",
+    path: "/setting",
     name: "Setting",
     icon: "ni ni-settings text-yellow",
-    component: Profile,
+    component: Index,
     layout: "/admin",
   },
   {
@@ -252,5 +252,13 @@ var routes = [
   //   component: ViewTest,
   //   layout: "/admin",
   // },
+  {
+    path: "/profile",
+    name: "My Profile",
+    component: Profile,
+    layout: "/admin",
+    iconCmp: GrTransaction,
+    wOutLink:true,
+  },
 ];
 export default routes;

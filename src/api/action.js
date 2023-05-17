@@ -34,3 +34,7 @@ export const productStockEntryAction = "product_stockentry";
 export const creditDebitAction = "credit_debit";
 export const addUseStock = "add_productstock";
 export const viewaccountAction = "viewaccount";
+export const viewProfileAction = "view_profile";
+export const registerAction = "register";
+export const sendOtpAction = "otp";
+export const checkGSTAction = "gstin";

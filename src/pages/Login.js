@@ -23,7 +23,7 @@ import Swal from "sweetalert2";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 
-const Login = () => {
+const Register = () => {
   var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -194,25 +194,26 @@ const Login = () => {
           <Col xs="6">
             <a
               className="text-dark"
-              // onClick={(e) => e.preventDefault()}
+              style={{cursor:"pointer"}}
               onClick={() => setShow(true)}
             >
               <small>Forgot password?</small>
             </a>
           </Col>
-          {/* <Col className="text-right" xs="6">
-            <a
+          <Col className="text-right" xs="6">
+          <a
               className="text-dark"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              style={{cursor:"pointer"}}
+              onClick={() => {history.push("/auth/register");
+                  }}
             >
-              <small>Contact : 9662779868</small>
+              <small>Create New Account</small>
             </a>
-          </Col> */}
+          </Col>
         </Row>
       </Col>
     </>
   );
 };
 
-export default Login;
+export default Register;

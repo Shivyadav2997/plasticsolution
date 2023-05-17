@@ -36,7 +36,11 @@ import {
   productStockEntryAction,
   creditDebitAction,
   addUseStock,
-  viewaccountAction
+  viewaccountAction,
+  viewProfileAction,
+  registerAction,
+  sendOtpAction,
+  checkGSTAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -373,7 +377,7 @@ const dashboardDataGet = async (token) => {
   }
 };
 
-const dashboardSendReport = async (token, type,d) => {
+const dashboardSendReport = async (token, type, d) => {
   try {
     const resp = await axios.get(
       baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}&d=${d}`
@@ -831,10 +835,11 @@ const addUseProductStock = async (token, payload) => {
   }
 };
 
-const viewaccount = async (token,id, st = "", en = "") => {
+const viewaccount = async (token, id, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${viewaccountAction}&token=${token}&id=${id}&st=${st}&en=${en}`
+      baseUrl +
+        `?action=${viewaccountAction}&token=${token}&id=${id}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -843,6 +848,79 @@ const viewaccount = async (token,id, st = "", en = "") => {
       data: resp.data,
       // data: [],
       message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const profileGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${viewProfileAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      // data: [],
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const registerUser = async (payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${registerAction}&${getParams(payload)}`
+    );
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const sendOtp = async (payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${sendOtpAction}&${getParams(payload)}`
+    );
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const checkGST = async (gst) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${checkGSTAction}&gst=${gst}`
+    );
+
+    return {
+      data: resp.data,
+      message: resp.data.msg,
     };
   } catch (error) {
     return {
@@ -892,5 +970,9 @@ export {
   balanceUpdate,
   addCreditDebit,
   addUseProductStock,
-  viewaccount
+  viewaccount,
+  profileGet,
+  registerUser,
+  sendOtp,
+  checkGST,
 };

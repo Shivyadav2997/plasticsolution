@@ -67,13 +67,15 @@ const Admin = (props) => {
             return routes[i].childRoutes[j].name;
           }
         }
-      } else if ((
+      } else if (
         path.indexOf(routes[i].layout + routes[i].path) !==
         -1
-      )|| (routes[i].path.indexOf(":")!==-1 && 
-      path.substring(0,path.lastIndexOf("/")) == (routes[i].layout + routes[i].path).substring(0,path.lastIndexOf("/"))
-      )) {
+      ) {
         return routes[i].name;
+      } else if (path.indexOf(":")!==-1 && 
+      path.substring(0,path.lastIndexOf("/")) == (routes[i].layout + routes[i].path).substring(0,path.lastIndexOf("/"))
+      ){
+        path.indexOf(":")
       }
     }
     return "Brand";

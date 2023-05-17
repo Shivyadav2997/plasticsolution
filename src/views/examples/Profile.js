@@ -10,10 +10,68 @@ import {
   Row,
   Col,
 } from "reactstrap";
-// core components
+import { useEffect, useState } from "react";
+import { profileGet } from "api/api";
 import UserHeader from "components/Headers/UserHeader.js";
+import { useDispatch,useSelector } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
 
 const Profile = () => {
+
+  const { user, fyear } = useSelector((store) => store.user);
+  const {profile,setProfile} = useState({
+    id: "",
+    b_name: "",
+    b_owner: "",
+    b_mo: "",
+    b_mo2: null,
+    b_mo3: null,
+    b_mo4: null,
+    b_add: "",
+    b_city: "",
+    b_gst: "",
+    email: "",
+    logo: "",
+    lat: "",
+    lng: "",
+    letterpad: "",
+    create_date: ""
+})
+
+  const getProfile = async () => {
+    setLoading(true);
+    var data = await profileGet(
+      user.token
+    );
+    if (data.data) {
+      setProfile(data.data)
+    } else {
+      setProfile({
+        id: "",
+        b_name: "",
+        b_owner: "",
+        b_mo: "",
+        b_mo2: null,
+        b_mo3: null,
+        b_mo4: null,
+        b_add: "",
+        b_city: "",
+        b_gst: "",
+        email: "",
+        logo: "",
+        lat: "",
+        lng: "",
+        letterpad: "",
+        create_date: ""
+    });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, [filterDate, fyear]);
+
   return (
     <>
       <Container className="pt-9" fluid>
