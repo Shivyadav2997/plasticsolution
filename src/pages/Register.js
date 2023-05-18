@@ -40,11 +40,13 @@ const Register = () => {
     timer: 2000,
   });
 
+  let interval = null;
   const [mobileAdded, setMobileAdded] = useState(false);
   const [mobile, setMobile] = useState("");
   const [mobileError, setMobileError] = useState("");
   const [gstError, setGstError] = useState("");
   const [gstSuccess, setGstSuccess] = useState("");
+  const [secondsRem, setSecondsRem] = useState(30);
   const mobileRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -64,6 +66,9 @@ const Register = () => {
           icon: "success",
           title: resp.data.msg,
         });
+        interval = setInterval(() => {
+          setSecondsRem((prevSeconds) => prevSeconds - 1);
+        }, 1000);
         setMobileAdded(true);
       } else {
         Toast.fire({
@@ -72,8 +77,35 @@ const Register = () => {
         });
       }
     } else {
-      setMobileAdded(true);
       setMobileError("Invalid mobile number length");
+    }
+  };
+
+  useEffect(() => {
+    if (secondsRem == 30 && mobileAdded) {
+      interval = setInterval(() => {
+        setSecondsRem((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+    } else if (secondsRem == 0) {
+      clearInterval(interval);
+    }
+  }, [secondsRem, mobileAdded]);
+
+  const resendotp = async () => {
+    dispatch(setLoader(true));
+    const resp = await sendOtp({ b_mobile: mobile });
+    dispatch(setLoader(false));
+    if (resp.data.sucess == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.data.msg,
+      });
+      setSecondsRem(30);
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.data.msg || "Something went wrong",
+      });
     }
   };
 
@@ -155,7 +187,7 @@ const Register = () => {
                       value={mobile}
                       ref={mobileRef}
                       withFormGroup={false}
-                      autofocus
+                      autoFocus
                     />
                   </InputGroup>
                   {mobileError && (
@@ -220,6 +252,20 @@ const Register = () => {
                             withFormGroup={false}
                           />
                         </InputGroup>
+                        {secondsRem > 0 ? (
+                          <label className="text-right w-100">
+                            Resend in{" "}
+                            <span className="text-green">{secondsRem}s</span>
+                          </label>
+                        ) : (
+                          <a
+                            className="text-right w-100 d-block"
+                            style={{ cursor: "pointer" }}
+                            onClick={resendotp}
+                          >
+                            Resend
+                          </a>
+                        )}
                       </FormGroup>
                       <FormGroup className="mb-3">
                         <InputGroup className="input-group-alternative">
