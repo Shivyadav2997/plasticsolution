@@ -41,6 +41,8 @@ import {
   registerAction,
   sendOtpAction,
   checkGSTAction,
+  updateProfileAction,
+  updatePassAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -878,10 +880,16 @@ const profileGet = async (token) => {
   }
 };
 
-const registerUser = async (payload) => {
+const registerUser = async (payload, logo = null) => {
   try {
-    const resp = await axios.get(
-      baseUrl + `?action=${registerAction}&${getParams(payload)}`
+    const formData = new FormData();
+    if (logo != null) {
+      formData.append("files", logo);
+    }
+
+    const resp = await axios.post(
+      baseUrl + `?action=${registerAction}&${getParams(payload)}`,
+      formData
     );
     return {
       data: resp.data,
@@ -930,6 +938,47 @@ const checkGST = async (gst) => {
   }
 };
 
+const updateProfile = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${updateProfileAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updatePassword = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${updatePassAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
 export {
   getMonthName,
   getData,
@@ -975,4 +1024,6 @@ export {
   registerUser,
   sendOtp,
   checkGST,
+  updateProfile,
+  updatePassword,
 };

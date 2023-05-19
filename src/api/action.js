@@ -38,3 +38,5 @@ export const viewProfileAction = "view_profile";
 export const registerAction = "register";
 export const sendOtpAction = "otp";
 export const checkGSTAction = "gstin";
+export const updateProfileAction = "updateprofile";
+export const updatePassAction = "update_pass";

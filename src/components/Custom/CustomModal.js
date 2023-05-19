@@ -4,7 +4,7 @@ import { Modal, Button, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 const CustomModal = ({ children, handleToggle, show, title, footer }) => {
   return (
     <>
-      <Modal isOpen={show} toggle={handleToggle}>
+      <Modal isOpen={show} toggle={handleToggle} backdrop={false}>
         <div className="modal-header">
           <h3 className="modal-title">{title}</h3>
           <button

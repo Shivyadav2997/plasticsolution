@@ -26,7 +26,7 @@ import * as Yup from "yup";
 import { registerUser, sendOtp, checkGST } from "api/api";
 import { FaCity, FaLandmark, FaPhoneAlt, FaSearch } from "react-icons/fa";
 import { MdBusiness, MdEmail, MdLocationCity } from "react-icons/md";
-import { BsPerson } from "react-icons/bs";
+import { BsDisplay, BsPerson } from "react-icons/bs";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { BiHome } from "react-icons/bi";
 import { TbLetterG, TbMessageCode } from "react-icons/tb";
@@ -40,13 +40,14 @@ const Register = () => {
     timer: 2000,
   });
 
-  let interval = null;
   const [mobileAdded, setMobileAdded] = useState(false);
+  const [intervalObj, setIntervalObj] = useState(null);
   const [mobile, setMobile] = useState("");
   const [mobileError, setMobileError] = useState("");
   const [gstError, setGstError] = useState("");
   const [gstSuccess, setGstSuccess] = useState("");
   const [secondsRem, setSecondsRem] = useState(30);
+  const [logo, setLogo] = useState(null);
   const mobileRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -66,9 +67,7 @@ const Register = () => {
           icon: "success",
           title: resp.data.msg,
         });
-        interval = setInterval(() => {
-          setSecondsRem((prevSeconds) => prevSeconds - 1);
-        }, 1000);
+
         setMobileAdded(true);
       } else {
         Toast.fire({
@@ -77,20 +76,32 @@ const Register = () => {
         });
       }
     } else {
-      setMobileError("Invalid mobile number length");
+      setMobileError("Invalid mobile number");
     }
   };
 
   useEffect(() => {
-    if (secondsRem == 30 && mobileAdded) {
-      interval = setInterval(() => {
-        setSecondsRem((prevSeconds) => prevSeconds - 1);
-      }, 1000);
-    } else if (secondsRem == 0) {
-      clearInterval(interval);
+    if (secondsRem == 0) {
+      clearInterval(intervalObj);
+      setIntervalObj(null);
     }
-  }, [secondsRem, mobileAdded]);
+    if (secondsRem == 30 && mobileAdded && intervalObj == null) {
+      const interObj = setInterval(() => {
+        setSecondsRem((prevSec) => prevSec - 1);
+      }, 1000);
+      setIntervalObj(interObj);
+    }
+  }, [secondsRem]);
 
+  useEffect(() => {
+    if (mobileAdded) {
+      const interObj = setInterval(() => {
+        setSecondsRem((prevSec) => prevSec - 1);
+      }, 1000);
+      setIntervalObj(interObj);
+    }
+    return () => clearInterval(intervalObj);
+  }, [mobileAdded]);
   const resendotp = async () => {
     dispatch(setLoader(true));
     const resp = await sendOtp({ b_mobile: mobile });
@@ -111,7 +122,7 @@ const Register = () => {
 
   const addUser = async (payload) => {
     dispatch(setLoader(true));
-    const resp = await registerUser(payload);
+    const resp = await registerUser(payload, logo);
     dispatch(setLoader(false));
     if (resp.data.success == 1) {
       Toast.fire({
@@ -152,11 +163,11 @@ const Register = () => {
     }
   };
   const validate = Yup.object({
-    otp: Yup.string().required("Required"),
-    name: Yup.string().required("Required"),
-    owner: Yup.string().required("Required"),
-    email: Yup.string().email("Email is invalid"),
-    city: Yup.string().required("Required"),
+    // otp: Yup.string().required("Required"),
+    // name: Yup.string().required("Required"),
+    // owner: Yup.string().required("Required"),
+    // email: Yup.string().email("Email is invalid"),
+    // city: Yup.string().required("Required"),
   });
 
   return (
@@ -215,6 +226,9 @@ const Register = () => {
                   city: "",
                   add: "",
                   otp: "",
+                  mob2: "",
+                  mob3: "",
+                  mob4: "",
                 }}
                 validationSchema={validate}
                 onSubmit={async (values, actions) => {
@@ -227,8 +241,12 @@ const Register = () => {
                     b_email: values.email,
                     b_city: values.city,
                     b_add: values.add,
+                    b_mobile2: values.mob2,
+                    b_mobile3: values.mob3,
+                    b_mobile4: values.mob4,
                   });
-                  actions.resetForm();
+                  // actions.resetForm();
+                  // console.log(logo);
                 }}
                 validateOnBlur={false}
                 validateOnChange={false}
@@ -276,8 +294,7 @@ const Register = () => {
                           </InputGroupAddon>
 
                           <CustomInput
-                            placeholder="Bussiness GST No."
-                            label="GST No."
+                            placeholder="Business GST No."
                             name="gst"
                             type="text"
                             withFormGroup={false}
@@ -301,6 +318,9 @@ const Register = () => {
                         {gstError && (
                           <label className="errorMsg">{gstError}</label>
                         )}
+                        {gstSuccess && (
+                          <label className="text-success">{gstSuccess}</label>
+                        )}
                       </FormGroup>
                       <FormGroup className="mb-3">
                         <InputGroup className="input-group-alternative">
@@ -311,7 +331,7 @@ const Register = () => {
                           </InputGroupAddon>
 
                           <CustomInput
-                            placeholder="Bussiness Name"
+                            placeholder="Business Name"
                             name="name"
                             type="text"
                             withFormGroup={false}
@@ -328,7 +348,6 @@ const Register = () => {
 
                           <CustomInput
                             placeholder="Owner Name"
-                            label=""
                             name="owner"
                             type="text"
                             withFormGroup={false}
@@ -344,8 +363,7 @@ const Register = () => {
                           </InputGroupAddon>
 
                           <CustomInput
-                            placeholder="Bussiness Email"
-                            label="Email"
+                            placeholder="Business Email"
                             name="email"
                             type="email"
                             withFormGroup={false}
@@ -362,8 +380,7 @@ const Register = () => {
                           </InputGroupAddon>
 
                           <CustomInput
-                            placeholder="Bussiness City"
-                            label="City"
+                            placeholder="Business City"
                             name="city"
                             type="text"
                             withFormGroup={false}
@@ -379,11 +396,71 @@ const Register = () => {
                           </InputGroupAddon>
 
                           <CustomInput
-                            placeholder="Bussiness Address"
-                            label="Address"
+                            placeholder="Business Address"
                             name="add"
                             type="text"
                             withFormGroup={false}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <FormGroup className="mb-3">
+                        <InputGroup className="input-group-alternative">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <FaPhoneAlt />
+                            </InputGroupText>
+                          </InputGroupAddon>
+
+                          <CustomInput
+                            placeholder="Mobile Number 2"
+                            name="mob2"
+                            type="text"
+                            withFormGroup={false}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <FormGroup className="mb-3">
+                        <InputGroup className="input-group-alternative">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <FaPhoneAlt />
+                            </InputGroupText>
+                          </InputGroupAddon>
+
+                          <CustomInput
+                            placeholder="Mobile Number 3"
+                            name="mob3"
+                            type="text"
+                            withFormGroup={false}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <FormGroup className="mb-3">
+                        <InputGroup className="input-group-alternative">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <FaPhoneAlt />
+                            </InputGroupText>
+                          </InputGroupAddon>
+
+                          <CustomInput
+                            placeholder="Mobile Number 4"
+                            name="mob4"
+                            type="text"
+                            withFormGroup={false}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <FormGroup className="mb-3">
+                        <InputGroup className="input-group-alternative">
+                          <Input
+                            type="file"
+                            withFormGroup={false}
+                            accept="image/*"
+                            name="logo"
+                            onChange={(e) => {
+                              setLogo(e.target.files[0]);
+                            }}
                           />
                         </InputGroup>
                       </FormGroup>
@@ -392,10 +469,6 @@ const Register = () => {
                           className="my-4"
                           color="primary"
                           type="button"
-                          // onClick={() => {
-                          //   dispatch(login({ id: 1, name: "shiv", lname: "yadav" }));
-                          //   history.push("/admin/index");
-                          // }}
                           onClick={() => formik.submitForm()}
                         >
                           Register

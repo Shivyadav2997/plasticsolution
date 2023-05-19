@@ -9,22 +9,41 @@ import {
   CardBody,
   ListGroup,
   ListGroupItem,
+  FormGroup,
+  InputGroup,
+  InputGroupAddon,
 } from "reactstrap";
 import { useEffect, useState } from "react";
-import { profileGet } from "api/api";
-import UserHeader from "components/Headers/UserHeader.js";
+import { profileGet, updateProfile, updatePassword } from "api/api";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoader } from "features/User/UserSlice";
+import { setLoader, logout } from "features/User/UserSlice";
 import logo from "assets/img/brand/logo.png";
-import { FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
 import { CustomInput } from "components/Custom/CustomInput";
+import CustomModal from "components/Custom/CustomModal";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
+import Swal from "sweetalert2";
+import { useRef } from "react";
+import { useHistory } from "react-router-dom";
+import { FaEye } from "react-icons/fa";
 
 const Profile = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   const dispatch = useDispatch();
   const { user, fyear } = useSelector((store) => store.user);
+  const [showPass, setShowPass] = useState(false);
+  const [showNPass, setShowNPass] = useState(false);
+  const [showCPass, setShowCPass] = useState(false);
+  const inputRef = useRef(null);
+  const [show, setShow] = useState(false);
+  const history = useHistory();
   const [profile, setProfile] = useState({
     id: "",
     b_name: "",
@@ -44,6 +63,22 @@ const Profile = () => {
     create_date: "",
   });
 
+  const profUpdate = async (payload) => {
+    dispatch(setLoader(true));
+    var resp = await updateProfile(user.token, payload);
+    dispatch(setLoader(false));
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.data.msg,
+      });
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.data.msg || "Something wen't wrong",
+      });
+    }
+  };
   const getProfile = async () => {
     dispatch(setLoader(true));
     var data = await profileGet(user.token);
@@ -55,9 +90,9 @@ const Profile = () => {
         b_name: "",
         b_owner: "",
         b_mo: "",
-        b_mo2: null,
-        b_mo3: null,
-        b_mo4: null,
+        b_mo2: "",
+        b_mo3: "",
+        b_mo4: "",
         b_add: "",
         b_city: "",
         b_gst: "",
@@ -72,13 +107,162 @@ const Profile = () => {
     dispatch(setLoader(false));
   };
 
+  const updatePass = async (payload) => {
+    dispatch(setLoader(true));
+    const resp = await updatePassword(user.token, payload);
+    dispatch(setLoader(false));
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.data.msg,
+      });
+      setShow(!show);
+      setTimeout(() => {
+        dispatch(logout());
+        history.push("/auth/login");
+      }, 1500);
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.data.msg || "Something wen't wrong",
+      });
+    }
+  };
+  const validate = Yup.object({
+    email: Yup.string().email("Email is invalid"),
+    city: Yup.string().required("Required"),
+  });
+
+  const validatePass = Yup.object({
+    pass: Yup.string().required("Required"),
+    npass: Yup.string().required("Required"),
+    cpass: Yup.string()
+      .required("Required")
+      .oneOf([Yup.ref("npass")], "Your passwords do not match."),
+  });
+
   useEffect(() => {
     getProfile();
   }, [fyear]);
+
+  const handleToggle = (e) => {
+    e.preventDefault();
+    setShow(!show);
+  };
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
-      <Row>
-        <Col md={3}></Col>
+      <CustomModal
+        show={show}
+        handleToggle={handleToggle}
+        title={`Change Password`}
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={() => {
+              inputRef.current.handleSubmit();
+            }}
+          >
+            Update Password
+          </Button>
+        }
+      >
+        <Formik
+          initialValues={{
+            pass: "",
+            npass: "",
+            cpass: "",
+          }}
+          validationSchema={validatePass}
+          onSubmit={(values) => {
+            console.log("passValue", values);
+            updatePass({ oldpass: values.pass, newpass: values.cpass });
+          }}
+          validateOnBlur={false}
+          validateOnChange={false}
+          innerRef={inputRef}
+        >
+          {(formik) => (
+            <div>
+              <Form>
+                <FormGroup className="mb-1">
+                  <label className="form-control-label">Current Password</label>
+                  <InputGroup className="input-group-alternative">
+                    <CustomInput
+                      placeholder="Current Password"
+                      label=""
+                      name="pass"
+                      type={showPass ? "text" : "password"}
+                      withFormGroup={false}
+                    />
+                    <InputGroupAddon addonType="append" className="ml-0">
+                      <Button
+                        className="pt-0 pb-0 btn-outline-primary"
+                        type="button"
+                        onClick={() => {
+                          setShowPass(!showPass);
+                        }}
+                      >
+                        <FaEye />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className="mb-1">
+                  <label className="form-control-label">New Password</label>
+                  <InputGroup className="input-group-alternative">
+                    <CustomInput
+                      placeholder="New Password"
+                      label="New Password"
+                      name="npass"
+                      type={showNPass ? "text" : "password"}
+                      withFormGroup={false}
+                    />
+                    <InputGroupAddon addonType="append" className="ml-0">
+                      <Button
+                        className="pt-0 pb-0 btn-outline-primary"
+                        type="button"
+                        onClick={() => {
+                          setShowNPass(!showNPass);
+                        }}
+                      >
+                        <FaEye />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className="mb-1">
+                  <label className="form-control-label">Confirm Password</label>
+                  <InputGroup className="input-group-alternative">
+                    <CustomInput
+                      placeholder="Confirm Password"
+                      label="Confirm Password"
+                      name="cpass"
+                      type={showCPass ? "text" : "password"}
+                      withFormGroup={false}
+                    />
+                    <InputGroupAddon addonType="append" className="ml-0">
+                      <Button
+                        className="pt-0 pb-0 btn-outline-primary"
+                        type="button"
+                        onClick={() => {
+                          setShowCPass(!showCPass);
+                        }}
+                      >
+                        <FaEye />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormGroup>
+              </Form>
+            </div>
+          )}
+        </Formik>
+      </CustomModal>
+      <Row className="justify-content-center">
         <Col md={6}>
           <Card style={{ borderTop: "3px solid #007bff" }}>
             <CardBody>
@@ -95,7 +279,13 @@ const Profile = () => {
                 {profile.b_owner}
                 <b>
                   <br />
-                  Renew 284 Days Left
+                  Renew{" "}
+                  {Math.floor(
+                    (new Date().getTime() -
+                      new Date(profile.create_date).getTime()) /
+                      (1000 * 3600 * 24)
+                  )}{" "}
+                  Days Left
                 </b>
               </p>
               <Formik
@@ -104,11 +294,31 @@ const Profile = () => {
                   gst: profile?.b_gst,
                   city: profile?.b_city,
                   add: profile?.b_add,
-                  lat:profile?.lat,
-                  long:profile?.lng
+                  lat: profile?.lat,
+                  long: profile?.lng,
+                  mob2: profile?.b_mo2,
+                  mob3: profile?.b_mo3,
+                  mob4: profile?.b_mo4,
                 }}
+                onSubmit={(values) => {
+                  profUpdate({
+                    b_mobile2: values.mob2,
+                    b_mobile3: values.mob3,
+                    b_mobile4: values.mob4,
+                    b_email: values.email,
+                    b_gst: values.gst,
+                    b_city: values.city,
+                    b_add: values.add,
+                    lat: values.lat,
+                    lng: values.long,
+                    b_name: "Plastic Solution",
+                    b_owner: "Jignesh Lakkad",
+                  });
+                }}
+                validationSchema={validate}
                 validateOnBlur={false}
                 validateOnChange={false}
+                enableReinitialize={true}
               >
                 {(formik) => (
                   <div>
@@ -127,37 +337,106 @@ const Profile = () => {
                           </a>
                         </ListGroupItem>
                         <ListGroupItem className="border-left-0 border-right-0">
-                          <b>Email</b>
-                          <CustomInput size="sm" name="email" type="text" value={profile.email}/>
+                          <Row>
+                            <Col md={6}>
+                              <b>Email</b>
+                              <CustomInput size="sm" name="email" type="text" />
+                            </Col>
+                            <Col md={6}>
+                              <b>Gst No.</b>
+                              <CustomInput size="sm" name="gst" type="text" />
+                            </Col>
+                          </Row>
                         </ListGroupItem>
                         <ListGroupItem className="border-left-0 border-right-0">
-                          <b>Gst No.</b>
-                          <CustomInput size="sm" name="gst"  type="text" value={profile.b_gst}/>
+                          <Row>
+                            <Col md={6}>
+                              <b>Mobile Number 2</b>
+                              <CustomInput
+                                size="sm"
+                                name="mob2"
+                                type="number"
+                              />
+                            </Col>
+                            <Col md={6}>
+                              <b>Mobile Number 3</b>
+                              <CustomInput
+                                size="sm"
+                                name="mob3"
+                                type="number"
+                              />
+                            </Col>
+                          </Row>
+                        </ListGroupItem>
+
+                        <ListGroupItem className="border-left-0 border-right-0">
+                          <Row>
+                            <Col md={6}>
+                              <b>Mobile Number 4</b>
+                              <CustomInput
+                                size="sm"
+                                name="mob4"
+                                type="number"
+                              />
+                            </Col>
+                            <Col md={6}>
+                              <b>City</b>
+                              <CustomInput size="sm" name="city" type="text" />
+                            </Col>
+                          </Row>
                         </ListGroupItem>
                         <ListGroupItem className="border-left-0 border-right-0">
-                          <b>City</b>
-                          <CustomInput size="sm" name="city" type="text" value={profile.b_city} />
+                          <Row>
+                            <Col xs={12}>
+                              <b>Address</b>
+                              <CustomInput size="sm" name="add" type="text" />
+                            </Col>
+                          </Row>
                         </ListGroupItem>
-                        <ListGroupItem className="border-left-0 border-right-0">
-                          <b>Address</b>
-                          <CustomInput size="sm" name="add"  type="text" value={profile.b_add}/>
-                        </ListGroupItem>
-                        <ListGroupItem className="border-left-0 border-right-0">
-                          <b>Latitude & Longitude</b>
-                          <CustomInput size="sm" name="lat"  type="text" value={profile.lat}/>
-                          <CustomInput size="sm" name="long"  type="text" value={profile.lng}/>
+                        <ListGroupItem className="border-left-0 border-right-0 border-bottom-0">
+                          <Row>
+                            <Col md={6}>
+                              <b>Latitude</b>
+                              <CustomInput size="sm" name="lat" type="text" />
+                            </Col>
+                            <Col md={6}>
+                              <b>Longitude</b>
+                              <CustomInput size="sm" name="long" type="text" />
+                            </Col>
+                          </Row>
                         </ListGroupItem>
                       </ListGroup>
-                      <Button
-                        type="submit"
-                        className="mr-1"
-                        color="primary"
-                        block
-                        size="md"
-                        onClick={() => {}}
-                      >
-                        Change Password
-                      </Button>
+                      <Row>
+                        <Col md={6}>
+                          <Button
+                            type="submit"
+                            className="mr-1"
+                            color="primary"
+                            block
+                            size="md"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              formik.submitForm();
+                            }}
+                          >
+                            Update Profile
+                          </Button>
+                        </Col>
+                        <Col md={6}>
+                          <Button
+                            type="submit"
+                            className="mr-1"
+                            color="primary"
+                            block
+                            size="md"
+                            onClick={(e) => {
+                              handleToggle(e);
+                            }}
+                          >
+                            Change Password
+                          </Button>
+                        </Col>
+                      </Row>
                     </Form>
                   </div>
                 )}
