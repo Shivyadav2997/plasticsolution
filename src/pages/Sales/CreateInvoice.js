@@ -14,7 +14,8 @@ import { format, parse } from "date-fns";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import DynamicDataTable from "@langleyfoxall/react-dynamic-data-table";
 import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
-import { transactionPartyGet } from "api/api";
+import { transactionPartyGet, productListGet, getBillNo } from "api/api";
+import { setLoader } from "features/User/UserSlice";
 
 const CreateInvoice = () => {
   const [parties, setParties] = useState([]);
@@ -23,27 +24,53 @@ const CreateInvoice = () => {
   const [gstTax, setGstTax] = useState(0);
   const [total, setTotal] = useState(0);
   const [rowIndex, setRowIndex] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [upperData, setUpperData] = useState({
+    party: "",
+    bType: "",
+    bNo: "",
+    bDate: format(new Date(), "yyyy-MM-dd"),
+    trans: "",
+    lrno: "",
+    vno: "",
+  });
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const [error, setError] = useState({ party: "", bType: "", bNo: "" });
   const [rows, setRows] = useState([
     {
       id: rowIndex,
       row: {
         item: "",
+        desc: "",
         pUnit: "",
         pQty: "",
         uQty: "",
         rate: "",
         bRate: "",
-        gst: 10,
+        gst: "",
         tax: "",
         wAmt: "",
         bAmt: "",
         id: rowIndex,
+        units: [],
       },
     },
   ]);
 
+  const setGstFromProduct = (rowsInput, inputValue) => {
+    if (inputValue != "") {
+      const product = products.find((x) => x.id == inputValue);
+      rowsInput["units"] = [product.unit];
+      rowsInput["gst"] =
+        product != null ? (isNaN(product.gst) ? "0" : product.gst) : "0";
+    } else {
+      rowsInput["gst"] = "0";
+    }
+    const curData = [...rows];
+    curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
+    setRows(curData);
+  };
   const calCulateTotal = (rowsInput) => {
     // const rowsInput = [...rowsData];
 
@@ -115,17 +142,39 @@ const CreateInvoice = () => {
   };
 
   const getTransactionParties = async () => {
+    dispatch(setLoader(true));
     var data = await transactionPartyGet(user.token);
+    dispatch(setLoader(false));
     if (data.data) {
       setParties(data.data);
     }
   };
 
+  const getProducts = async () => {
+    dispatch(setLoader(true));
+    const data = await productListGet(user.token);
+    setProducts(data.data);
+    dispatch(setLoader(false));
+  };
+  const billNoGenerate = async (curDate) => {
+    dispatch(setLoader(true));
+    const data = await getBillNo(user.token, { date: curDate, type: "Sale" });
+    if (data.data.no) {
+      setUpperData({ ...upperData, bNo: data.data.no });
+    }
+    dispatch(setLoader(false));
+  };
+
   useEffect(() => {
     getTransactionParties();
+    getProducts();
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
   }, []);
+
+  useEffect(() => {
+    billNoGenerate(upperData.bDate);
+  }, [upperData.bDate]);
 
   return (
     <>
@@ -135,7 +184,7 @@ const CreateInvoice = () => {
             <Row>
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Party Name"
+                  label="Party Name *"
                   type="select"
                   options={[
                     <option value="">Select Party</option>,
@@ -143,33 +192,90 @@ const CreateInvoice = () => {
                       return <option value={opt.pid}>{opt.b_name}</option>;
                     }),
                   ]}
+                  errorMsg={error.party}
+                  value={upperData.party}
+                  onChange={(e) => {
+                    setUpperData({ ...upperData, party: e.target.value });
+                  }}
                 />
               </Col>
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
                   label="Bill Type"
                   type="select"
-                  options={[<option value="">Select Type</option>]}
+                  options={[
+                    <option value="">Select Bill Type</option>,
+                    ...["Debit", "Cash", "Bill_Tax"].map((opt) => {
+                      return <option value={opt}>{opt}</option>;
+                    }),
+                  ]}
+                  errorMsg={error.bType}
+                  value={upperData.bType}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setUpperData({ ...upperData, bType: e.target.value });
+                  }}
                 />
               </Col>
               <Col xs="4" lg="3">
-                <CustomInputWoutFormik label="Bill No" />
+                <CustomInputWoutFormik
+                  label="Bill No"
+                  errorMsg={error.bNo}
+                  value={upperData.bNo}
+                  onChange={(e) => {
+                    setUpperData({ ...upperData, bNo: e.target.value });
+                  }}
+                />
               </Col>
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
                   label="Date"
                   type="date"
-                  defaultValue={format(new Date(), "yyyy-MM-dd")}
+                  // defaultValue={format(new Date(), "yyyy-MM-dd")}
+                  value={upperData.bDate}
+                  onChange={(e) => {
+                    setUpperData({
+                      ...upperData,
+                      bDate: e.target.value,
+                    });
+                  }}
                 />
               </Col>
               <Col xs="4" lg="3">
-                <CustomInputWoutFormik label="Transport" />
+                <CustomInputWoutFormik
+                  label="Transport"
+                  value={upperData.trans}
+                  onChange={(e) => {
+                    setUpperData({
+                      ...upperData,
+                      trans: e.target.value,
+                    });
+                  }}
+                />
               </Col>
               <Col xs="4" lg="3">
-                <CustomInputWoutFormik label="L.R.No." />
+                <CustomInputWoutFormik
+                  label="L.R.No."
+                  value={upperData.lrno}
+                  onChange={(e) => {
+                    setUpperData({
+                      ...upperData,
+                      lrno: e.target.value,
+                    });
+                  }}
+                />
               </Col>
               <Col xs="4" lg="3">
-                <CustomInputWoutFormik label="Vehicle No." />
+                <CustomInputWoutFormik
+                  label="Vehicle No."
+                  value={upperData.vno}
+                  onChange={(e) => {
+                    setUpperData({
+                      ...upperData,
+                      vno: e.target.value,
+                    });
+                  }}
+                />
               </Col>
             </Row>
 
@@ -178,6 +284,7 @@ const CreateInvoice = () => {
               rows={rows.map((value) => value.row)}
               columnWidths={{
                 item: "200px",
+                desc: "100px",
                 pUnit: "100px",
                 pQty: "60px",
                 uQty: "70px",
@@ -188,7 +295,7 @@ const CreateInvoice = () => {
                 wAmt: "10px",
                 bAmt: "10px",
               }}
-              fieldsToExclude={["id"]}
+              fieldsToExclude={["id", "units"]}
               // fieldMap={{ email: "Email address" }}
               buttons={[]}
               dataItemManipulator={(field, value, row, index) => {
@@ -197,12 +304,25 @@ const CreateInvoice = () => {
                     return (
                       <CustomInputWoutFormik
                         type="select"
-                        options={
-                          <>
-                            <option value="">Select Item</option>
-                            <option value={1}>Item 1</option>
-                          </>
-                        }
+                        options={[
+                          <option value="">Select Item</option>,
+                          ...products.map((opt) => {
+                            return (
+                              <option value={opt.id}>{opt.item_name}</option>
+                            );
+                          }),
+                        ]}
+                        defaultValue={value}
+                        onChange={(event) => {
+                          row[field] = event.target.value;
+                          setGstFromProduct(row, event.target.value);
+                        }}
+                      />
+                    );
+                  case "desc":
+                    return (
+                      <CustomInputWoutFormik
+                        type="text"
                         defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
@@ -213,12 +333,12 @@ const CreateInvoice = () => {
                     return (
                       <CustomInputWoutFormik
                         type="select"
-                        options={
-                          <>
-                            <option value="">Select Unit</option>
-                            <option value="kg">Kg</option>
-                          </>
-                        }
+                        options={[
+                          <option value="">Select Unit</option>,
+                          ...row["units"].map((opt) => {
+                            return <option value={opt}>{opt}</option>;
+                          }),
+                        ]}
                         defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
@@ -370,16 +490,18 @@ const CreateInvoice = () => {
                               id: rowIndex + 1,
                               row: {
                                 item: "",
+                                desc: "",
                                 pUnit: "",
                                 pQty: "",
                                 uQty: "",
                                 rate: "",
                                 bRate: "",
                                 gst: "",
-                                tax: 10,
+                                tax: "",
                                 wAmt: "",
                                 bAmt: "",
                                 id: rowIndex + 1,
+                                units: [],
                               },
                             },
                           ]);
@@ -520,7 +642,15 @@ const CreateInvoice = () => {
             <Row className="justify-content-md-end mr-0">
               <Button
                 className="btn-md btn-outline-success"
-                onClick={() => console.log("save", rows)}
+                onClick={() => {
+                  console.log("rows", rows);
+                  console.log("upperData", upperData);
+
+                  console.log("totalWAmt", totalWAmt);
+                  console.log("totalBAmt", totalBAmt);
+                  console.log("gstTax", gstTax);
+                  console.log("total", total);
+                }}
               >
                 Save
               </Button>

@@ -7,8 +7,10 @@ export const CustomInputWoutFormik = ({
   size,
   withFormGroup,
   ref,
+  errorMsg = "",
   ...props
 }) => {
+  const errorClass = errorMsg != "" ? "has-error" : "";
   return (
     <>
       {withFormGroup === false ? (
@@ -21,7 +23,12 @@ export const CustomInputWoutFormik = ({
             </label>
           )}
 
-          <Input bsSize={size || "sm"} innerRef={ref} {...props}>
+          <Input
+            className={errorClass}
+            bsSize={size || "sm"}
+            innerRef={ref}
+            {...props}
+          >
             {options}
           </Input>
         </FormGroup>

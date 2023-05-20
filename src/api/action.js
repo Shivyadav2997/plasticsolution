@@ -40,3 +40,5 @@ export const sendOtpAction = "otp";
 export const checkGSTAction = "gstin";
 export const updateProfileAction = "updateprofile";
 export const updatePassAction = "update_pass";
+export const getBillAction = "findbillno";
+export const createInvoiceAction = "create_invoice";
