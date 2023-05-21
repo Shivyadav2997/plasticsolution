@@ -45,6 +45,8 @@ import {
   updatePassAction,
   createInvoiceAction,
   getBillAction,
+  viewSettingsAction,
+  updateSettingAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1002,6 +1004,78 @@ const getBillNo = async (token, payload) => {
   }
 };
 
+function objectToFormData(obj) {
+  const formData = new FormData();
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      formData.append(`${key}[]`, obj[key]);
+    }
+  }
+
+  return formData;
+}
+
+const createInvoice = async (token, payload, json) => {
+  try {
+    const formData = objectToFormData(json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createInvoiceAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getSettings = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${viewSettingsAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateSettings = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${updateSettingAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
 export {
   getMonthName,
   getData,
@@ -1050,4 +1124,7 @@ export {
   updateProfile,
   updatePassword,
   getBillNo,
+  createInvoice,
+  getSettings,
+  updateSettings,
 };

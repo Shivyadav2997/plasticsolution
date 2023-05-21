@@ -3,6 +3,7 @@ import Index from "views/Index.js";
 import Register from "pages/Register.js";
 import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
+import Setting from "pages/Setting";
 import Login from "pages/Login.js";
 import { MdAccountBox } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
@@ -61,7 +62,7 @@ var routes = [
     component: ViewAccount,
     layout: "/admin",
     iconCmp: GrTransaction,
-    wOutLink:true,
+    wOutLink: true,
   },
   {
     path: "/balance",
@@ -221,7 +222,7 @@ var routes = [
     path: "/setting",
     name: "Setting",
     icon: "ni ni-settings text-yellow",
-    component: Index,
+    component: Setting,
     layout: "/admin",
   },
   {
@@ -258,7 +259,7 @@ var routes = [
     component: Profile,
     layout: "/admin",
     iconCmp: GrTransaction,
-    wOutLink:true,
+    wOutLink: true,
   },
 ];
 export default routes;

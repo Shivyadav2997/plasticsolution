@@ -17,6 +17,7 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
 
 const Purchase = () => {
   const [purchases, setPurchases] = useState({
@@ -24,6 +25,7 @@ const Purchase = () => {
     monthly: [],
   });
 
+  const history = useHistory();
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
@@ -391,7 +393,10 @@ const Purchase = () => {
               </Col>
               <Col>
                 <Row className="justify-content-end mr-0 ml-0">
-                  <Button className="btn-md btn-outline-primary">
+                  <Button
+                    className="btn-md btn-outline-primary"
+                    onClick={() => history.push("/admin/purchase-invoice")}
+                  >
                     Create Purchase Bill
                   </Button>
                 </Row>

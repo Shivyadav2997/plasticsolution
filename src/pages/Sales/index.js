@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import ReactDOM from "react-dom/client";
 import { purchaseListGet, getMonthName } from "api/api";
+import { useHistory } from "react-router-dom";
 
 const Sales = () => {
   const [sales, setSales] = useState({
@@ -25,6 +26,7 @@ const Sales = () => {
     monthly: [],
   });
 
+  const history = useHistory();
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
@@ -388,7 +390,10 @@ const Sales = () => {
               </Col>
               <Col>
                 <Row className="justify-content-end mr-0">
-                  <Button className="btn-md btn-outline-primary">
+                  <Button
+                    className="btn-md btn-outline-primary"
+                    onClick={() => history.push("/admin/sales-invoice")}
+                  >
                     Create Sales Bill
                   </Button>
                 </Row>
@@ -438,11 +443,9 @@ const Sales = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => {
-                      //   handleToggle();
-                    }}
+                    onClick={() => history.push("/admin/sales-invoice")}
                   >
-                    Add Sale
+                    Create Sales Bill
                   </Button>
                 </Row>
               </Col>

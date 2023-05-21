@@ -14,10 +14,25 @@ import { format, parse } from "date-fns";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import DynamicDataTable from "@langleyfoxall/react-dynamic-data-table";
 import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
-import { transactionPartyGet, productListGet, getBillNo } from "api/api";
+import {
+  transactionPartyGet,
+  productListGet,
+  getBillNo,
+  createInvoice,
+} from "api/api";
 import { setLoader } from "features/User/UserSlice";
+import { GiNuclearPlant } from "react-icons/gi";
+import Swal from "sweetalert2";
 
 const CreateInvoice = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
+
   const [parties, setParties] = useState([]);
   const [totalWAmt, setTotalWAmt] = useState(0);
   const [totalBAmt, setTotalBAmt] = useState(0);
@@ -58,10 +73,69 @@ const CreateInvoice = () => {
     },
   ]);
 
+  const addInvoice = async () => {
+    if (upperData.party == "") {
+      setError({ ...error, party: "Please Select Party" });
+    } else if (upperData.bType == "") {
+      setError({ ...error, bType: "Please Select Bill Type" });
+    } else if (upperData.bNo == "") {
+      setError({ ...error, bNo: "Please Input BillNo" });
+    } else if (total == 0) {
+      Toast.fire({
+        icon: "error",
+        title: "Invalid Invoice Data",
+      });
+    } else {
+      await createInvoice(
+        user.token,
+        {
+          type: "sale",
+          party: upperData.party,
+          b_type: upperData.bType,
+          date: upperData.bDate,
+          bno: upperData.bNo,
+          tr: upperData.trans,
+          lr: upperData.lrno,
+          veh: upperData.vno,
+          tkachu: totalWAmt,
+          tpaku: totalBAmt,
+          gst: gstTax,
+        },
+        {
+          item: rows.map((x) => x.row.item),
+          item_desc: rows.map((x) => x.row.desc),
+          pkunit: rows.map((x) => x.row.pUnit),
+          pkqty: rows.map((x) => x.row.pQty),
+          uqty: rows.map((x) => x.row.uQty),
+          rate: rows.map((x) => x.row.rate),
+          paku: rows.map((x) => x.row.bRate),
+          pgst: rows.map((x) => x.row.gst),
+          tax: rows.map((x) => x.row.tax),
+          kachu: rows.map((x) => x.row.wAmt),
+          total: rows.map((x) => x.row.bAmt),
+        }
+      );
+    }
+  };
   const setGstFromProduct = (rowsInput, inputValue) => {
     if (inputValue != "") {
       const product = products.find((x) => x.id == inputValue);
-      rowsInput["units"] = [product.unit];
+      switch (product.unit) {
+        case "KGS":
+          rowsInput["units"] = [
+            { id: "1", name: "KGS" },
+            { id: "1", name: "BAG" },
+            { id: "20", name: "20KGS BAG" },
+            { id: "25", name: "25KGS BAG" },
+            { id: "50", name: "50KGS BAG" },
+            { id: "0", name: "NOS" },
+          ];
+          break;
+        default:
+          rowsInput["units"] = [{ id: "0", name: product.unit }];
+          break;
+      }
+
       rowsInput["gst"] =
         product != null ? (isNaN(product.gst) ? "0" : product.gst) : "0";
     } else {
@@ -71,29 +145,17 @@ const CreateInvoice = () => {
     curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
     setRows(curData);
   };
-  const calCulateTotal = (rowsInput) => {
-    // const rowsInput = [...rowsData];
-
-    // for (let index = 0; index < rowsInput.length; index++) {
-    //   if (rowsInput[index]["bRate"] && rowsInput[index]["uQty"]) {
-    //     rowsInput[index]["bAmt"] =
-    //       rowsInput[index]["bRate"] * rowsInput[index]["uQty"];
-    //   }
-    //   if (
-    //     rowsInput[index]["bRate"] &&
-    //     rowsInput[index]["uQty"] &&
-    //     rowsInput[index]["rate"]
-    //   ) {
-    //     rowsInput[index]["wAmt"] =
-    //       (rowsInput[index]["rate"] - rowsInput[index]["bRate"]) *
-    //       rowsInput[index]["uQty"];
-    //   }
-    //   if (rowsInput[index]["gst"] && rowsInput[index]["bAmt"]) {
-    //     rowsInput[index]["tax"] =
-    //       (rowsInput[index]["bAmt"] * rowsInput[index]["gst"]) / 100;
-    //   }
-    // }
-
+  const calCulateTotal = (rowsInput, calcQty = false) => {
+    if (calcQty) {
+      switch (rowsInput["pUnit"]) {
+        case "1":
+        case "20":
+        case "25":
+        case "50":
+          rowsInput["uQty"] = rowsInput["pQty"] * Number(rowsInput["pUnit"]);
+          break;
+      }
+    }
     if (rowsInput["bRate"] && rowsInput["uQty"]) {
       rowsInput["bAmt"] = rowsInput["bRate"] * rowsInput["uQty"];
     }
@@ -195,6 +257,7 @@ const CreateInvoice = () => {
                   errorMsg={error.party}
                   value={upperData.party}
                   onChange={(e) => {
+                    setError({ ...error, party: "" });
                     setUpperData({ ...upperData, party: e.target.value });
                   }}
                 />
@@ -204,7 +267,7 @@ const CreateInvoice = () => {
                   label="Bill Type"
                   type="select"
                   options={[
-                    <option value="">Select Bill Type</option>,
+                    <option value="">Select Bill Type *</option>,
                     ...["Debit", "Cash", "Bill_Tax"].map((opt) => {
                       return <option value={opt}>{opt}</option>;
                     }),
@@ -212,17 +275,18 @@ const CreateInvoice = () => {
                   errorMsg={error.bType}
                   value={upperData.bType}
                   onChange={(e) => {
-                    console.log(e.target.value);
+                    setError({ ...error, bType: "" });
                     setUpperData({ ...upperData, bType: e.target.value });
                   }}
                 />
               </Col>
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Bill No"
+                  label="Bill No *"
                   errorMsg={error.bNo}
                   value={upperData.bNo}
                   onChange={(e) => {
+                    setError({ ...error, bNo: "" });
                     setUpperData({ ...upperData, bNo: e.target.value });
                   }}
                 />
@@ -336,12 +400,13 @@ const CreateInvoice = () => {
                         options={[
                           <option value="">Select Unit</option>,
                           ...row["units"].map((opt) => {
-                            return <option value={opt}>{opt}</option>;
+                            return <option value={opt.id}>{opt.name}</option>;
                           }),
                         ]}
                         defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
+                          calCulateTotal(row, true);
                         }}
                       />
                     );
@@ -352,7 +417,7 @@ const CreateInvoice = () => {
                         defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
-                          calCulateTotal(row);
+                          calCulateTotal(row, true);
                         }}
                         className="text-right"
                       />
@@ -643,13 +708,13 @@ const CreateInvoice = () => {
               <Button
                 className="btn-md btn-outline-success"
                 onClick={() => {
-                  console.log("rows", rows);
-                  console.log("upperData", upperData);
-
-                  console.log("totalWAmt", totalWAmt);
-                  console.log("totalBAmt", totalBAmt);
-                  console.log("gstTax", gstTax);
-                  console.log("total", total);
+                  // console.log("rows", rows);
+                  // console.log("upperData", upperData);
+                  // console.log("totalWAmt", totalWAmt);
+                  // console.log("totalBAmt", totalBAmt);
+                  // console.log("gstTax", gstTax);
+                  // console.log("total", total);
+                  addInvoice();
                 }}
               >
                 Save
