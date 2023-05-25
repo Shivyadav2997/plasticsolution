@@ -1018,7 +1018,9 @@ function objectToFormData(obj) {
 
 const createInvoice = async (token, payload, json) => {
   try {
-    const formData = objectToFormData(json);
+    // const formData = objectToFormData(json);
+    const formData = new FormData();
+    formData.append("rows", json);
     const resp = await axios.post(
       baseUrl +
         `?action=${createInvoiceAction}&token=${token}&${getParams(payload)}`,

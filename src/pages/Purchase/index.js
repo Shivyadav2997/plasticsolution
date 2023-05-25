@@ -450,11 +450,9 @@ const Purchase = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => {
-                      //   handleToggle();
-                    }}
+                    onClick={() => history.push("/admin/purchase-invoice")}
                   >
-                    Add Purchase
+                    Create Purchase Bill
                   </Button>
                 </Row>
               </Col>

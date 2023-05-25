@@ -36,6 +36,7 @@ const CreateInvoice = () => {
 
   const history = useHistory();
   const [parties, setParties] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [totalWAmt, setTotalWAmt] = useState(0);
   const [totalBAmt, setTotalBAmt] = useState(0);
   const [gstTax, setGstTax] = useState(0);
@@ -92,7 +93,7 @@ const CreateInvoice = () => {
       const resp = await createInvoice(
         user.token,
         {
-          type: "sale",
+          type: "purchase",
           party: upperData.party,
           b_type: upperData.bType,
           date: upperData.bDate,
@@ -125,7 +126,7 @@ const CreateInvoice = () => {
           title: resp.data.msg,
         });
         setTimeout(() => {
-          history.push("/admin/sales");
+          history.push("/admin/purchase");
         }, 1500);
       } else {
         Toast.fire({
@@ -238,7 +239,10 @@ const CreateInvoice = () => {
   };
   const billNoGenerate = async (curDate) => {
     dispatch(setLoader(true));
-    const data = await getBillNo(user.token, { date: curDate, type: "Sale" });
+    const data = await getBillNo(user.token, {
+      date: curDate,
+      type: "Purchase",
+    });
     if (data.data.no) {
       setUpperData({ ...upperData, bNo: data.data.no });
     }
@@ -250,7 +254,7 @@ const CreateInvoice = () => {
     getProducts();
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     billNoGenerate(upperData.bDate);
@@ -739,7 +743,8 @@ const CreateInvoice = () => {
               </Button>
               <Button
                 className="btn-md btn-outline-danger"
-                onClick={() => history.push("/admin/sales")}
+                onClick={() => history.push("/admin/purchase")}
+                purchase
               >
                 Cancel
               </Button>
