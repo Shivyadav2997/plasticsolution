@@ -173,6 +173,8 @@ const CreateInvoice = () => {
         case "50":
           rowsInput["uQty"] = rowsInput["pQty"] * Number(rowsInput["pUnit"]);
           break;
+        default:
+          rowsInput["uQty"] = rowsInput["pQty"];
       }
     }
     if (rowsInput["bRate"] && rowsInput["uQty"]) {
@@ -366,20 +368,20 @@ const CreateInvoice = () => {
             </Row>
 
             <DynamicDataTable
-              className="table align-items-center table-flush col-12"
+              className="table align-items-center table-flush col-12 invoice-table"
               rows={rows.map((value) => value.row)}
               columnWidths={{
-                item: "200px",
-                desc: "100px",
-                pUnit: "100px",
-                pQty: "60px",
-                uQty: "70px",
-                rate: "70px",
-                bRate: "70px",
-                gst: "50px",
-                tax: "10px",
-                wAmt: "10px",
-                bAmt: "10px",
+                item: "14%",
+                desc: "9%",
+                pUnit: "9%",
+                pQty: "9%",
+                uQty: "9%",
+                rate: "9%",
+                bRate: "9%",
+                gst: "6%",
+                tax: "7%",
+                wAmt: "9%",
+                bAmt: "9%",
               }}
               fieldsToExclude={["id", "units"]}
               // fieldMap={{ email: "Email address" }}
@@ -532,38 +534,6 @@ const CreateInvoice = () => {
                 }
                 return value;
               }}
-              // rowRenderer={({
-              //   row, // Instance of data row
-              //   onClick, // Row on click handler
-              //   onMouseUp, // Row on MouseUp handler
-              //   onMouseDown, // Row on MouseDown handler
-              //   buttons, // Array of buttons
-              //   actions, // Array of header actions
-              //   fields, // Visible fields
-              //   renderCheckboxes, // Boolean indicating whether to render checkboxes
-              //   disableCheckbox, // Boolean indicating whether to disable the checkbox per row
-              //   checkboxIsChecked, // Boolean indicating if checkbox is checked
-              //   onCheckboxChange, // Callable that is called when a per row checkbox is changed
-              //   dataItemManipulator, // Callable that handles manipulation of every item in the data row
-              // }) => {
-              //   console.log(row);
-              //   return (
-              //     <tr>
-              //       <td>shiv</td>
-              //     </tr>
-              //   );
-              // }}
-              // editableColumns={[
-              //   {
-              //     name: "bAmt",
-              //     controlled: `false`,
-              //     type: "number",
-              //     value: "1",
-              //     onChange: (event, column, row, index) => {
-              //       console.log("shiv");
-              //     },
-              //   },
-              // ]}
               footer={
                 <>
                   <tr>
@@ -646,86 +616,6 @@ const CreateInvoice = () => {
                 </>
               }
             />
-            {/* <table className="table align-items-center table-flush col-12">
-              <tbody>
-                <tr>
-                  <td>
-                    <Button
-                      className="btn btn-outline-primary btn-sm"
-                      onClick={() => {
-                        setRows([
-                          ...rows,
-                          {
-                            id: rowIndex + 1,
-                            row: {
-                              item: "",
-                              pUnit: "",
-                              pQty: "",
-                              uQty: "",
-                              rate: "",
-                              bRate: "",
-                              gst: "",
-                              tax: 10,
-                              wAmt: "",
-                              bAmt: "",
-                              id: rowIndex + 1,
-                            },
-                          },
-                        ]);
-                        setRowIndex(rowIndex + 1);
-                      }}
-                    >
-                      Add Row
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <td co></td>
-                  <td align="right">Sub Total</td>
-                  <td>
-                    <CustomInputWoutFormik
-                      className="text-right"
-                      value={totalWAmt}
-                      disabled
-                    />
-                  </td>
-                  <td>
-                    <CustomInputWoutFormik
-                      className="text-right"
-                      value={totalBAmt}
-                      disabled
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={7}></td>
-                  <td align="right">GST Tax</td>
-                  <td></td>
-                  <td>
-                    <CustomInputWoutFormik
-                      className="text-right"
-                      value={gstTax}
-                      disabled
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={7}></td>
-                  <td align="right">
-                    <strong>Final Total</strong>
-                  </td>
-                  <td></td>
-                  <td>
-                    <CustomInputWoutFormik
-                      className="text-right"
-                      value={total}
-                      disabled
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table> */}
-
             <Row className="justify-content-md-end mr-0">
               <Button
                 className="btn-md btn-outline-success"

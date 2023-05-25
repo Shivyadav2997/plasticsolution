@@ -15,14 +15,13 @@ table.dataTable td {
   box-sizing: initial;
 }
 
-
-.card .table td,
-.card .table th {
+.card .table:not(.invoice-table) td,
+.card .table:not(.invoice-table) th {
   padding-right: 1rem !important;
 }
 
-.card .table td:not(.all):not(:first-child),
-.card .table th {
+.card .table:not(.invoice-table) td:not(.all):not(:first-child),
+.card .table:not(.invoice-table) th {
   padding-left: 1rem !important;
 }
 
@@ -32,16 +31,16 @@ table.dataTable td {
   padding: 0.5rem !important;
   vertical-align: top !important;
   border-top: 1px solid #dee2e6 !important;
-  padding-left:0.5rem !important;
+  padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
   white-space: unset !important;
 }
-.card .ledger-table td:not(.all):not(:first-child){
+.card .ledger-table td:not(.all):not(:first-child) {
   padding-left: 0.5rem !important;
 }
 
-.daybookCard .table td,
-.daybookCard .table th {
+.daybookCard .table:not(.invoice-table) td,
+.daybookCard .table:not(.invoice-table) th {
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
 }
@@ -179,6 +178,20 @@ html {
 body,
 #root {
   height: 100vh;
+}
+
+.invoice-table {
+  min-width: 900px;
+  font-size: 0.7rem !important;
+}
+.invoice-table .form-control {
+  font-size: 0.7rem !important;
+}
+.invoice-table td,
+.invoice-table th {
+  padding: 0.3rem !important;
+  padding-left: 0.3rem !important;
+  padding-right: 0.3rem !important;
 }
 @media (max-width: 575.98px) {
   .main-content-open,

@@ -1026,6 +1026,9 @@ const createInvoice = async (token, payload, json) => {
         `?action=${createInvoiceAction}&token=${token}&${getParams(payload)}`,
       formData
     );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
       data: resp.data,
       message: resp.data.msg,

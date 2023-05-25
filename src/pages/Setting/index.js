@@ -126,7 +126,7 @@ const Setting = () => {
         </Row>
         <Row className="justify-content-end mr-0 pt-1">
           <Button className="btn-md btn-outline-success" onClick={saveSetting}>
-            Save
+            Update
           </Button>
         </Row>
       </div>
@@ -137,7 +137,7 @@ const Setting = () => {
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Row>
           <Col>
-            <CustomTab tabnames={["Whatsapp"]} tabpanes={tabPan} />
+            <CustomTab tabnames={["Setting"]} tabpanes={tabPan} />
           </Col>
         </Row>
       </Container>
