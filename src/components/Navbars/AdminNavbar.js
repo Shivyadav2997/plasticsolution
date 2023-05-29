@@ -42,11 +42,11 @@ const AdminNavbar = (props) => {
 
   const profileClick = () => {
     history.push("/admin/profile");
-  }
+  };
 
   return (
     <>
-      <Navbar className="navbar-top navbar-dark" id="navbar-main">
+      <Navbar className="navbar-top navbar-dark navbar-admin" id="navbar-main">
         <Container fluid>
           <button
             className="navbar-toggler"
@@ -78,9 +78,9 @@ const AdminNavbar = (props) => {
             <UncontrolledDropdown nav>
               <DropdownToggle className="pr-0" nav>
                 <Media className="align-items-center">
-                  <span className="avatar avatar-sm rounded-circle">
+                  {/* <span className="avatar avatar-sm rounded-circle">
                     <img alt="..." src={user.logo} />
-                  </span>
+                  </span> */}
                   <Media className="ml-2 d-block">
                     <span className="mb-0 text-sm font-weight-bold text-dark">
                       {user.name}
@@ -97,10 +97,12 @@ const AdminNavbar = (props) => {
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>
-
+                <DropdownItem to="/admin/setting" tag={Link}>
+                  <i className="ni ni-settings" />
+                  <span>Settings</span>
+                </DropdownItem>
                 <DropdownItem divider />
                 <DropdownItem
-                  href="#pablo"
                   onClick={(e) => {
                     e.preventDefault();
                     logoutClick();

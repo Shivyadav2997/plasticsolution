@@ -1,4 +1,5 @@
 import React, { StrictMode } from "react";
+import "pages/arsha.css";
 import "index.css";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
@@ -12,6 +13,9 @@ import { Provider } from "react-redux";
 import ProtectedRoute from "pages/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Index from "pages/Index";
+import ContactUs from "pages/contactus";
+import Pricing from "pages/pricing";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
@@ -29,7 +33,10 @@ root.render(
           )}
         />
         <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-        <Redirect from="/" to="/admin/index" />
+        <Route path="/contactus" component={ContactUs} />
+        <Route path="/pricing" component={Pricing} />
+
+        <Route path="/" component={Index} />
       </Switch>
     </Provider>
   </BrowserRouter>

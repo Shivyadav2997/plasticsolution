@@ -173,7 +173,7 @@ const Sidebar = (props) => {
     <Navbar
       className={`${
         collapseSidebar ? "navbar-open-custom" : "navbar-close-custom"
-      } navbar-vertical fixed-left navbar-light bg-white navbar-expand-xs`}
+      } navbar-vertical fixed-left navbar-light bg-white navbar-expand-xs navbar-admin`}
       id="sidenav-main"
     >
       <Container fluid style={{ justifyContent: "unset" }}>

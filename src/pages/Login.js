@@ -53,7 +53,7 @@ const Register = () => {
       dispatch(setLoader(false));
       if (loginResponse.sucess) {
         dispatch(login(loginResponse));
-        history.push("/admin/index");
+        history.push("/admin/dashboard");
       } else {
         // alert(loginResponse.msg);
         toast(loginResponse.msg);
@@ -102,18 +102,6 @@ const Register = () => {
           </Button>
         }
       >
-        {/* <Form>
-          <Input
-            placeholder="User Name"
-            value={forgotUName}
-            type="text"
-            onChange={(e) => {
-              setErrorUname(e.target.value);
-            }}
-            required
-            
-          />
-        </Form> */}
         <CustomInputWoutFormik
           // label="User Name"
           placeholder="Username"
@@ -178,10 +166,6 @@ const Register = () => {
                   className="my-4"
                   color="primary"
                   type="button"
-                  // onClick={() => {
-                  //   dispatch(login({ id: 1, name: "shiv", lname: "yadav" }));
-                  //   history.push("/admin/index");
-                  // }}
                   onClick={loginSubmit}
                 >
                   Login
@@ -194,18 +178,19 @@ const Register = () => {
           <Col xs="6">
             <a
               className="text-dark"
-              style={{cursor:"pointer"}}
+              style={{ cursor: "pointer" }}
               onClick={() => setShow(true)}
             >
               <small>Forgot password?</small>
             </a>
           </Col>
           <Col className="text-right" xs="6">
-          <a
+            <a
               className="text-dark"
-              style={{cursor:"pointer"}}
-              onClick={() => {history.push("/auth/register");
-                  }}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                history.push("/auth/register");
+              }}
             >
               <small>Create New Account</small>
             </a>

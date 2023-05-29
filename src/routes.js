@@ -1,13 +1,9 @@
-import Index from "views/Index.js";
-// import Profile from "views/examples/Profile.js";
+import Dashboard from "pages/Dashboard/Index";
 import Register from "pages/Register.js";
-import Tables from "views/examples/Tables.js";
-import Icons from "views/examples/Icons.js";
 import Setting from "pages/Setting";
 import Login from "pages/Login.js";
 import { MdAccountBox } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
-import { GiExpense, GiFactory } from "react-icons/gi";
 import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { FaFileInvoiceDollar } from "react-icons/fa";
@@ -25,20 +21,17 @@ import Account from "pages/Account";
 import Balance from "pages/Balance";
 import Bank from "pages/Bank";
 import Profile from "pages/Profile";
-import ViewTest from "pages/View";
 import ProductList from "pages/Product";
 import ProductStock from "pages/Product/stock";
-import Production from "pages/Production";
 import { FaBalanceScale } from "react-icons/fa";
-import { BsBank } from "react-icons/bs";
 import ViewAccount from "pages/Account/view";
 
 var routes = [
   {
-    path: "/index",
+    path: "/dashboard",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
-    component: Index,
+    component: Dashboard,
     layout: "/admin",
   },
   {
@@ -225,6 +218,7 @@ var routes = [
     icon: "ni ni-settings text-yellow",
     component: Setting,
     layout: "/admin",
+    wOutLink: true,
   },
   {
     path: "/contact-us",
@@ -232,6 +226,7 @@ var routes = [
     icon: "ni ni-email-83 text-red",
     component: Contact,
     layout: "/admin",
+    wOutLink: true,
   },
   {
     path: "/register",

@@ -67,15 +67,17 @@ const Admin = (props) => {
             return routes[i].childRoutes[j].name;
           }
         }
-      } else if (
-        path.indexOf(routes[i].layout + routes[i].path) !==
-        -1
-      ) {
+      } else if (path.indexOf(routes[i].layout + routes[i].path) !== -1) {
         return routes[i].name;
-      } else if (path.indexOf(":")!==-1 && 
-      path.substring(0,path.lastIndexOf("/")) == (routes[i].layout + routes[i].path).substring(0,path.lastIndexOf("/"))
-      ){
-        path.indexOf(":")
+      } else if (
+        path.indexOf(":") !== -1 &&
+        path.substring(0, path.lastIndexOf("/")) ==
+          (routes[i].layout + routes[i].path).substring(
+            0,
+            path.lastIndexOf("/")
+          )
+      ) {
+        path.indexOf(":");
       }
     }
     return "Brand";
@@ -88,25 +90,12 @@ const Admin = (props) => {
           {...props}
           routes={routes}
           logo={{
-            innerLink: "/admin/index",
+            innerLink: "/admin/dashboard",
             imgSrc: require("../assets/img/brand/logo.png"),
             imgAlt: "...",
           }}
         />
-        {/* <SidebarNew
-          {...props}
-          routes={routes}
-          logo={{
-            innerLink: "/admin/index",
-            imgSrc: require("../assets/img/brand/logo.png"),
-            imgAlt: "...",
-          }}
-        /> */}
-        {/* <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Party />} />
-          </Routes> */}
-        {/* </SidebarNew> */}
+
         <div
           className={`${
             collapseSidebar ? "main-content-open" : "main-content-close"
@@ -123,7 +112,7 @@ const Admin = (props) => {
           />
           <Switch>
             {getRoutes(routes)}
-            <Redirect from="*" to="/admin/index" />
+            <Redirect from="*" to="/admin/dashboard" />
           </Switch>
           <Container fluid>
             <AdminFooter />

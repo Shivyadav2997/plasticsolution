@@ -1,6 +1,7 @@
 import { Container, Row, Col, Nav, NavItem, NavLink } from "reactstrap";
-
+import { useHistory } from "react-router-dom";
 const Footer = () => {
+  const history = useHistory();
   return (
     <footer className="footer">
       <Row className="align-items-center justify-content-xl-between">
@@ -21,13 +22,20 @@ const Footer = () => {
         <Col xl="6">
           <Nav className="nav-footer justify-content-center justify-content-xl-end">
             <NavItem>
-              <NavLink href="#">About Us</NavLink>
+              <NavLink href="javascript:void(0)">About Us</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="">Contact</NavLink>
+              <NavLink
+                href="javascript:void(0)"
+                onClick={() => {
+                  history.push("/admin/contact-us");
+                }}
+              >
+                Contact
+              </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="">Privacy</NavLink>
+              <NavLink href="javascript:void(0)">Privacy</NavLink>
             </NavItem>
           </Nav>
         </Col>
