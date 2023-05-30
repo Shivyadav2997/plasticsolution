@@ -3,13 +3,34 @@ import { Row, Col, Navbar, Container } from "reactstrap";
 import "./arsha.js";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-const ContactUs = () => {
+import {
+  BsFacebook,
+  BsInstagram,
+  BsLinkedin,
+  BsSkype,
+  BsTwitter,
+} from "react-icons/bs";
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+const Contact = () => {
   const history = useHistory();
   const [scroll, setScroll] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [open, setOpen] = useState("1");
+  const toggle = (id) => {
+    if (open === id) {
+      setOpen();
+    } else {
+      setOpen(id);
+    }
+  };
+  const toggleCollapse = () => {
+    setShowMenu(!showMenu);
+  };
   useEffect(() => {
     window.addEventListener("scroll", () => {
       setScroll(window.scrollY > 100);
     });
+    window.scrollTo(0, 0);
   }, []);
   return (
     <>
@@ -95,49 +116,17 @@ const ContactUs = () => {
                 </a>
               </li>
             </ul>
-            <i className="bi bi-list mobile-nav-toggle"></i>
+            <i className="mobile-nav-toggle" onClick={toggleCollapse}>
+              {/* <span className="navbar-toggler-icon" /> */}
+              {showMenu ? (
+                <AiOutlineClose color="white" fontSize={24} />
+              ) : (
+                <AiOutlineMenu color="black" fontSize={24} />
+              )}
+            </i>
           </nav>
         </Container>
       </header>
-      <section id="hero" className="d-flex align-items-center">
-        <div className="container">
-          <div className="row">
-            <div
-              className="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1"
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              <h1>Better Solutions For Your Business</h1>
-              <h2>
-                We are team of talented designers making websites with Bootstrap
-              </h2>
-              <div className="d-flex justify-content-center justify-content-lg-start">
-                <a href="#about" className="btn-get-started scrollto">
-                  Get Started
-                </a>
-                <a
-                  href="https://www.youtube.com/watch?v=jDDaplaOz7Q"
-                  className="glightbox btn-watch-video"
-                >
-                  <i className="bi bi-play-circle"></i>
-                  <span>Watch Video</span>
-                </a>
-              </div>
-            </div>
-            <div
-              className="col-lg-6 order-1 order-lg-2 hero-img"
-              data-aos="zoom-in"
-              data-aos-delay="200"
-            >
-              <img
-                src={require("../assets/img/hero-img.png")}
-                className="img-fluid animated"
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
-      </section>
 
       <main id="main">
         <section id="contact" className="contact">
@@ -246,7 +235,124 @@ const ContactUs = () => {
           </div>
         </section>
       </main>
+
+      <footer id="footer">
+        <div class="footer-top">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 footer-contact">
+                <h3>
+                  <a href="javascript:void(0)" className="logo me-auto">
+                    <img
+                      src={require("../assets/img/brand/logo.png")}
+                      alt=""
+                      className="img-fluid"
+                    />
+                  </a>
+                </h3>
+                <p>
+                  A108 Adam Street <br />
+                  New York, NY 535022
+                  <br />
+                  United States <br />
+                  <br />
+                  <strong>Phone:</strong> +1 5589 55488 55
+                  <br />
+                  <strong>Email:</strong> info@example.com
+                  <br />
+                </p>
+              </div>
+
+              <div class="col-lg-3 col-md-6 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                  <li>
+                    <i class="bx bx-chevron-right"></i> <a href="#">Home</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#about">About us</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#services">Services</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Terms of service</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Privacy policy</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-lg-3 col-md-6 footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Web Design</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Web Development</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Product Management</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Marketing</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a href="#">Graphic Design</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-lg-3 col-md-6 footer-links">
+                <h4>Our Social Networks</h4>
+                <p>
+                  Cras fermentum odio eu feugiat lide par naso tierra videa
+                  magna derita valies
+                </p>
+                <div class="social-links mt-3">
+                  <a href="#" class="twitter">
+                    <BsTwitter size={12} />
+                  </a>
+                  <a href="#" class="facebook">
+                    <BsFacebook size={12} />
+                  </a>
+                  <a href="#" class="instagram">
+                    <BsInstagram size={12} />
+                  </a>
+                  <a href="#" class="google-plus">
+                    <BsSkype size={12} />
+                  </a>
+                  <a href="#" class="linkedin">
+                    <BsLinkedin size={12} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container footer-bottom clearfix">
+          <div class="copyright">
+            &copy; Copyright{" "}
+            <strong>
+              <span>Prisha Software Pvt Ltd</span>
+            </strong>
+            . All Rights Reserved
+          </div>
+        </div>
+      </footer>
     </>
   );
 };
-export default ContactUs;
+export default Contact;
