@@ -1,4 +1,13 @@
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  FormGroup,
+} from "reactstrap";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
@@ -6,19 +15,23 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { saleListGet } from "api/api";
+import { saleListGet, invoiceGet } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
-import CustomModal from "components/Custom/CustomModal";
-import { CustomInput } from "components/Custom/CustomInput";
-import ConfirmationDialog from "components/Custom/ConfirmationDialog";
-import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+
 import ReactDOM from "react-dom/client";
-import { purchaseListGet, getMonthName } from "api/api";
+import { getMonthName } from "api/api";
 import { useHistory } from "react-router-dom";
+import { FaEye } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+
+import { useDispatch } from "react-redux";
+import { setLoader } from "features/User/UserSlice";
+import HTMLReactParser from "html-react-parser";
+import CustomModal from "components/Custom/CustomModal";
+import { setIn } from "formik";
 
 const Sales = () => {
   const [sales, setSales] = useState({
@@ -26,6 +39,7 @@ const Sales = () => {
     monthly: [],
   });
 
+  const [show, setShow] = useState(false);
   const history = useHistory();
   const childRef = useRef(null);
   const childRef2 = useRef(null);
@@ -34,9 +48,30 @@ const Sales = () => {
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
   const [monthSales, setmonthSales] = useState([]);
-
+  const [invoiceHtml, setInvoiceHtml] = useState("");
+  const [original, setOriginal] = useState(true);
+  const [transport, setTransport] = useState(false);
+  const [office, setOffice] = useState(false);
+  const [duplicate, setDuplicate] = useState(false);
+  const [without, setWithout] = useState(false);
+  const dispatch = useDispatch();
+  const [invId, setInvId] = useState("");
   const formRef = useRef(null);
+  const printIframe = (id) => {
+    const iframe = document.frames
+      ? document.frames[id]
+      : document.getElementById(id);
+    const iframeWindow = iframe.contentWindow || iframe;
 
+    iframe.focus();
+    iframeWindow.print();
+
+    return false;
+  };
+
+  const handleToggle = () => {
+    setShow(!show);
+  };
   //   const handleShowConfirmation = () => {
   //     if (showDelete) {
   //       setExpenseId(null);
@@ -60,19 +95,37 @@ const Sales = () => {
   //     }
   //   };
 
-  //   const deleteClick = (cellData, rowData, row, col) => {
-  //     setExpenseId(cellData.id);
-  //     handleShowConfirmation();
-  //   };
+  const deleteClick = (cellData, rowData, row, col) => {
+    // setExpenseId(cellData.id);
+    // handleShowConfirmation();
+  };
 
-  //   const handleToggle = async () => {
-  //     if (!show) {
-  //       //await getTransactionParties().then(() => setShow(true));
-  //       setShow(true);
-  //     } else {
-  //       setShow(false);
-  //     }
-  //   };
+  const viewInvoice = async (rowData) => {
+    const id = btoa(Number(rowData.id));
+    setInvId(id);
+    setOriginal(true);
+    setDuplicate(false);
+    setOffice(false);
+    setTransport(false);
+    handleToggle();
+    dispatch(setLoader(true));
+    const resp = await invoiceGet(user.token, {
+      id: id,
+      tt: "ORIGINAL FOR RECIPIENT",
+      t: 4,
+      d: 1,
+    });
+    setInvoiceHtml(resp.data);
+    dispatch(setLoader(false));
+  };
+  // const handleToggle = async () => {
+  //   if (!show) {
+  //     //await getTransactionParties().then(() => setShow(true));
+  //     setShow(true);
+  //   } else {
+  //     setShow(false);
+  //   }
+  // };
 
   var colDefs = [
     {
@@ -122,6 +175,39 @@ const Sales = () => {
     {
       title: "Action",
       data: null,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            {" "}
+            <div className="d-flex gap-10">
+              <div>
+                <Button
+                  className="btn-outline-primary btn-icon btn-sm"
+                  color="default"
+                  onClick={() => viewInvoice(rowData)}
+                >
+                  <span>
+                    <FaEye size={12} />
+                  </span>
+                </Button>
+              </div>
+
+              <div>
+                <Button
+                  className="btn-danger btn-icon btn-sm"
+                  onClick={() => deleteClick(cellData, rowData, row, col)}
+                >
+                  <span>
+                    <MdDelete size={16} />
+                  </span>
+                </Button>
+              </div>
+            </div>
+          </>
+        );
+      },
+      className: "all",
     },
   ];
 
@@ -229,6 +315,7 @@ const Sales = () => {
       title="Sales List"
       withCard={false}
       hasEdit={false}
+      hasDelete={false}
       custom={true}
       ref={childRef}
       //   deleteClick={deleteClick}
@@ -273,6 +360,45 @@ const Sales = () => {
     date: Yup.date().required("Required"),
   });
 
+  const invoiceWithChecks = async () => {
+    dispatch(setLoader(true));
+    const resp = await invoiceGet(user.token, {
+      id: invId,
+      tt: "ORIGINAL FOR RECIPIENT",
+      t: 4,
+      a: original ? 1 : 0,
+      b: transport ? 1 : 0,
+      c: office ? 1 : 0,
+      d: duplicate ? 1 : 0,
+      w: without ? 1 : 0,
+    });
+    setInvoiceHtml(resp.data);
+    dispatch(setLoader(false));
+  };
+
+  const downloadOrWhatsappInvoice = async (download, whatsapp) => {
+    dispatch(setLoader(true));
+    const resp = await invoiceGet(user.token, {
+      id: invId,
+      tt: "ORIGINAL FOR RECIPIENT",
+      t: 4,
+      a: original ? 1 : 0,
+      b: transport ? 1 : 0,
+      c: office ? 1 : 0,
+      d: duplicate ? 1 : 0,
+      w: without ? 1 : 0,
+      dn: download ? 1 : 0,
+      wp: whatsapp ? 1 : 0,
+    });
+    console.log("resp", resp);
+    dispatch(setLoader(false));
+  };
+
+  useEffect(() => {
+    if (show) {
+      invoiceWithChecks();
+    }
+  }, [without, original, duplicate, transport, office]);
   return (
     <>
       {/* <CustomModal
@@ -371,6 +497,148 @@ const Sales = () => {
       >
         Are You Sure you want to delete this ?
       </ConfirmationDialog> */}
+      <CustomModal
+        show={show}
+        title="Sales Invoice"
+        handleToggle={handleToggle}
+        scrollable={true}
+        centered={false}
+        iframe={true}
+        fullscreen={true}
+        footer={
+          <>
+            <div className="d-flex justify-content-between w-100 flex-column flex-lg-row">
+              <div className="d-flex" style={{ gap: "10px" }}>
+                <FormGroup>
+                  <input
+                    type="checkbox"
+                    id="without"
+                    checked={without}
+                    onChange={(e) => setWithout(e.currentTarget.checked)}
+                  />
+                  <label className="ml-2" htmlFor="without">
+                    WithoutAmt
+                  </label>
+                </FormGroup>
+                <FormGroup>
+                  <input
+                    type="checkbox"
+                    id="original"
+                    checked={original}
+                    onChange={(e) => {
+                      setOriginal(e.currentTarget.checked);
+                      if (
+                        !e.currentTarget.checked &&
+                        !office &&
+                        !transport &&
+                        !duplicate
+                      ) {
+                        setOriginal(true);
+                      }
+                    }}
+                  />
+                  <label className="ml-2" htmlFor="original">
+                    Original
+                  </label>
+                </FormGroup>
+                <FormGroup>
+                  <input
+                    type="checkbox"
+                    id="transport"
+                    checked={transport}
+                    onChange={(e) => {
+                      setTransport(e.currentTarget.checked);
+                      if (
+                        !e.currentTarget.checked &&
+                        !office &&
+                        !original &&
+                        !duplicate
+                      ) {
+                        setOriginal(true);
+                      }
+                    }}
+                  />
+                  <label className="ml-2" htmlFor="transport">
+                    Transport
+                  </label>
+                </FormGroup>
+                <FormGroup>
+                  <input
+                    type="checkbox"
+                    id="office"
+                    checked={office}
+                    onChange={(e) => {
+                      setOffice(e.currentTarget.checked);
+                      if (
+                        !e.currentTarget.checked &&
+                        !original &&
+                        !transport &&
+                        !duplicate
+                      ) {
+                        setOriginal(true);
+                      }
+                    }}
+                  />
+                  <label className="ml-2" htmlFor="office">
+                    Office
+                  </label>
+                </FormGroup>
+                <FormGroup>
+                  <input
+                    type="checkbox"
+                    id="duplicate"
+                    checked={duplicate}
+                    onChange={(e) => {
+                      setDuplicate(e.currentTarget.checked);
+                      if (
+                        !e.currentTarget.checked &&
+                        !office &&
+                        !transport &&
+                        !original
+                      ) {
+                        setOriginal(true);
+                      }
+                    }}
+                  />
+                  <label className="ml-2" htmlFor=" duplicate">
+                    Duplicate
+                  </label>
+                </FormGroup>
+              </div>
+              <div>
+                <div className="d-flex">
+                  {/* <Button
+                    type="submit"
+                    className="mr-1 btn-outline-primary"
+                    size="md"
+                    onClick={() => downloadOrWhatsappInvoice(false, true)}
+                  >
+                    Whatsapp
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="mr-1 btn-outline-success"
+                    size="md"
+                    onClick={() => downloadOrWhatsappInvoice(true, false)}
+                  >
+                    Download
+                  </Button>{" "}
+                  <Button
+                    type="submit"
+                    className="mr-1  btn-outline-warning"
+                    size="md"
+                    onClick={() => printIframe("iframe")}
+                  >
+                    Print
+                  </Button> */}
+                </div>
+              </div>
+            </div>
+          </>
+        }
+      >
+        <div dangerouslySetInnerHTML={{ __html: invoiceHtml }}></div>
+      </CustomModal>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         {selMonth > 0 ? (
           <>

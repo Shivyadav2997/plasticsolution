@@ -1,13 +1,4 @@
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Table,
-  FormGroup,
-  Card,
-  CardBody,
-} from "reactstrap";
+import { Container, Row, Col, Button, Card, CardBody } from "reactstrap";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { format, parse } from "date-fns";
@@ -42,6 +33,7 @@ const CreateInvoice = () => {
   const [total, setTotal] = useState(0);
   const [rowIndex, setRowIndex] = useState(0);
   const [products, setProducts] = useState([]);
+  const [show, setShow] = useState(false);
   const [upperData, setUpperData] = useState({
     party: "",
     bType: "",

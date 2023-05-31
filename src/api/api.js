@@ -51,6 +51,7 @@ import {
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
 const baseUrl = process.env.REACT_APP_API_URL;
+const baseInvoiceUrl = process.env.REACT_APP_INVOICE_URL;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -61,7 +62,7 @@ const getMonthName = (monthNumber) => {
 };
 const getParams = (payload) => {
   const strParams = Object.keys(payload).map((k) => {
-    return payload[k] ? `${k}=${payload[k]}` : "";
+    return `${k}=${payload[k]}`;
   });
   return strParams.join("&");
 };
@@ -1081,6 +1082,26 @@ const updateSettings = async (token, payload) => {
     };
   }
 };
+
+const invoiceGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseInvoiceUrl + `?&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
 export {
   getMonthName,
   getData,
@@ -1132,4 +1153,5 @@ export {
   createInvoice,
   getSettings,
   updateSettings,
+  invoiceGet,
 };

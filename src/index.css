@@ -205,3 +205,10 @@ body,
     z-index: 9999;
   }
 }
+
+.modal-fullscreen {
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100%;
+  margin: 0;
+}
