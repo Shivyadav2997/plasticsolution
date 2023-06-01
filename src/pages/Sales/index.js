@@ -15,7 +15,12 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
-import { saleListGet, invoiceGet } from "api/api";
+import {
+  saleListGet,
+  invoiceGet,
+  invoiceDownload,
+  deleteRecord,
+} from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
@@ -24,7 +29,7 @@ import * as Yup from "yup";
 import ReactDOM from "react-dom/client";
 import { getMonthName } from "api/api";
 import { useHistory } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
+import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import { useDispatch } from "react-redux";
@@ -32,14 +37,24 @@ import { setLoader } from "features/User/UserSlice";
 import HTMLReactParser from "html-react-parser";
 import CustomModal from "components/Custom/CustomModal";
 import { setIn } from "formik";
-
+import Swal from "sweetalert2";
+import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 const Sales = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   const [sales, setSales] = useState({
     all: [],
     monthly: [],
   });
 
   const [show, setShow] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const history = useHistory();
   const childRef = useRef(null);
   const childRef2 = useRef(null);
@@ -72,32 +87,41 @@ const Sales = () => {
   const handleToggle = () => {
     setShow(!show);
   };
-  //   const handleShowConfirmation = () => {
-  //     if (showDelete) {
-  //       setExpenseId(null);
-  //     }
-  //     setShowDelete(!showDelete);
-  //   };
 
-  //   const deleteExpense = async () => {
-  //     if (expenseId != null) {
-  //       handleShowConfirmation();
-  //       setLoading(true);
-  //       const resp = await deleteRecord(user.token, {
-  //         type: "expenses",
-  //         id: expenseId,
-  //       });
-  //       toast(resp.message);
-  //       if (resp.data.sucess == 1) {
-  //         getExpenses();
-  //         setExpenseId(null);
-  //       }
-  //     }
-  //   };
+  const handleShowConfirmation = () => {
+    if (showDelete) {
+      setDeleteId(null);
+    }
+    setShowDelete(!showDelete);
+  };
+
+  const deleteInvoice = async () => {
+    if (deleteId != null) {
+      dispatch(setLoader(true));
+      const resp = await deleteRecord(user.token, {
+        type: "invoice",
+        id: deleteId,
+      });
+      dispatch(setLoader(false));
+      if (resp.data.sucess == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
+        handleShowConfirmation();
+        getData();
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
+      }
+    }
+  };
 
   const deleteClick = (cellData, rowData, row, col) => {
-    // setExpenseId(cellData.id);
-    // handleShowConfirmation();
+    setDeleteId(cellData.id);
+    handleShowConfirmation();
   };
 
   const viewInvoice = async (rowData) => {
@@ -111,21 +135,15 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
-      tt: "ORIGINAL FOR RECIPIENT",
-      t: 4,
-      d: 1,
+      a: 1,
+      b: 0,
+      c: 0,
+      d: 0,
+      w: 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
   };
-  // const handleToggle = async () => {
-  //   if (!show) {
-  //     //await getTransactionParties().then(() => setShow(true));
-  //     setShow(true);
-  //   } else {
-  //     setShow(false);
-  //   }
-  // };
 
   var colDefs = [
     {
@@ -364,34 +382,41 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: invId,
-      tt: "ORIGINAL FOR RECIPIENT",
-      t: 4,
-      a: original ? 1 : 0,
-      b: transport ? 1 : 0,
-      c: office ? 1 : 0,
-      d: duplicate ? 1 : 0,
+      a: original && !without ? 1 : 0,
+      b: transport && !without ? 1 : 0,
+      c: office && !without ? 1 : 0,
+      d: duplicate && !without ? 1 : 0,
       w: without ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
   };
 
-  const downloadOrWhatsappInvoice = async (download, whatsapp) => {
+  const downloadOrWhatsappInvoice = async (whatsapp) => {
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await invoiceDownload(user.token, {
       id: invId,
-      tt: "ORIGINAL FOR RECIPIENT",
-      t: 4,
-      a: original ? 1 : 0,
-      b: transport ? 1 : 0,
-      c: office ? 1 : 0,
-      d: duplicate ? 1 : 0,
+      a: original && !without ? 1 : 0,
+      b: transport && !without ? 1 : 0,
+      c: office && !without ? 1 : 0,
+      d: duplicate && !without ? 1 : 0,
       w: without ? 1 : 0,
-      dn: download ? 1 : 0,
       wp: whatsapp ? 1 : 0,
     });
-    console.log("resp", resp);
     dispatch(setLoader(false));
+    if (whatsapp) {
+      Toast.fire({
+        icon: resp.data.success == 1 ? "success" : "error",
+        title: resp.data.msg || "Something went wrong",
+      });
+    } else {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.target = "_blank";
+      alink.download = url.substring(url.lastIndexOf("/") + 1);
+      alink.click();
+    }
   };
 
   useEffect(() => {
@@ -487,153 +512,177 @@ const Sales = () => {
             </div>
           )}
         </Formik>
-      </CustomModal>
+      </CustomModal> */}
       <ConfirmationDialog
         show={showDelete}
         handleToggle={handleShowConfirmation}
         title="Delete"
-        handleOkay={deleteExpense}
+        handleOkay={deleteInvoice}
         handleCancel={handleShowConfirmation}
       >
         Are You Sure you want to delete this ?
-      </ConfirmationDialog> */}
+      </ConfirmationDialog>
       <CustomModal
         show={show}
-        title="Sales Invoice"
+        title="View/Print Invoice"
         handleToggle={handleToggle}
-        scrollable={true}
         centered={false}
         iframe={true}
         fullscreen={true}
         footer={
           <>
-            <div className="d-flex justify-content-between w-100 flex-column flex-lg-row">
-              <div className="d-flex" style={{ gap: "10px" }}>
-                <FormGroup>
-                  <input
-                    type="checkbox"
-                    id="without"
-                    checked={without}
-                    onChange={(e) => setWithout(e.currentTarget.checked)}
-                  />
-                  <label className="ml-2" htmlFor="without">
-                    WithoutAmt
-                  </label>
-                </FormGroup>
-                <FormGroup>
-                  <input
-                    type="checkbox"
-                    id="original"
-                    checked={original}
-                    onChange={(e) => {
-                      setOriginal(e.currentTarget.checked);
-                      if (
-                        !e.currentTarget.checked &&
-                        !office &&
-                        !transport &&
-                        !duplicate
-                      ) {
-                        setOriginal(true);
-                      }
-                    }}
-                  />
-                  <label className="ml-2" htmlFor="original">
-                    Original
-                  </label>
-                </FormGroup>
-                <FormGroup>
-                  <input
-                    type="checkbox"
-                    id="transport"
-                    checked={transport}
-                    onChange={(e) => {
-                      setTransport(e.currentTarget.checked);
-                      if (
-                        !e.currentTarget.checked &&
-                        !office &&
-                        !original &&
-                        !duplicate
-                      ) {
-                        setOriginal(true);
-                      }
-                    }}
-                  />
-                  <label className="ml-2" htmlFor="transport">
-                    Transport
-                  </label>
-                </FormGroup>
-                <FormGroup>
-                  <input
-                    type="checkbox"
-                    id="office"
-                    checked={office}
-                    onChange={(e) => {
-                      setOffice(e.currentTarget.checked);
-                      if (
-                        !e.currentTarget.checked &&
-                        !original &&
-                        !transport &&
-                        !duplicate
-                      ) {
-                        setOriginal(true);
-                      }
-                    }}
-                  />
-                  <label className="ml-2" htmlFor="office">
-                    Office
-                  </label>
-                </FormGroup>
-                <FormGroup>
-                  <input
-                    type="checkbox"
-                    id="duplicate"
-                    checked={duplicate}
-                    onChange={(e) => {
-                      setDuplicate(e.currentTarget.checked);
-                      if (
-                        !e.currentTarget.checked &&
-                        !office &&
-                        !transport &&
-                        !original
-                      ) {
-                        setOriginal(true);
-                      }
-                    }}
-                  />
-                  <label className="ml-2" htmlFor=" duplicate">
-                    Duplicate
-                  </label>
-                </FormGroup>
-              </div>
-              <div>
+            <Row className="w-100">
+              <Col xs={12} lg={9}>
+                <Row className="w-100">
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="without"
+                      checked={without}
+                      onChange={(e) => {
+                        if (e.currentTarget.checked) {
+                          setOriginal(false);
+                          setTransport(false);
+                          setOffice(false);
+                          setDuplicate(false);
+                        } else {
+                          setOriginal(true);
+                        }
+
+                        setWithout(e.currentTarget.checked);
+                      }}
+                    />
+                    <label className="ml-2" htmlFor="without">
+                      Without
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="original"
+                      checked={original}
+                      onChange={(e) => {
+                        if (e.currentTarget.checked) {
+                          setWithout(false);
+                        }
+                        setOriginal(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !office &&
+                          !transport &&
+                          !duplicate
+                        ) {
+                          setOriginal(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor="original">
+                      Original
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="transport"
+                      checked={transport}
+                      onChange={(e) => {
+                        if (e.currentTarget.checked) {
+                          setWithout(false);
+                        }
+                        setTransport(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !office &&
+                          !original &&
+                          !duplicate
+                        ) {
+                          setOriginal(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor="transport">
+                      Transport
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="office"
+                      checked={office}
+                      onChange={(e) => {
+                        if (e.currentTarget.checked) {
+                          setWithout(false);
+                        }
+                        setOffice(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !original &&
+                          !transport &&
+                          !duplicate
+                        ) {
+                          setOriginal(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor="office">
+                      Office
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="duplicate"
+                      checked={duplicate}
+                      onChange={(e) => {
+                        if (e.currentTarget.checked) {
+                          setWithout(false);
+                        }
+                        setDuplicate(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !office &&
+                          !transport &&
+                          !original
+                        ) {
+                          setOriginal(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor=" duplicate">
+                      Duplicate
+                    </label>
+                  </Col>
+                </Row>
+              </Col>
+              <Col xs={12} lg={3}>
                 <div className="d-flex">
-                  {/* <Button
-                    type="submit"
-                    className="mr-1 btn-outline-primary"
-                    size="md"
-                    onClick={() => downloadOrWhatsappInvoice(false, true)}
-                  >
-                    Whatsapp
-                  </Button>
                   <Button
                     type="submit"
                     className="mr-1 btn-outline-success"
-                    size="md"
-                    onClick={() => downloadOrWhatsappInvoice(true, false)}
+                    size="sm"
+                    onClick={() => downloadOrWhatsappInvoice(true)}
                   >
-                    Download
+                    <FaWhatsapp color="success" /> Whatsapp
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="btn-outline-primary"
+                    size="sm"
+                    onClick={() => downloadOrWhatsappInvoice(false)}
+                  >
+                    <FaDownload color="primary" /> Download
                   </Button>{" "}
                   <Button
                     type="submit"
-                    className="mr-1  btn-outline-warning"
-                    size="md"
+                    className="mr-1 btn-outline-warning"
+                    size="sm"
                     onClick={() => printIframe("iframe")}
                   >
-                    Print
-                  </Button> */}
+                    <FaPrint color="warning" /> Print
+                  </Button>
                 </div>
-              </div>
-            </div>
+              </Col>
+            </Row>
           </>
         }
       >

@@ -41,7 +41,7 @@ const CustomModal = ({
         <ModalBody className="pt-0 bg-secondary">
           {iframe ? (
             <iframe
-              style={{ width: "100%", height: "100%" }}
+              style={{ minWidth: "100%", height: "100%" }}
               ref={setContentRef}
               id="iframe"
             >

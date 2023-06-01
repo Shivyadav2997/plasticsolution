@@ -210,5 +210,17 @@ body,
   width: 100vw !important;
   max-width: none !important;
   height: 100%;
-  margin: 0;
+  margin: 0 !important;
+}
+.modal-fullscreen .modal-content {
+  max-height: none !important;
+  height: 100% !important;
+}
+
+.modal-fullscreen .modal-header {
+  padding: 10px !important;
+}
+
+.modal-fullscreen .modal-footer {
+  padding: 10px !important;
 }
