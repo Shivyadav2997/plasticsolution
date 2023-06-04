@@ -56,7 +56,7 @@ const Party = () => {
   const viewInvoice = (cellData, rowData, row, col) => {
     sessionStorage.setItem("party", rowData.party);
     const id = btoa(Number(rowData.pid));
-    history.push(`/admin/v1/viewAccount/${id}`);
+    history.push(`/admin/v2/viewAccount/${id}`);
   };
   const sendWhatsapp = (cellData, rowData, row, col) => {
     console.log(rowData);
@@ -150,10 +150,7 @@ const Party = () => {
       data: "party",
       className: "all",
     },
-    {
-      title: "Without Outstanding",
-      data: "withoutamt",
-    },
+
     {
       title: "Bill Outstanding",
       data: "billamt",
@@ -228,10 +225,7 @@ const Party = () => {
       title: "Invoice",
       data: "invoice",
     },
-    {
-      title: "WithoutAmt",
-      data: "withoutamt",
-    },
+
     {
       title: "BillAmt",
       data: "billamt",
@@ -330,7 +324,7 @@ const Party = () => {
             wAmount: "",
             bAmount: "",
             amount: "",
-            billtype: "",
+            billtype: "BillAmt",
             date: format(new Date(), "yyyy-MM-dd"),
             description: "",
           }}
@@ -352,10 +346,7 @@ const Party = () => {
                   onChange={(e) => {
                     formik.handleChange(e);
                     const party = parties.find((x) => x.pid == e.target.value);
-                    formik.setFieldValue(
-                      "wAmount",
-                      party ? party.withoutamt : ""
-                    );
+
                     formik.setFieldValue("bAmount", party ? party.billamt : "");
                   }}
                   options={[
@@ -367,16 +358,7 @@ const Party = () => {
                 />
 
                 <Row xs="2">
-                  <Col>
-                    <CustomInput
-                      placeholder=""
-                      name="wAmount"
-                      type="text"
-                      label="Without Amt. (Outstanding)"
-                      disabled
-                    />
-                  </Col>
-                  <Col>
+                  <Col xs={12}>
                     <CustomInput
                       placeholder=""
                       name="bAmount"
@@ -397,14 +379,14 @@ const Party = () => {
                 <CustomInput
                   name="billtype"
                   type="select"
-                  label="Type"
+                  // label="Type"
                   options={[
                     { label: "Select Type", value: "" },
-                    { label: "WithoutAmt", value: "WithoutAmt" },
                     { label: "BillAmt", value: "BillAmt" },
                   ].map((opt) => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}
+                  className="d-none"
                 />
                 {/* 
                 <CustomInput

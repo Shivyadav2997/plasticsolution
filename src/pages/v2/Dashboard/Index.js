@@ -46,14 +46,14 @@ const Index = (props) => {
   const [dashboardData, setDashboardData] = useState({
     current_sale: {
       title: "",
-      WithtAmt: "0.00",
+
       billAmt: "0.00",
       gst: "0.00",
       total: "0.00",
     },
     current_purchase: {
       title: "",
-      WithtAmt: "0.00",
+
       billAmt: "0.00",
       gst: "0.00",
       total: "0.00",
@@ -63,17 +63,14 @@ const Index = (props) => {
       monthly: "0.00",
     },
     debit: {
-      WithtAmt: "0.00",
       billAmt: "0.00",
       total: "0.00",
     },
     credit: {
-      WithtAmt: "0.00",
       billAmt: "0.00",
       total: "0.00",
     },
     closing: {
-      WithtAmt: "0.00",
       billAmt: "0.00",
       total: "0.00",
     },
@@ -220,19 +217,19 @@ const Index = (props) => {
               >
                 <Button
                   className="btn-md btn-outline-primary mb-1 ml-0"
-                  onClick={() => history.push("/admin/v1/sales-invoice")}
+                  onClick={() => history.push("/admin/v2/sales-invoice")}
                 >
                   <FaShoppingCart size={18} color="primary" /> Sale Invoice
                 </Button>
                 <Button
                   className="btn-md btn-outline-info mb-1 ml-0"
-                  onClick={() => history.push("/admin/v1/purchase-invoice")}
+                  onClick={() => history.push("/admin/v2/purchase-invoice")}
                 >
                   <FaShoppingCart size={18} color="info" /> Purchase Invoice
                 </Button>
                 <Button
                   className="btn-md btn-outline-success mb-1 ml-0"
-                  onClick={() => history.push("/admin/v1/day-book")}
+                  onClick={() => history.push("/admin/v2/day-book")}
                 >
                   <FaWallet size={18} color="success" /> DayBook
                 </Button>
@@ -268,12 +265,6 @@ const Index = (props) => {
                   style={{ width: "100%" }}
                 >
                   <tbody>
-                    <tr>
-                      <td>WithtAmt</td>
-                      <td className="text-right">
-                        ₹ {dashboardData?.current_sale?.WithtAmt}
-                      </td>
-                    </tr>
                     <tr>
                       <td>BillAmt</td>
                       <td className="text-right">
@@ -318,12 +309,6 @@ const Index = (props) => {
                   style={{ width: "100%" }}
                 >
                   <tbody>
-                    <tr>
-                      <td>WithtAmt</td>
-                      <td className="text-right">
-                        ₹ {dashboardData?.current_purchase?.WithtAmt}
-                      </td>
-                    </tr>
                     <tr>
                       <td>BillAmt</td>
                       <td className="text-right">
@@ -410,12 +395,6 @@ const Index = (props) => {
                 >
                   <tbody>
                     <tr>
-                      <td>WithouAmt</td>
-                      <td className="text-right">
-                        ₹ {dashboardData?.debit?.WithtAmt}
-                      </td>
-                    </tr>
-                    <tr>
                       <td>BillAmt</td>
                       <td className="text-right">
                         ₹ {dashboardData?.debit?.billAmt}
@@ -453,12 +432,6 @@ const Index = (props) => {
                   style={{ width: "100%" }}
                 >
                   <tbody>
-                    <tr>
-                      <td>WithouAmt</td>
-                      <td className="text-right">
-                        ₹ {dashboardData?.credit?.WithtAmt}
-                      </td>
-                    </tr>
                     <tr>
                       <td>BillAmt</td>
                       <td className="text-right">
@@ -498,12 +471,6 @@ const Index = (props) => {
                 >
                   <tbody>
                     <tr>
-                      <td>WithouAmt</td>
-                      <td className="text-right">
-                        ₹ {dashboardData?.closing?.WithtAmt}
-                      </td>
-                    </tr>
-                    <tr>
                       <td>BillAmt</td>
                       <td className="text-right">
                         ₹ {dashboardData?.closing?.billAmt}
@@ -539,7 +506,7 @@ const Index = (props) => {
                       color="primary"
                       onClick={(e) => {
                         e.preventDefault();
-                        history.push("/admin/v1/sales");
+                        history.push("/admin/v2/sales");
                       }}
                       size="sm"
                     >
@@ -553,7 +520,6 @@ const Index = (props) => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Party</th>
-                    <th scope="col">WithouAmt</th>
                     <th scope="col">BillAmt</th>
                     <th scope="col">Total</th>
                   </tr>
@@ -563,7 +529,6 @@ const Index = (props) => {
                     return (
                       <tr key={index}>
                         <td>{sale.party}</td>
-                        <td>{sale.withoutamt}</td>
                         <td>{sale.billamt}</td>
                         <td>
                           {sale.total}
@@ -602,13 +567,11 @@ const Index = (props) => {
                       color="primary"
                       onClick={(e) => {
                         e.preventDefault();
-                        history.push("/admin/v1/purchase");
+                        history.push("/admin/v2/purchase");
                       }}
                       size="sm"
                     >
-                      {/* <Link to="/admin/purchase" className="text-white"> */}
                       See all
-                      {/* </Link> */}
                     </Button>
                   </div>
                 </Row>
@@ -618,7 +581,6 @@ const Index = (props) => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Party</th>
-                    <th scope="col">WithouAmt</th>
                     <th scope="col">BillAmt</th>
                     <th scope="col">Total</th>
                   </tr>
@@ -628,7 +590,6 @@ const Index = (props) => {
                     return (
                       <tr key={index}>
                         <td>{purchase.party}</td>
-                        <td>{purchase.withoutamt}</td>
                         <td>{purchase.billamt}</td>
                         <td>
                           {purchase.total}

@@ -1,13 +1,4 @@
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Table,
-  FormGroup,
-  Card,
-  CardBody,
-} from "reactstrap";
+import { Container, Row, Col, Button, Card, CardBody } from "reactstrap";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { format, parse } from "date-fns";
@@ -42,6 +33,7 @@ const CreateInvoice = () => {
   const [total, setTotal] = useState(0);
   const [rowIndex, setRowIndex] = useState(0);
   const [products, setProducts] = useState([]);
+  const [show, setShow] = useState(false);
   const [upperData, setUpperData] = useState({
     party: "",
     bType: "",
@@ -92,7 +84,7 @@ const CreateInvoice = () => {
       const resp = await createInvoice(
         user.token,
         {
-          type: "purchase",
+          type: "sale",
           party: upperData.party,
           b_type: upperData.bType,
           date: upperData.bDate,
@@ -125,7 +117,7 @@ const CreateInvoice = () => {
           title: resp.data.msg,
         });
         setTimeout(() => {
-          history.push("/admin/v1/purchase");
+          history.push("/admin/v2/sales");
         }, 1500);
       } else {
         Toast.fire({
@@ -240,10 +232,7 @@ const CreateInvoice = () => {
   };
   const billNoGenerate = async (curDate) => {
     dispatch(setLoader(true));
-    const data = await getBillNo(user.token, {
-      date: curDate,
-      type: "Purchase",
-    });
+    const data = await getBillNo(user.token, { date: curDate, type: "Sale" });
     if (data.data.no) {
       setUpperData({ ...upperData, bNo: data.data.no });
     }
@@ -303,6 +292,7 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
+
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
                   label="Date"
@@ -328,7 +318,6 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
-
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
                   label="Transport"
@@ -534,6 +523,38 @@ const CreateInvoice = () => {
                 }
                 return value;
               }}
+              // rowRenderer={({
+              //   row, // Instance of data row
+              //   onClick, // Row on click handler
+              //   onMouseUp, // Row on MouseUp handler
+              //   onMouseDown, // Row on MouseDown handler
+              //   buttons, // Array of buttons
+              //   actions, // Array of header actions
+              //   fields, // Visible fields
+              //   renderCheckboxes, // Boolean indicating whether to render checkboxes
+              //   disableCheckbox, // Boolean indicating whether to disable the checkbox per row
+              //   checkboxIsChecked, // Boolean indicating if checkbox is checked
+              //   onCheckboxChange, // Callable that is called when a per row checkbox is changed
+              //   dataItemManipulator, // Callable that handles manipulation of every item in the data row
+              // }) => {
+              //   console.log(row);
+              //   return (
+              //     <tr>
+              //       <td>shiv</td>
+              //     </tr>
+              //   );
+              // }}
+              // editableColumns={[
+              //   {
+              //     name: "bAmt",
+              //     controlled: `false`,
+              //     type: "number",
+              //     value: "1",
+              //     onChange: (event, column, row, index) => {
+              //       console.log("shiv");
+              //     },
+              //   },
+              // ]}
               footer={
                 <>
                   <tr>
@@ -616,6 +637,7 @@ const CreateInvoice = () => {
                 </>
               }
             />
+
             <Row className="justify-content-md-end mr-0">
               <Button
                 className="btn-md btn-outline-success"
@@ -633,8 +655,7 @@ const CreateInvoice = () => {
               </Button>
               <Button
                 className="btn-md btn-outline-danger"
-                onClick={() => history.push("/admin/v1/purchase")}
-                purchase
+                onClick={() => history.push("/admin/v2/sales")}
               >
                 Cancel
               </Button>

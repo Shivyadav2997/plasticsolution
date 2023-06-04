@@ -168,10 +168,10 @@ const Sales = () => {
       title: "BNo",
       data: "bno",
     },
-    {
-      title: "WithoutAmt",
-      data: "withoutAmt",
-    },
+    // {
+    //   title: "WithoutAmt",
+    //   data: "withoutAmt",
+    // },
     {
       title: "BillAmt",
       data: "billamt",
@@ -239,10 +239,10 @@ const Sales = () => {
       title: "No",
       data: "no",
     },
-    {
-      title: "WithoutAmt",
-      data: "withoutAmt",
-    },
+    // {
+    //   title: "WithoutAmt",
+    //   data: "withoutAmt",
+    // },
     {
       title: "BillAmt",
       data: "billAmt",
@@ -709,7 +709,7 @@ const Sales = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v1/sales-invoice")}
+                    onClick={() => history.push("/admin/v2/sales-invoice")}
                   >
                     Create Sales Bill
                   </Button>
@@ -760,7 +760,7 @@ const Sales = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v1/sales-invoice")}
+                    onClick={() => history.push("/admin/v2/sales-invoice")}
                   >
                     Create Sales Bill
                   </Button>

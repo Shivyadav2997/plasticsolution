@@ -44,10 +44,11 @@ const Register = () => {
     if (uname === "") {
       setErrorUname("User name is required");
     }
-    if (pass === "") {
-      setErrorPass("Password is required");
-    }
-    if (uname && pass) {
+    // if (pass === "") {
+    //   setErrorPass("Password is required");
+    // }
+    // if (uname && pass) {
+    if (uname) {
       dispatch(setLoader(true));
       const loginResponse = await loginApi(uname, pass);
       dispatch(setLoader(false));

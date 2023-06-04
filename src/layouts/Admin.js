@@ -9,16 +9,13 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import LoadingOverlay from "react-loading-overlay";
 import routes from "routes.js";
 import { useSelector, useDispatch } from "react-redux";
-import SidebarNew from "components/Sidebar/SidebarNew";
-import Index from "pages/ContactUs";
-import Party from "pages/Party";
 import { toggleSidebar } from "features/User/UserSlice";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
   const dispatch = useDispatch();
-  const { loading, collapseSidebar, fyear } = useSelector(
+  const { loading, collapseSidebar, fyear, user } = useSelector(
     (store) => store.user
   );
   React.useEffect(() => {
@@ -29,7 +26,10 @@ const Admin = (props) => {
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (
+        prop.layout === "/admin" &&
+        prop.path.includes("/" + user.path + "/")
+      ) {
         if (prop.hasChild) {
           return prop.childRoutes.map((prop2, key2) => {
             return (
@@ -83,6 +83,7 @@ const Admin = (props) => {
     return "Brand";
   };
 
+  console.log("test", getRoutes(routes));
   return (
     <>
       <LoadingOverlay active={loading} spinner>
@@ -112,7 +113,7 @@ const Admin = (props) => {
           />
           <Switch>
             {getRoutes(routes)}
-            <Redirect from="*" to="/admin/dashboard" />
+            <Redirect from="*" to={`/admin/${user.path}/dashboard`} />
           </Switch>
           <Container fluid>
             <AdminFooter />

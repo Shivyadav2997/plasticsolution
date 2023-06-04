@@ -40,10 +40,6 @@ const AdminNavbar = (props) => {
     history.push("/auth/login");
   };
 
-  const profileClick = () => {
-    history.push("/admin/profile");
-  };
-
   return (
     <>
       <Navbar className="navbar-top navbar-dark navbar-admin" id="navbar-main">

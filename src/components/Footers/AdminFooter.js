@@ -1,7 +1,9 @@
 import { Container, Row, Col, Nav, NavItem, NavLink } from "reactstrap";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 const Footer = () => {
   const history = useHistory();
+  const { user } = useSelector((store) => store.user);
   return (
     <footer className="footer">
       <Row className="align-items-center justify-content-xl-between">
@@ -28,7 +30,7 @@ const Footer = () => {
               <NavLink
                 href="javascript:void(0)"
                 onClick={() => {
-                  history.push("/admin/contact-us");
+                  history.push("/admin/" + user.path + "/contact-us");
                 }}
               >
                 Contact

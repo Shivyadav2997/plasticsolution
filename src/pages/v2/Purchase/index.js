@@ -1,13 +1,4 @@
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  FormGroup,
-} from "reactstrap";
+import { Container, Row, Col, Button } from "reactstrap";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
@@ -16,7 +7,7 @@ import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
 import {
-  saleListGet,
+  purchaseListGet,
   invoiceGet,
   invoiceDownload,
   deleteRecord,
@@ -34,12 +25,10 @@ import { MdDelete } from "react-icons/md";
 
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
-import HTMLReactParser from "html-react-parser";
 import CustomModal from "components/Custom/CustomModal";
-import { setIn } from "formik";
 import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
-const Sales = () => {
+const Purchase = () => {
   var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -47,7 +36,7 @@ const Sales = () => {
     heightAuto: false,
     timer: 1500,
   });
-  const [sales, setSales] = useState({
+  const [purchases, setPurchases] = useState({
     all: [],
     monthly: [],
   });
@@ -62,12 +51,9 @@ const Sales = () => {
   const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
-  const [monthSales, setmonthSales] = useState([]);
+  const [monthPurchases, setMonthPurchases] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
-  const [transport, setTransport] = useState(false);
-  const [office, setOffice] = useState(false);
-  const [duplicate, setDuplicate] = useState(false);
   const [without, setWithout] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
@@ -128,17 +114,12 @@ const Sales = () => {
     const id = btoa(Number(rowData.id));
     setInvId(id);
     setOriginal(true);
-    setDuplicate(false);
-    setOffice(false);
-    setTransport(false);
     handleToggle();
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
+      p: 1,
       a: 1,
-      b: 0,
-      c: 0,
-      d: 0,
       w: 0,
     });
     setInvoiceHtml(resp.data);
@@ -167,10 +148,6 @@ const Sales = () => {
     {
       title: "BNo",
       data: "bno",
-    },
-    {
-      title: "WithoutAmt",
-      data: "withoutAmt",
     },
     {
       title: "BillAmt",
@@ -240,10 +217,6 @@ const Sales = () => {
       data: "no",
     },
     {
-      title: "WithoutAmt",
-      data: "withoutAmt",
-    },
-    {
       title: "BillAmt",
       data: "billAmt",
     },
@@ -284,27 +257,27 @@ const Sales = () => {
     setLoading(true);
     var data = {};
     if (selMonth > 0) {
-      data = await saleListGet(user.token, "", "", selMonth);
+      data = await purchaseListGet(user.token, "", "", selMonth);
     } else {
-      data = await saleListGet(user.token, filterDate.st, filterDate.et);
+      data = await purchaseListGet(user.token, filterDate.st, filterDate.et);
     }
 
     if (selMonth > 0) {
       if (data.data) {
         var data2 = data.data;
-        setmonthSales(data2.sale);
+        setMonthPurchases(data2.purchase);
       } else {
-        setmonthSales([]);
+        setMonthPurchases([]);
       }
     } else {
       if (data.data) {
         var data2 = data.data;
-        setSales({
-          all: data2.sale || [],
-          monthly: data2.monthly_sale || [],
+        setPurchases({
+          all: data2.purchase || [],
+          monthly: data2.monthly_purchase || [],
         });
       } else {
-        setSales({ all: [], monthly: [] });
+        setPurchases({ all: [], monthly: [] });
       }
     }
     setLoading(false);
@@ -329,8 +302,8 @@ const Sales = () => {
       cols={columns}
       columndefs={colDefs}
       dark={false}
-      data={sales.all}
-      title="Sales List"
+      data={purchases.all}
+      title="Purchase List"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
@@ -343,7 +316,7 @@ const Sales = () => {
       cols={columnsMonthly}
       columndefs={colDefsMonthly}
       dark={false}
-      data={sales.monthly}
+      data={purchases.monthly}
       title="Monthly List"
       withCard={false}
       hasEdit={false}
@@ -382,10 +355,8 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: invId,
+      p: 1,
       a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
       w: without ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
@@ -396,10 +367,8 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
+      p: 1,
       a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
       w: without ? 1 : 0,
       wp: whatsapp ? 1 : 0,
     });
@@ -423,96 +392,9 @@ const Sales = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [without, original, duplicate, transport, office]);
+  }, [without, original]);
   return (
     <>
-      {/* <CustomModal
-        show={show}
-        title={`Recieve`}
-        handleToggle={handleToggle}
-        footer={
-          <Button
-            type="submit"
-            className="mr-1"
-            color="primary"
-            block
-            size="md"
-            onClick={() => formRef.current.handleSubmit()}
-          >
-            Save
-          </Button>
-        }
-      >
-        <Formik
-          initialValues={{
-            amount: "",
-            type: "",
-            mode: "",
-            date: format(new Date(), "yyyy-MM-dd"),
-            desc: "",
-          }}
-          validationSchema={validate}
-          onSubmit={(values) => {
-            addExpense(values);
-          }}
-          innerRef={formRef}
-          validateOnChange={false}
-          validateOnBlur={false}
-        >
-          {(formik) => (
-            <div>
-              <Form>
-                <CustomInput
-                  name="type"
-                  type="select"
-                  label="Expense Type"
-                  options={[
-                    { label: "Select Type", value: "" },
-                    { label: "Salary", value: "Salary" },
-                    { label: "Rent", value: "Rent" },
-                    { label: "Machine", value: "Machine" },
-                    { label: "Transsport", value: "Transsport" },
-                    { label: "Other", value: "Other" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-                <CustomInput
-                  name="mode"
-                  type="select"
-                  label="Expense Mode"
-                  options={[
-                    { label: "Select Mode", value: "" },
-                    { label: "Cash", value: "Cash" },
-                    { label: "Bank", value: "Bank" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-                <CustomInput
-                  placeholder="Amount"
-                  name="amount"
-                  type="number"
-                  label="Amount"
-                />
-
-                <CustomInput
-                  placeholder=""
-                  name="date"
-                  type="date"
-                  label="Date"
-                />
-                <CustomInput
-                  placeholder=""
-                  name="desc"
-                  type="textarea"
-                  label="Note"
-                />
-              </Form>
-            </div>
-          )}
-        </Formik>
-      </CustomModal> */}
       <ConfirmationDialog
         show={showDelete}
         handleToggle={handleShowConfirmation}
@@ -540,16 +422,10 @@ const Sales = () => {
                       id="without"
                       checked={without}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
+                        if (e.currentTarget.checked && original) {
+                          setWithout(true);
                           setOriginal(false);
-                          setTransport(false);
-                          setOffice(false);
-                          setDuplicate(false);
-                        } else {
-                          setOriginal(true);
                         }
-
-                        setWithout(e.currentTarget.checked);
                       }}
                     />
                     <label className="ml-2" htmlFor="without">
@@ -562,94 +438,14 @@ const Sales = () => {
                       id="original"
                       checked={original}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
+                        if (e.currentTarget.checked && without) {
                           setWithout(false);
-                        }
-                        setOriginal(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !transport &&
-                          !duplicate
-                        ) {
                           setOriginal(true);
                         }
                       }}
                     />
                     <label className="ml-2" htmlFor="original">
                       Original
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="transport"
-                      checked={transport}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setTransport(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !original &&
-                          !duplicate
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="transport">
-                      Transport
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="office"
-                      checked={office}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setOffice(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !original &&
-                          !transport &&
-                          !duplicate
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="office">
-                      Office
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="duplicate"
-                      checked={duplicate}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setDuplicate(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !transport &&
-                          !original
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor=" duplicate">
-                      Duplicate
                     </label>
                   </Col>
                 </Row>
@@ -695,13 +491,13 @@ const Sales = () => {
               <Col className="">
                 <Row className="ml-0">
                   <h1>
-                    {selMonth}-{getMonthName(selMonth)} Sales
+                    {selMonth}-{getMonthName(selMonth)} Purchases
                   </h1>
                   <Button
                     className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
                     onClick={() => setSelMonth(0)}
                   >
-                    All Sales
+                    All Purchases
                   </Button>
                 </Row>
               </Col>
@@ -709,9 +505,9 @@ const Sales = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v1/sales-invoice")}
+                    onClick={() => history.push("/admin/v2/purchase-invoice")}
                   >
-                    Create Sales Bill
+                    Create Purchase Bill
                   </Button>
                 </Row>
               </Col>
@@ -725,7 +521,7 @@ const Sales = () => {
                     <CustomTable
                       cols={columns}
                       dark={false}
-                      data={monthSales}
+                      data={monthPurchases}
                     />
                   </div>
                 </Row>
@@ -739,13 +535,13 @@ const Sales = () => {
                 <Row className="ml-0">
                   <CustomDatePicker
                     onCallback={dateSelect}
-                    text="Sales By Date"
+                    text="Purchases By Date"
                   />
                   <Button
                     className="btn-md btn-outline-primary mb-1"
                     onClick={() => setFilterDate({ st: "", et: "" })}
                   >
-                    All Sales
+                    All Purchase
                   </Button>
 
                   <h1>
@@ -760,9 +556,9 @@ const Sales = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v1/sales-invoice")}
+                    onClick={() => history.push("/admin/v2/purchase-invoice")}
                   >
-                    Create Sales Bill
+                    Create Purchase Bill
                   </Button>
                 </Row>
               </Col>
@@ -774,7 +570,7 @@ const Sales = () => {
                 ) : (
                   <>
                     <CustomTab
-                      tabnames={["All Sales", "Monthly Sale"]}
+                      tabnames={["All Purchases", "Monthly Purchase"]}
                       tabpanes={tabPan}
                       onChangeEvents={onChangeEvents}
                     />
@@ -789,4 +585,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default Purchase;

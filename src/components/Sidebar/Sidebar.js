@@ -66,7 +66,11 @@ const Sidebar = (props) => {
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin" && !prop.wOutLink) {
+      if (
+        prop.layout === "/admin" &&
+        !prop.wOutLink &&
+        prop.path.includes("/" + user.path + "/")
+      ) {
         if (prop.hasChild) {
           return (
             <NavItem key={key}>

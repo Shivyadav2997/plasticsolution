@@ -125,7 +125,7 @@ const CreateInvoice = () => {
           title: resp.data.msg,
         });
         setTimeout(() => {
-          history.push("/admin/v1/purchase");
+          history.push("/admin/v2/purchase");
         }, 1500);
       } else {
         Toast.fire({
@@ -633,7 +633,7 @@ const CreateInvoice = () => {
               </Button>
               <Button
                 className="btn-md btn-outline-danger"
-                onClick={() => history.push("/admin/v1/purchase")}
+                onClick={() => history.push("/admin/v2/purchase")}
                 purchase
               >
                 Cancel

@@ -1,13 +1,10 @@
-import Dashboard from "pages/Dashboard/Index";
 import Register from "pages/Register.js";
-import Setting from "pages/Setting";
 import Login from "pages/Login.js";
-import { MdAccountBox } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
-import { FaFileInvoiceDollar } from "react-icons/fa";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
+import { FaBalanceScale } from "react-icons/fa";
 import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
@@ -23,26 +20,46 @@ import Bank from "pages/Bank";
 import Profile from "pages/Profile";
 import ProductList from "pages/Product";
 import ProductStock from "pages/Product/stock";
-import { FaBalanceScale } from "react-icons/fa";
 import ViewAccount from "pages/Account/view";
+import Setting from "pages/Setting";
+import Dashboard from "pages/Dashboard/Index";
+//v2
+import PartyV2 from "pages/v2/Party/index";
+import TransactionV2 from "pages/v2/Transaction";
+import ExpenseV2 from "pages/v2/Expenses";
+import SalesV2 from "pages/v2/Sales";
+import PurchaseV2 from "pages/v2/Purchase";
+import CreateInvoiceV2 from "pages/v2/Sales/CreateInvoice.js";
+import PurchaseInvoiceV2 from "pages/v2/Purchase/CreateInvoice.js";
+import DayBookV2 from "pages/v2/Daybook";
+import ContactV2 from "pages/v2/ContactUs";
+import AccountV2 from "pages/v2/Account";
+import BalanceV2 from "pages/v2/Balance";
+import BankV2 from "pages/v2/Bank";
+import ProfileV2 from "pages/v2/Profile";
+import ProductListV2 from "pages/v2/Product";
+import ProductStockV2 from "pages/v2/Product/stock";
+import ViewAccountV2 from "pages/v2/Account/view";
+import SettingV2 from "pages/v2/Setting";
+import DashboardV2 from "pages/v2/Dashboard/Index";
 
 var routes = [
   {
-    path: "/dashboard",
+    path: "/v1/dashboard",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
     component: Dashboard,
     layout: "/admin",
   },
   {
-    path: "/party",
+    path: "/v1/party",
     name: "Party",
     icon: "ni ni-single-02 text-yellow",
     component: Party,
     layout: "/admin",
   },
   {
-    path: "/account",
+    path: "/v1/account",
     name: "Account",
     icon: "text-success",
     component: Account,
@@ -50,7 +67,7 @@ var routes = [
     iconCmp: GrTransaction,
   },
   {
-    path: "/viewAccount/:id",
+    path: "/v1/viewAccount/:id",
     name: "ViewAccount",
     icon: "text-success",
     component: ViewAccount,
@@ -59,7 +76,7 @@ var routes = [
     wOutLink: true,
   },
   {
-    path: "/balance",
+    path: "/v1/balance",
     name: "Balance",
     icon: "text-primary",
     component: Balance,
@@ -67,7 +84,7 @@ var routes = [
     iconCmp: FaBalanceScale,
   },
   {
-    path: "/bank",
+    path: "/v1/bank",
     name: "Bank",
     icon: "text-yellow",
     component: Bank,
@@ -75,35 +92,21 @@ var routes = [
     iconCmp: AiOutlineBank,
   },
   {
-    path: "/transaction",
+    path: "/v1/transaction",
     name: "Transaction",
     icon: "ni ni-bullet-list-67 text-red",
     component: Transaction,
     layout: "/admin",
   },
-  // {
-  //   path: "/transaction2",
-  //   name: "Regular Datatable",
-  //   icon: "ni ni-bullet-list-67 text-red",
-  //   component: Transaction2,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/transaction3",
-  //   name: "React Table",
-  //   icon: "ni ni-bullet-list-67 text-red",
-  //   component: Transaction3,
-  //   layout: "/admin",
-  // },
   {
-    path: "/expenses",
+    path: "/v1/expenses",
     name: "Expenses",
     icon: "ni ni-money-coins text-success",
     component: Expense,
     layout: "/admin",
   },
   {
-    path: "/day-book",
+    path: "/v1/day-book",
     name: "Day Book",
     icon: "text-blue",
     component: DayBook,
@@ -111,84 +114,37 @@ var routes = [
     iconCmp: AiFillBook,
   },
   {
-    path: "/sales",
+    path: "/v1/sales",
     name: "Sales",
     icon: "text-yellow",
     layout: "/admin",
     iconCmp: TbPackageExport,
-    // hasChild: true,
-    // state: "sales",
     component: Sales,
-    // childRoutes: [
-    //   {
-    //     path: "/sales-invoice",
-    //     name: "Create Invoices",
-    //     icon: "",
-    //     component: CreateInvoice,
-    //     layout: "/admin",
-    //     iconCmp: RiCheckboxBlankCircleLine,
-    //   },
-    //   {
-    //     path: "/sales",
-    //     name: "Sales Bill",
-    //     icon: "",
-    //     component: Sales,
-    //     layout: "/admin",
-    //     iconCmp: RiCheckboxBlankCircleLine,
-    //   },
-    // ],
   },
-  // {
-  //   path: "/invoiceTest",
-  //   name: "Invoice",
-  //   icon: "ni ni-money-coins text-success",
-  //   component: CreateInvoice,
-  //   layout: "/admin",
-  // },
   {
-    path: "/purchase",
+    path: "/v1/purchase",
     name: "Purchase",
     icon: "text-red",
     layout: "/admin",
     iconCmp: TbPackageImport,
-    // hasChild: true,
-    // state: "purchase",
     component: Purchase,
-    // childRoutes: [
-    //   {
-    //     path: "/purchase-invoice",
-    //     name: "Create Invoices",
-    //     icon: "",
-    //     component: PurchaseInvoice,
-    //     layout: "/admin",
-    //     iconCmp: RiCheckboxBlankCircleLine,
-    //   },
-    //   {
-    //     path: "/purchase",
-    //     name: "Purchase Bill",
-    //     icon: "",
-    //     component: Purchase,
-    //     layout: "/admin",
-    //     iconCmp: RiCheckboxBlankCircleLine,
-    //   },
-    // ],
   },
-
   {
-    path: "/sales-invoice",
+    path: "/v1/sales-invoice",
     name: "Create Sales Invoice",
     component: CreateInvoice,
     layout: "/admin",
     wOutLink: true,
   },
   {
-    path: "/purchase-invoice",
+    path: "/v1/purchase-invoice",
     name: "Create Purchase Invoice",
     component: PurchaseInvoice,
     layout: "/admin",
     wOutLink: true,
   },
   {
+    path: "/v1/",
     name: "Product",
     icon: "text-red",
     layout: "/admin",
@@ -197,7 +153,7 @@ var routes = [
     state: "product",
     childRoutes: [
       {
-        path: "/product-list",
+        path: "/v1/product-list",
         name: "Product List",
         icon: "",
         component: ProductList,
@@ -205,7 +161,7 @@ var routes = [
         iconCmp: RiCheckboxBlankCircleLine,
       },
       {
-        path: "/product-stock",
+        path: "/v1/product-stock",
         name: "Product Stock",
         icon: "",
         component: ProductStock,
@@ -215,7 +171,7 @@ var routes = [
     ],
   },
   // {
-  //   path: "/production",
+  //   path: "/v1/production",
   //   name: "Production",
   //   icon: "text-primary",
   //   component: Production,
@@ -223,7 +179,7 @@ var routes = [
   //   iconCmp: GiFactory,
   // },
   // {
-  //   path: "/gst",
+  //   path: "/v1/gst",
   //   name: "GST",
   //   icon: "text-success",
   //   component: Icons,
@@ -231,7 +187,7 @@ var routes = [
   //   iconCmp: FaFileInvoiceDollar,
   // },
   {
-    path: "/setting",
+    path: "/v1/setting",
     name: "Setting",
     icon: "ni ni-settings text-yellow",
     component: Setting,
@@ -239,11 +195,19 @@ var routes = [
     wOutLink: true,
   },
   {
-    path: "/contact-us",
+    path: "/v1/contact-us",
     name: "Contact Us",
     icon: "ni ni-email-83 text-red",
     component: Contact,
     layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v1/profile",
+    name: "My Profile",
+    component: Profile,
+    layout: "/admin",
+    iconCmp: GrTransaction,
     wOutLink: true,
   },
   {
@@ -267,10 +231,169 @@ var routes = [
   //   component: ViewTest,
   //   layout: "/admin",
   // },
+  //Version 2
   {
-    path: "/profile",
+    path: "/v2/dashboard",
+    name: "Dashboard",
+    icon: "ni ni-tv-2 text-primary",
+    component: DashboardV2,
+    layout: "/admin",
+  },
+  {
+    path: "/v2/party",
+    name: "Party",
+    icon: "ni ni-single-02 text-yellow",
+    component: PartyV2,
+    layout: "/admin",
+  },
+  {
+    path: "/v2/account",
+    name: "Account",
+    icon: "text-success",
+    component: AccountV2,
+    layout: "/admin",
+    iconCmp: GrTransaction,
+  },
+  {
+    path: "/v2/viewAccount/:id",
+    name: "ViewAccount",
+    icon: "text-success",
+    component: ViewAccountV2,
+    layout: "/admin",
+    iconCmp: GrTransaction,
+    wOutLink: true,
+  },
+  {
+    path: "/v2/balance",
+    name: "Balance",
+    icon: "text-primary",
+    component: BalanceV2,
+    layout: "/admin",
+    iconCmp: FaBalanceScale,
+  },
+  {
+    path: "/v2/bank",
+    name: "Bank",
+    icon: "text-yellow",
+    component: BankV2,
+    layout: "/admin",
+    iconCmp: AiOutlineBank,
+  },
+  {
+    path: "/v2/transaction",
+    name: "Transaction",
+    icon: "ni ni-bullet-list-67 text-red",
+    component: TransactionV2,
+    layout: "/admin",
+  },
+  {
+    path: "/v2/expenses",
+    name: "Expenses",
+    icon: "ni ni-money-coins text-success",
+    component: ExpenseV2,
+    layout: "/admin",
+  },
+  {
+    path: "/v2/day-book",
+    name: "Day Book",
+    icon: "text-blue",
+    component: DayBookV2,
+    layout: "/admin",
+    iconCmp: AiFillBook,
+  },
+  {
+    path: "/v2/sales",
+    name: "Sales",
+    icon: "text-yellow",
+    layout: "/admin",
+    iconCmp: TbPackageExport,
+    component: SalesV2,
+  },
+  {
+    path: "/v2/purchase",
+    name: "Purchase",
+    icon: "text-red",
+    layout: "/admin",
+    iconCmp: TbPackageImport,
+    component: PurchaseV2,
+  },
+  {
+    path: "/v2/sales-invoice",
+    name: "Create Sales Invoice",
+    component: CreateInvoiceV2,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v2/purchase-invoice",
+    name: "Create Purchase Invoice",
+    component: PurchaseInvoiceV2,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v2/",
+    name: "Product",
+    icon: "text-red",
+    layout: "/admin",
+    iconCmp: AiOutlineDropbox,
+    hasChild: true,
+    state: "product",
+    childRoutes: [
+      {
+        path: "/v2/product-list",
+        name: "Product List",
+        icon: "",
+        component: ProductListV2,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+      {
+        path: "/v2/product-stock",
+        name: "Product Stock",
+        icon: "",
+        component: ProductStockV2,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
+    ],
+  },
+  // {
+  //   path: "/v2/production",
+  //   name: "Production",
+  //   icon: "text-primary",
+  //   component: ProductionV2,
+  //   layout: "/admin",
+  //   iconCmp: GiFactory,
+  // },
+  // {
+  //   path: "/v2/gst",
+  //   name: "GST",
+  //   icon: "text-success",
+  //   component: IconsV2,
+  //   layout: "/admin",
+  //   iconCmp: FaFileInvoiceDollar,
+  // },
+  {
+    path: "/v2/setting",
+    name: "Setting",
+    icon: "ni ni-settings text-yellow",
+    component: SettingV2,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v2/contact-us",
+    name: "Contact Us",
+    icon: "ni ni-email-83 text-red",
+    component: ContactV2,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v2/profile",
     name: "My Profile",
-    component: Profile,
+    component: ProfileV2,
     layout: "/admin",
     iconCmp: GrTransaction,
     wOutLink: true,
