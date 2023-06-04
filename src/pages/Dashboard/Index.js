@@ -29,7 +29,7 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
-
+import { format } from "date-fns";
 const Index = (props) => {
   let history = useHistory();
 
@@ -81,11 +81,11 @@ const Index = (props) => {
     purchase_list: [],
   });
 
-  const sendReport = async (type,d=0) => {
+  const sendReport = async (type, d = 0, dt = null) => {
     dispatch(setLoader(true));
-    const resp = await dashboardSendReport(user.token, type,d);
+    const resp = await dashboardSendReport(user.token, type, d, dt);
     dispatch(setLoader(false));
-    if(d==0){
+    if (d == 0) {
       if (resp.data.success == 1) {
         Toast.fire({
           icon: "success",
@@ -97,16 +97,14 @@ const Index = (props) => {
           title: resp.data.msg || "Something went wrong",
         });
       }
-    }
-    else if (resp.data.pdfurl){
-      const url = resp.data.pdfurl
-      let alink = document.createElement('a');
+    } else if (resp.data.pdfurl) {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
       alink.href = url;
-      alink.target="_blank"
+      alink.target = "_blank";
       alink.download = url.substring(url.lastIndexOf("/") + 1);
       alink.click();
     }
-    
   };
 
   const getDashboardData = async () => {
@@ -128,77 +126,87 @@ const Index = (props) => {
                 style={{ background: "none" }}
               >
                 <Button className="btn-md text-success mb-1 ml-0">
-                Daily Report
-                  <br/>
+                  Daily Report
+                  <br />
                   <Button
                     className="btn-sm btn-outline-success mb-1 ml-0"
-                    onClick={() => sendReport(1)}
+                    onClick={() =>
+                      sendReport(6, 0, format(new Date(), "yyyy-MM-dd"))
+                    }
                   >
-                    <FaWhatsapp size={18} color="primary" /> 
+                    <FaWhatsapp size={18} color="primary" />
+                  </Button>
+                  <Button
+                    className="btn-sm btn-outline-primary mb-1 ml-0"
+                    onClick={() =>
+                      sendReport(6, 1, format(new Date(), "yyyy-MM-dd"))
+                    }
+                  >
+                    <FaDownload size={18} color="primary" />
                   </Button>
                 </Button>
                 <Button className="btn-md text-primary mb-1 ml-0">
                   Get Stock
-                  <br/>
+                  <br />
                   <Button
                     className="btn-sm btn-outline-success mb-1 ml-0"
                     onClick={() => sendReport(2)}
                   >
-                    <FaWhatsapp size={18} color="primary" /> 
+                    <FaWhatsapp size={18} color="primary" />
                   </Button>
                   <Button
                     className="btn-sm btn-outline-primary mb-1 ml-0"
-                    onClick={() => sendReport(2,1)}
+                    onClick={() => sendReport(2, 1)}
                   >
-                    <FaDownload size={18} color="primary" /> 
+                    <FaDownload size={18} color="primary" />
                   </Button>
                 </Button>
                 <Button className="btn-md text-danger mb-1 ml-0">
                   Debit Ledger
-                  <br/>
+                  <br />
                   <Button
                     className="btn-sm btn-outline-success mb-1 ml-0"
                     onClick={() => sendReport(3)}
                   >
-                    <FaWhatsapp size={18} color="primary" /> 
+                    <FaWhatsapp size={18} color="primary" />
                   </Button>
                   <Button
                     className="btn-sm btn-outline-primary mb-1 ml-0"
-                    onClick={() => sendReport(3,1)}
+                    onClick={() => sendReport(3, 1)}
                   >
-                    <FaDownload size={18} color="primary" /> 
+                    <FaDownload size={18} color="primary" />
                   </Button>
                 </Button>
                 <Button className="btn-md  text-success  mb-1 ml-0">
-                Credit Ledger
-                  <br/>
+                  Credit Ledger
+                  <br />
                   <Button
                     className="btn-sm btn-outline-success mb-1 ml-0"
                     onClick={() => sendReport(4)}
                   >
-                    <FaWhatsapp size={18} color="primary" /> 
+                    <FaWhatsapp size={18} color="primary" />
                   </Button>
                   <Button
                     className="btn-sm btn-outline-primary mb-1 ml-0"
-                    onClick={() => sendReport(4,1)}
+                    onClick={() => sendReport(4, 1)}
                   >
-                    <FaDownload size={18} color="primary" /> 
+                    <FaDownload size={18} color="primary" />
                   </Button>
                 </Button>
                 <Button className="btn-md text-primary mb-1 ml-0">
-                Full Ledger
-                  <br/>
+                  Full Ledger
+                  <br />
                   <Button
                     className="btn-sm btn-outline-success mb-1 ml-0"
                     onClick={() => sendReport(5)}
                   >
-                    <FaWhatsapp size={18} color="primary" /> 
+                    <FaWhatsapp size={18} color="primary" />
                   </Button>
                   <Button
                     className="btn-sm btn-outline-primary mb-1 ml-0"
-                    onClick={() => sendReport(5,1)}
+                    onClick={() => sendReport(5, 1)}
                   >
-                    <FaDownload size={18} color="primary" /> 
+                    <FaDownload size={18} color="primary" />
                   </Button>
                 </Button>
               </ListGroupItem>

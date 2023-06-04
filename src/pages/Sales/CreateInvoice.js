@@ -292,17 +292,7 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
-              <Col xs="4" lg="3">
-                <CustomInputWoutFormik
-                  label="Bill No *"
-                  errorMsg={error.bNo}
-                  value={upperData.bNo}
-                  onChange={(e) => {
-                    setError({ ...error, bNo: "" });
-                    setUpperData({ ...upperData, bNo: e.target.value });
-                  }}
-                />
-              </Col>
+
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
                   label="Date"
@@ -314,6 +304,17 @@ const CreateInvoice = () => {
                       ...upperData,
                       bDate: e.target.value,
                     });
+                  }}
+                />
+              </Col>
+              <Col xs="4" lg="3">
+                <CustomInputWoutFormik
+                  label="Bill No *"
+                  errorMsg={error.bNo}
+                  value={upperData.bNo}
+                  onChange={(e) => {
+                    setError({ ...error, bNo: "" });
+                    setUpperData({ ...upperData, bNo: e.target.value });
                   }}
                 />
               </Col>

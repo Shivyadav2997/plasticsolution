@@ -11,13 +11,21 @@ import {
 import { format, parse, add, sub } from "date-fns";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { useState, useEffect } from "react";
-import { daybookGet } from "api/api";
+import { daybookGet, daybookDownload } from "api/api";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { isDate } from "moment";
-
+import { FaDownload, FaWhatsapp } from "react-icons/fa";
+import Swal from "sweetalert2";
 const DayBook = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   const [curDate, setCurDate] = useState(new Date());
   const [curDateString, setCurDateString] = useState(
     format(new Date(), "yyyy-MM-dd")
@@ -41,6 +49,29 @@ const DayBook = () => {
 
   const todayClick = () => {
     setCurDate(new Date());
+  };
+
+  const whatsappDownloadClick = async (whatsapp) => {
+    dispatch(setLoader(true));
+    const resp = await daybookDownload(user.token, {
+      type: 6,
+      d: whatsapp ? 0 : 1,
+      dt: format(curDate, "yyyy-MM-dd"),
+    });
+    dispatch(setLoader(false));
+    if (whatsapp) {
+      Toast.fire({
+        icon: resp.data.success == 1 ? "success" : "error",
+        title: resp.data.msg || "Something went wrong",
+      });
+    } else {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.target = "_blank";
+      alink.download = url.substring(url.lastIndexOf("/") + 1);
+      alink.click();
+    }
   };
 
   const getRowsFromArray = (array1, array2) => {
@@ -92,18 +123,18 @@ const DayBook = () => {
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
       <Row className="text-center mb-2 justify-content-center align-items-center d-none d-sm-flex">
-        <Button className="btn-md btn-outline-primary" onClick={todayClick}>
+        <Button
+          className="btn-md btn-outline-primary mb-1"
+          onClick={todayClick}
+        >
           Today
         </Button>
-        <Button
-          className="btn-md btn-outline-primary </Row>"
-          onClick={prevClick}
-        >
+        <Button className="btn-md btn-outline-primary mb-1" onClick={prevClick}>
           Previous
         </Button>
         <Input
           type="date"
-          className="mr-2"
+          className="mr-2  mb-1"
           style={{ width: "max-content" }}
           value={curDateString}
           onChange={(e) => {
@@ -115,8 +146,23 @@ const DayBook = () => {
             }
           }}
         />
-        <Button className=" btn-md btn-outline-primary" onClick={nextClick}>
+        <Button
+          className=" btn-md btn-outline-primary  mb-1"
+          onClick={nextClick}
+        >
           Next
+        </Button>
+        <Button
+          className=" btn-md btn-outline-success "
+          onClick={() => whatsappDownloadClick(true)}
+        >
+          <FaWhatsapp /> Whatsapp
+        </Button>
+        <Button
+          className=" btn-md btn-outline-primary"
+          onClick={() => whatsappDownloadClick(false)}
+        >
+          <FaDownload /> Download
         </Button>
       </Row>
       <Row className="text-center mb-2 justify-content-between align-items-center d-flex d-sm-none">
@@ -134,6 +180,16 @@ const DayBook = () => {
           <Button className="btn-sm btn-outline-primary" onClick={nextClick}>
             Next
           </Button>
+        </Col>
+        <Col xs={12} className="mt-2">
+          <div>
+            <Button className="btn-sm btn-outline-success" onClick={nextClick}>
+              Whatsapp
+            </Button>
+            <Button className="btn-sm btn-outline-primary" onClick={nextClick}>
+              Download
+            </Button>
+          </div>
         </Col>
       </Row>
       <Row className="text-center mb-2 justify-content-center align-items-center d-flex d-sm-none">

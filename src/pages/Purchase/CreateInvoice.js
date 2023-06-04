@@ -36,7 +36,6 @@ const CreateInvoice = () => {
 
   const history = useHistory();
   const [parties, setParties] = useState([]);
-  const [refresh, setRefresh] = useState(false);
   const [totalWAmt, setTotalWAmt] = useState(0);
   const [totalBAmt, setTotalBAmt] = useState(0);
   const [gstTax, setGstTax] = useState(0);
@@ -256,7 +255,7 @@ const CreateInvoice = () => {
     getProducts();
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
-  }, [refresh]);
+  }, []);
 
   useEffect(() => {
     billNoGenerate(upperData.bDate);
@@ -306,17 +305,6 @@ const CreateInvoice = () => {
               </Col>
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Bill No *"
-                  errorMsg={error.bNo}
-                  value={upperData.bNo}
-                  onChange={(e) => {
-                    setError({ ...error, bNo: "" });
-                    setUpperData({ ...upperData, bNo: e.target.value });
-                  }}
-                />
-              </Col>
-              <Col xs="4" lg="3">
-                <CustomInputWoutFormik
                   label="Date"
                   type="date"
                   // defaultValue={format(new Date(), "yyyy-MM-dd")}
@@ -329,6 +317,18 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
+              <Col xs="4" lg="3">
+                <CustomInputWoutFormik
+                  label="Bill No *"
+                  errorMsg={error.bNo}
+                  value={upperData.bNo}
+                  onChange={(e) => {
+                    setError({ ...error, bNo: "" });
+                    setUpperData({ ...upperData, bNo: e.target.value });
+                  }}
+                />
+              </Col>
+
               <Col xs="4" lg="3">
                 <CustomInputWoutFormik
                   label="Transport"

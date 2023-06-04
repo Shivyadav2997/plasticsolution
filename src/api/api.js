@@ -385,11 +385,14 @@ const dashboardDataGet = async (token) => {
   }
 };
 
-const dashboardSendReport = async (token, type, d) => {
+const dashboardSendReport = async (token, type, d, dt = null) => {
   try {
-    const resp = await axios.get(
-      baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}&d=${d}`
-    );
+    let apiurlsend =
+      baseUrl + `?action=${homeLinkAction}&token=${token}&type=${type}&d=${d}`;
+    if (dt != null) {
+      apiurlsend += `&dt=${dt}`;
+    }
+    const resp = await axios.get(apiurlsend);
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
     }
@@ -1123,6 +1126,27 @@ const invoiceDownload = async (token, payload) => {
     };
   }
 };
+
+const daybookDownload = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${homeLinkAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1176,4 +1200,5 @@ export {
   updateSettings,
   invoiceGet,
   invoiceDownload,
+  daybookDownload,
 };
