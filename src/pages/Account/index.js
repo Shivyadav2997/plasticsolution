@@ -286,14 +286,22 @@ const Party = () => {
   const getAccounts = async () => {
     setLoading(true);
     const data = await accountListGet(user.token);
-    setAccounts(data.data.account_list);
+    if (data.data) {
+      setAccounts(data.data.account_list);
+    } else {
+      setAccounts([]);
+    }
     setLoading(false);
   };
 
   const getCreditDebitList = async () => {
     setLoading(true);
     const data = await creditDebitListGet(user.token);
-    setCreditDebit(data.data.account_list);
+    if (data.data) {
+      setCreditDebit(data.data.account_list);
+    } else {
+      setCreditDebit([]);
+    }
     setLoading(false);
   };
 

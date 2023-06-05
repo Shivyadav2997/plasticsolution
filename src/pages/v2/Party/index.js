@@ -185,7 +185,11 @@ const Party = () => {
   const getParties = async () => {
     setLoading(true);
     const data = await partyListGet(user.token);
-    setParties(data.data);
+    if (data.data) {
+      setParties(data.data);
+    } else {
+      setParties([]);
+    }
     setLoading(false);
   };
 

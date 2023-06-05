@@ -89,11 +89,11 @@ const AdminNavbar = (props) => {
                 <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Welcome!</h6>
                 </DropdownItem>
-                <DropdownItem to="/admin/profile" tag={Link}>
+                <DropdownItem to={`/admin/${user.path}/profile`} tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/setting" tag={Link}>
+                <DropdownItem to={`/admin/${user.path}/setting`} tag={Link}>
                   <i className="ni ni-settings" />
                   <span>Settings</span>
                 </DropdownItem>
