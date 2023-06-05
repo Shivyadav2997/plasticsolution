@@ -10,7 +10,7 @@ import {
   productListGet,
   getBillNo,
   createInvoice,
-} from "api/api";
+} from "api/apiv2";
 import { setLoader } from "features/User/UserSlice";
 import { GiNuclearPlant } from "react-icons/gi";
 import Swal from "sweetalert2";
@@ -33,7 +33,6 @@ const CreateInvoice = () => {
   const [total, setTotal] = useState(0);
   const [rowIndex, setRowIndex] = useState(0);
   const [products, setProducts] = useState([]);
-  const [show, setShow] = useState(false);
   const [upperData, setUpperData] = useState({
     party: "",
     bType: "",
@@ -55,11 +54,9 @@ const CreateInvoice = () => {
         pUnit: "",
         pQty: "",
         uQty: "",
-        rate: "",
         bRate: "",
         gst: "",
         tax: "",
-        wAmt: "",
         bAmt: "",
         id: rowIndex,
         units: [],
@@ -365,7 +362,6 @@ const CreateInvoice = () => {
                 pUnit: "9%",
                 pQty: "9%",
                 uQty: "9%",
-                rate: "9%",
                 bRate: "9%",
                 gst: "6%",
                 tax: "7%",
@@ -496,18 +492,7 @@ const CreateInvoice = () => {
                         disabled
                       />
                     );
-                  case "wAmt":
-                    return (
-                      <CustomInputWoutFormik
-                        type="number"
-                        defaultValue={value}
-                        onChange={(event) => {
-                          row[field] = event.target.value;
-                        }}
-                        className="text-right"
-                        disabled
-                      />
-                    );
+
                   case "bAmt":
                     return (
                       <CustomInputWoutFormik
@@ -572,11 +557,9 @@ const CreateInvoice = () => {
                                 pUnit: "",
                                 pQty: "",
                                 uQty: "",
-                                rate: "",
                                 bRate: "",
                                 gst: "",
                                 tax: "",
-                                wAmt: "",
                                 bAmt: "",
                                 id: rowIndex + 1,
                                 units: [],

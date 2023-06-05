@@ -8,7 +8,7 @@ import { useTable } from "react-table";
 import { useState } from "react";
 import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
-import { transactionListget } from "api/api";
+import { transactionListget } from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";

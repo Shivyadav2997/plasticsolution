@@ -231,7 +231,7 @@ var routes = [
   //   component: ViewTest,
   //   layout: "/admin",
   // },
-  //Version 2
+  //v2
   {
     path: "/v2/dashboard",
     name: "Dashboard",

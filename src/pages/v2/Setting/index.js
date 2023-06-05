@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
-import { getSettings, updateSettings } from "api/api";
+import { getSettings, updateSettings } from "api/apiv2";
 
 const Setting = () => {
   const dispatch = useDispatch();

@@ -14,7 +14,7 @@ import {
   InputGroupAddon,
 } from "reactstrap";
 import { useEffect, useState } from "react";
-import { profileGet, updateProfile, updatePassword } from "api/api";
+import { profileGet, updateProfile, updatePassword } from "api/apiv2";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoader, logout } from "features/User/UserSlice";
 import logo from "assets/img/brand/logo.png";

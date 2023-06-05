@@ -7,7 +7,7 @@ import * as React from "react";
 import { useState, useRef } from "react";
 import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
-import { productionGet } from "api/api";
+import { productionGet } from "api/apiv2";
 import { Input } from "reactstrap";
 import $ from "jquery";
 import { format, parse } from "date-fns";

@@ -14,7 +14,7 @@ import {
   transactionPaymentAdd,
   deleteRecord,
   bankListGet,
-} from "api/api";
+} from "api/apiv2";
 import { Input } from "reactstrap";
 import $ from "jquery";
 import { format, parse } from "date-fns";

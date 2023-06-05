@@ -11,7 +11,7 @@ import {
   productEdit,
   deleteRecord,
   productUnitGet,
-} from "api/api";
+} from "api/apiv2";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";

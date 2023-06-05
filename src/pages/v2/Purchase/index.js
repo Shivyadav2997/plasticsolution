@@ -11,14 +11,14 @@ import {
   invoiceGet,
   invoiceDownload,
   deleteRecord,
-} from "api/api";
+} from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
 import * as Yup from "yup";
 
 import ReactDOM from "react-dom/client";
-import { getMonthName } from "api/api";
+import { getMonthName } from "api/apiv2";
 import { useHistory } from "react-router-dom";
 import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -54,7 +54,6 @@ const Purchase = () => {
   const [monthPurchases, setMonthPurchases] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
-  const [without, setWithout] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
   const formRef = useRef(null);
@@ -356,8 +355,7 @@ const Purchase = () => {
     const resp = await invoiceGet(user.token, {
       id: invId,
       p: 1,
-      a: original && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -368,8 +366,7 @@ const Purchase = () => {
     const resp = await invoiceDownload(user.token, {
       id: invId,
       p: 1,
-      a: original && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
       wp: whatsapp ? 1 : 0,
     });
     dispatch(setLoader(false));
@@ -392,7 +389,7 @@ const Purchase = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [without, original]);
+  }, [original]);
   return (
     <>
       <ConfirmationDialog
@@ -419,29 +416,10 @@ const Purchase = () => {
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
-                      id="without"
-                      checked={without}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked && original) {
-                          setWithout(true);
-                          setOriginal(false);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="without">
-                      Without
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
                       id="original"
                       checked={original}
                       onChange={(e) => {
-                        if (e.currentTarget.checked && without) {
-                          setWithout(false);
-                          setOriginal(true);
-                        }
+                        setOriginal(e.currentTarget.checked);
                       }}
                     />
                     <label className="ml-2" htmlFor="original">
@@ -505,7 +483,7 @@ const Purchase = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    // onClick={() => history.push("/admin/v2/purchase-invoice")}
                   >
                     Create Purchase Bill
                   </Button>
@@ -556,7 +534,7 @@ const Purchase = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    // onClick={() => history.push("/admin/v2/purchase-invoice")}
                   >
                     Create Purchase Bill
                   </Button>

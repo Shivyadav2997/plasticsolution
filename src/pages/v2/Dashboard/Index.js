@@ -24,7 +24,7 @@ import {
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { BiRupee } from "react-icons/bi";
-import { dashboardDataGet, dashboardSendReport } from "api/api";
+import { dashboardDataGet, dashboardSendReport } from "api/apiv2";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";

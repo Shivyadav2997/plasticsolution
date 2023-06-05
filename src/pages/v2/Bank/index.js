@@ -12,7 +12,7 @@ import {
   bankAdd,
   bankUpdate,
   deleteRecord,
-} from "api/api";
+} from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";

@@ -19,7 +19,7 @@ import {
   productListGet,
   getBillNo,
   createInvoice,
-} from "api/api";
+} from "api/apiv2";
 import { setLoader } from "features/User/UserSlice";
 import { GiNuclearPlant } from "react-icons/gi";
 import Swal from "sweetalert2";

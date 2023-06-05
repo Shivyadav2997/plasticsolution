@@ -20,14 +20,14 @@ import {
   invoiceGet,
   invoiceDownload,
   deleteRecord,
-} from "api/api";
+} from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
 import * as Yup from "yup";
 
 import ReactDOM from "react-dom/client";
-import { getMonthName } from "api/api";
+import { getMonthName } from "api/apiv2";
 import { useHistory } from "react-router-dom";
 import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -68,7 +68,6 @@ const Sales = () => {
   const [transport, setTransport] = useState(false);
   const [office, setOffice] = useState(false);
   const [duplicate, setDuplicate] = useState(false);
-  const [without, setWithout] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
   const formRef = useRef(null);
@@ -168,10 +167,6 @@ const Sales = () => {
       title: "BNo",
       data: "bno",
     },
-    // {
-    //   title: "WithoutAmt",
-    //   data: "withoutAmt",
-    // },
     {
       title: "BillAmt",
       data: "billamt",
@@ -239,10 +234,6 @@ const Sales = () => {
       title: "No",
       data: "no",
     },
-    // {
-    //   title: "WithoutAmt",
-    //   data: "withoutAmt",
-    // },
     {
       title: "BillAmt",
       data: "billAmt",
@@ -382,11 +373,10 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: invId,
-      a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
+      b: transport ? 1 : 0,
+      c: office ? 1 : 0,
+      d: duplicate ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -396,11 +386,10 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
-      a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
+      b: transport ? 1 : 0,
+      c: office ? 1 : 0,
+      d: duplicate ? 1 : 0,
       wp: whatsapp ? 1 : 0,
     });
     dispatch(setLoader(false));
@@ -423,7 +412,7 @@ const Sales = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [without, original, duplicate, transport, office]);
+  }, [original, duplicate, transport, office]);
   return (
     <>
       {/* <CustomModal
@@ -537,34 +526,9 @@ const Sales = () => {
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
-                      id="without"
-                      checked={without}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setOriginal(false);
-                          setTransport(false);
-                          setOffice(false);
-                          setDuplicate(false);
-                        } else {
-                          setOriginal(true);
-                        }
-
-                        setWithout(e.currentTarget.checked);
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="without">
-                      Without
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
                       id="original"
                       checked={original}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
                         setOriginal(e.currentTarget.checked);
                         if (
                           !e.currentTarget.checked &&
@@ -586,9 +550,6 @@ const Sales = () => {
                       id="transport"
                       checked={transport}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
                         setTransport(e.currentTarget.checked);
                         if (
                           !e.currentTarget.checked &&
@@ -610,9 +571,6 @@ const Sales = () => {
                       id="office"
                       checked={office}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
                         setOffice(e.currentTarget.checked);
                         if (
                           !e.currentTarget.checked &&
@@ -634,9 +592,6 @@ const Sales = () => {
                       id="duplicate"
                       checked={duplicate}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
                         setDuplicate(e.currentTarget.checked);
                         if (
                           !e.currentTarget.checked &&
@@ -709,7 +664,7 @@ const Sales = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/sales-invoice")}
+                    // onClick={() => history.push("/admin/v2/sales-invoice")}
                   >
                     Create Sales Bill
                   </Button>
@@ -760,7 +715,7 @@ const Sales = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/sales-invoice")}
+                    // onClick={() => history.push("/admin/v2/sales-invoice")}
                   >
                     Create Sales Bill
                   </Button>

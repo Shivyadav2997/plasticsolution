@@ -11,7 +11,7 @@ import {
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { format, parse } from "date-fns";
-import { transactionPartyGet } from "api/api";
+import { transactionPartyGet } from "api/apiv2";
 import EditableTable from "components/Custom/EditableTable";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 

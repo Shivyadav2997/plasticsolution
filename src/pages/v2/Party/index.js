@@ -20,7 +20,7 @@ import {
   partyEdit,
   deleteRecord,
   checkGST,
-} from "api/api";
+} from "api/apiv2";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";

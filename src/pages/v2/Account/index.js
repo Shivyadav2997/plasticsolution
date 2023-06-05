@@ -13,7 +13,7 @@ import {
   bankListGet,
   addCreditDebit,
   deleteRecord,
-} from "api/api";
+} from "api/apiv2";
 import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
