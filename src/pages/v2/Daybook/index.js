@@ -108,6 +108,7 @@ const DayBook = () => {
 
   useEffect(() => {
     if (curDate != null) {
+      setCurDateString(format(curDate, "yyyy-MM-dd"));
       getDaybookData();
     } else {
       setDaybookData({

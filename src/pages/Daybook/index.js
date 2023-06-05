@@ -108,6 +108,7 @@ const DayBook = () => {
 
   useEffect(() => {
     if (curDate != null) {
+      setCurDateString(format(curDate, "yyyy-MM-dd"));
       getDaybookData();
     } else {
       setDaybookData({
@@ -138,7 +139,7 @@ const DayBook = () => {
           style={{ width: "max-content" }}
           value={curDateString}
           onChange={(e) => {
-            setCurDateString(e.target.value);
+            // setCurDateString(e.target.value);
             if (e.target.value) {
               setCurDate(e.target.valueAsDate);
             } else {
@@ -183,10 +184,16 @@ const DayBook = () => {
         </Col>
         <Col xs={12} className="mt-2">
           <div>
-            <Button className="btn-sm btn-outline-success" onClick={nextClick}>
+            <Button
+              className="btn-sm btn-outline-success"
+              onClick={() => whatsappDownloadClick(true)}
+            >
               Whatsapp
             </Button>
-            <Button className="btn-sm btn-outline-primary" onClick={nextClick}>
+            <Button
+              className="btn-sm btn-outline-primary"
+              onClick={() => whatsappDownloadClick(false)}
+            >
               Download
             </Button>
           </div>
