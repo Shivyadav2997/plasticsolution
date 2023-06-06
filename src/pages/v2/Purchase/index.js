@@ -483,7 +483,7 @@ const Purchase = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    // onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() => history.push("/admin/v2/purchase-invoice")}
                   >
                     Create Purchase Bill
                   </Button>
@@ -534,7 +534,7 @@ const Purchase = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    // onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() => history.push("/admin/v2/purchase-invoice")}
                   >
                     Create Purchase Bill
                   </Button>

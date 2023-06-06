@@ -63,11 +63,9 @@ const CreateInvoice = () => {
         pUnit: "",
         pQty: "",
         uQty: "",
-        rate: "",
         bRate: "",
         gst: "",
         tax: "",
-        wAmt: "",
         bAmt: "",
         id: rowIndex,
         units: [],
@@ -100,7 +98,6 @@ const CreateInvoice = () => {
           tr: upperData.trans,
           lr: upperData.lrno,
           veh: upperData.vno,
-          tkachu: totalWAmt,
           tpaku: totalBAmt,
           gst: gstTax,
         },
@@ -110,11 +107,9 @@ const CreateInvoice = () => {
           pkunit: rows.map((x) => x.row.pUnit),
           pkqty: rows.map((x) => x.row.pQty),
           uqty: rows.map((x) => x.row.uQty),
-          rate: rows.map((x) => x.row.rate),
           paku: rows.map((x) => x.row.bRate),
           pgst: rows.map((x) => x.row.gst),
           tax: rows.map((x) => x.row.tax),
-          kachu: rows.map((x) => x.row.wAmt),
           total: rows.map((x) => x.row.bAmt),
         })
       );
@@ -179,10 +174,10 @@ const CreateInvoice = () => {
     if (rowsInput["bRate"] && rowsInput["uQty"]) {
       rowsInput["bAmt"] = rowsInput["bRate"] * rowsInput["uQty"];
     }
-    if (rowsInput["bRate"] && rowsInput["uQty"] && rowsInput["rate"]) {
-      rowsInput["wAmt"] =
-        (rowsInput["rate"] - rowsInput["bRate"]) * rowsInput["uQty"];
-    }
+    // if (rowsInput["bRate"] && rowsInput["uQty"] && rowsInput["rate"]) {
+    //   rowsInput["wAmt"] =
+    //     (rowsInput["rate"] - rowsInput["bRate"]) * rowsInput["uQty"];
+    // }
     if (rowsInput["gst"] && rowsInput["bAmt"]) {
       rowsInput["tax"] = (rowsInput["bAmt"] * rowsInput["gst"]) / 100;
     }
@@ -192,9 +187,9 @@ const CreateInvoice = () => {
       gst = 0;
     for (let index = 0; index < rows.length; index++) {
       if (index == rowsInput.id) {
-        if (rowsInput["wAmt"]) {
-          sub1 += rowsInput["wAmt"];
-        }
+        // if (rowsInput["wAmt"]) {
+        //   sub1 += rowsInput["wAmt"];
+        // }
         if (rowsInput["bAmt"]) {
           sub2 += rowsInput["bAmt"];
         }
@@ -202,9 +197,9 @@ const CreateInvoice = () => {
           gst += rowsInput["tax"];
         }
       } else {
-        if (rows[index]["row"]["wAmt"]) {
-          sub1 += rows[index]["row"]["wAmt"];
-        }
+        // if (rows[index]["row"]["wAmt"]) {
+        //   sub1 += rows[index]["row"]["wAmt"];
+        // }
         if (rows[index]["row"]["bAmt"]) {
           sub2 += rows[index]["row"]["bAmt"];
         }
@@ -215,7 +210,7 @@ const CreateInvoice = () => {
     }
     setGstTax(gst);
     setTotalBAmt(sub2);
-    setTotalWAmt(sub1);
+    // setTotalWAmt(sub1);
     setTotal(sub1 + sub2 + gst);
 
     const curData = [...rows];
@@ -376,11 +371,11 @@ const CreateInvoice = () => {
                 pUnit: "9%",
                 pQty: "9%",
                 uQty: "9%",
-                rate: "9%",
+                // rate: "9%",
                 bRate: "9%",
                 gst: "6%",
                 tax: "7%",
-                wAmt: "9%",
+                // wAmt: "9%",
                 bAmt: "9%",
               }}
               fieldsToExclude={["id", "units"]}
@@ -458,18 +453,18 @@ const CreateInvoice = () => {
                         className="text-right"
                       />
                     );
-                  case "rate":
-                    return (
-                      <CustomInputWoutFormik
-                        type="number"
-                        defaultValue={value}
-                        onChange={(event) => {
-                          row[field] = event.target.value;
-                          calCulateTotal(row);
-                        }}
-                        className="text-right"
-                      />
-                    );
+                  // case "rate":
+                  //   return (
+                  //     <CustomInputWoutFormik
+                  //       type="number"
+                  //       defaultValue={value}
+                  //       onChange={(event) => {
+                  //         row[field] = event.target.value;
+                  //         calCulateTotal(row);
+                  //       }}
+                  //       className="text-right"
+                  //     />
+                  //   );
                   case "bRate":
                     return (
                       <CustomInputWoutFormik
@@ -507,18 +502,18 @@ const CreateInvoice = () => {
                         disabled
                       />
                     );
-                  case "wAmt":
-                    return (
-                      <CustomInputWoutFormik
-                        type="number"
-                        defaultValue={value}
-                        onChange={(event) => {
-                          row[field] = event.target.value;
-                        }}
-                        className="text-right"
-                        disabled
-                      />
-                    );
+                  // case "wAmt":
+                  //   return (
+                  //     <CustomInputWoutFormik
+                  //       type="number"
+                  //       defaultValue={value}
+                  //       onChange={(event) => {
+                  //         row[field] = event.target.value;
+                  //       }}
+                  //       className="text-right"
+                  //       disabled
+                  //     />
+                  //   );
                   case "bAmt":
                     return (
                       <CustomInputWoutFormik
@@ -551,11 +546,9 @@ const CreateInvoice = () => {
                                 pUnit: "",
                                 pQty: "",
                                 uQty: "",
-                                rate: "",
                                 bRate: "",
                                 gst: "",
                                 tax: "",
-                                wAmt: "",
                                 bAmt: "",
                                 id: rowIndex + 1,
                                 units: [],
@@ -570,15 +563,8 @@ const CreateInvoice = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan={8}></td>
+                    <td colSpan={7}></td>
                     <td align="right">Sub Total</td>
-                    <td>
-                      <CustomInputWoutFormik
-                        className="text-right"
-                        value={totalWAmt}
-                        disabled
-                      />
-                    </td>
                     <td>
                       <CustomInputWoutFormik
                         className="text-right"
@@ -588,9 +574,8 @@ const CreateInvoice = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan={8}></td>
+                    <td colSpan={7}></td>
                     <td align="right">GST Tax</td>
-                    <td></td>
                     <td>
                       <CustomInputWoutFormik
                         className="text-right"
@@ -600,11 +585,10 @@ const CreateInvoice = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan={8}></td>
+                    <td colSpan={7}></td>
                     <td align="right">
                       <strong>Final Total</strong>
                     </td>
-                    <td></td>
                     <td>
                       <CustomInputWoutFormik
                         className="text-right"
@@ -620,12 +604,6 @@ const CreateInvoice = () => {
               <Button
                 className="btn-md btn-outline-success"
                 onClick={() => {
-                  // console.log("rows", rows);
-                  // console.log("upperData", upperData);
-                  // console.log("totalWAmt", totalWAmt);
-                  // console.log("totalBAmt", totalBAmt);
-                  // console.log("gstTax", gstTax);
-                  // console.log("total", total);
                   addInvoice();
                 }}
               >

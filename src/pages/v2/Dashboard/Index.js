@@ -388,7 +388,7 @@ const Index = (props) => {
                     </div>
                   </Col>
                 </Row>
-                <Table
+                {/* <Table
                   className="align-items-center table-flush "
                   responsive
                   style={{ width: "100%" }}
@@ -401,7 +401,7 @@ const Index = (props) => {
                       </td>
                     </tr>
                   </tbody>
-                </Table>
+                </Table> */}
               </CardBody>
             </Card>
           </Col>
@@ -426,7 +426,7 @@ const Index = (props) => {
                     </div>
                   </Col>
                 </Row>
-                <Table
+                {/* <Table
                   className="align-items-center table-flush "
                   responsive
                   style={{ width: "100%" }}
@@ -439,7 +439,7 @@ const Index = (props) => {
                       </td>
                     </tr>
                   </tbody>
-                </Table>
+                </Table> */}
               </CardBody>
             </Card>
           </Col>
@@ -464,7 +464,7 @@ const Index = (props) => {
                     </div>
                   </Col>
                 </Row>
-                <Table
+                {/* <Table
                   className="align-items-center table-flush "
                   responsive
                   style={{ width: "100%" }}
@@ -477,7 +477,7 @@ const Index = (props) => {
                       </td>
                     </tr>
                   </tbody>
-                </Table>
+                </Table> */}
               </CardBody>
             </Card>
           </Col>
@@ -491,17 +491,6 @@ const Index = (props) => {
                     <h3 className="mb-0">Sale Bill</h3>
                   </div>
                   <div className="col text-right">
-                    {/* {saleListOpen ? (
-                      <AiOutlineMinus
-                        size="25px"
-                        onClick={() => setSaleListOpen(false)}
-                      />
-                    ) : (
-                      <AiOutlinePlus
-                        size="25px"
-                        onClick={() => setSaleListOpen(true)}
-                      />
-                    )} */}
                     <Button
                       color="primary"
                       onClick={(e) => {
@@ -552,17 +541,6 @@ const Index = (props) => {
                     <h3 className="mb-0">Purchase Bill</h3>
                   </div>
                   <div className="col text-right">
-                    {/* {purchaseListOpen ? (
-                      <AiOutlineMinus
-                        size="25px"
-                        onClick={() => setPurchaseListOpen(false)}
-                      />
-                    ) : (
-                      <AiOutlinePlus
-                        size="25px"
-                        onClick={() => setPurchaseListOpen(true)}
-                      />
-                    )} */}
                     <Button
                       color="primary"
                       onClick={(e) => {
