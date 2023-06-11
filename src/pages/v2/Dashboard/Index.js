@@ -509,7 +509,8 @@ const Index = (props) => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Party</th>
-                    <th scope="col">BillAmt</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">GST</th>
                     <th scope="col">Total</th>
                   </tr>
                 </thead>
@@ -519,6 +520,7 @@ const Index = (props) => {
                       <tr key={index}>
                         <td>{sale.party}</td>
                         <td>{sale.billamt}</td>
+                        <td>{sale.gst}</td>
                         <td>
                           {sale.total}
                           <div>
@@ -559,7 +561,8 @@ const Index = (props) => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Party</th>
-                    <th scope="col">BillAmt</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">GST</th>
                     <th scope="col">Total</th>
                   </tr>
                 </thead>
@@ -569,6 +572,7 @@ const Index = (props) => {
                       <tr key={index}>
                         <td>{purchase.party}</td>
                         <td>{purchase.billamt}</td>
+                        <td>{purchase.gst}</td>
                         <td>
                           {purchase.total}
                           <div>

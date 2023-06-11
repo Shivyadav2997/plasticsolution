@@ -23,6 +23,7 @@ import ProductStock from "pages/Product/stock";
 import ViewAccount from "pages/Account/view";
 import Setting from "pages/Setting";
 import Dashboard from "pages/Dashboard/Index";
+import Production from "pages/Production";
 //v2
 import PartyV2 from "pages/v2/Party/index";
 import TransactionV2 from "pages/v2/Transaction";
@@ -42,7 +43,9 @@ import ProductStockV2 from "pages/v2/Product/stock";
 import ViewAccountV2 from "pages/v2/Account/view";
 import SettingV2 from "pages/v2/Setting";
 import DashboardV2 from "pages/v2/Dashboard/Index";
+import ProductionV2 from "pages/v2/Production";
 
+import { GiFactory } from "react-icons/gi";
 var routes = [
   {
     path: "/v1/dashboard",
@@ -170,14 +173,14 @@ var routes = [
       },
     ],
   },
-  // {
-  //   path: "/v1/production",
-  //   name: "Production",
-  //   icon: "text-primary",
-  //   component: Production,
-  //   layout: "/admin",
-  //   iconCmp: GiFactory,
-  // },
+  {
+    path: "/v1/production",
+    name: "Production",
+    icon: "text-primary",
+    component: Production,
+    layout: "/admin",
+    iconCmp: GiFactory,
+  },
   // {
   //   path: "/v1/gst",
   //   name: "GST",
@@ -358,14 +361,14 @@ var routes = [
       },
     ],
   },
-  // {
-  //   path: "/v2/production",
-  //   name: "Production",
-  //   icon: "text-primary",
-  //   component: ProductionV2,
-  //   layout: "/admin",
-  //   iconCmp: GiFactory,
-  // },
+  {
+    path: "/v2/production",
+    name: "Production",
+    icon: "text-primary",
+    component: ProductionV2,
+    layout: "/admin",
+    iconCmp: GiFactory,
+  },
   // {
   //   path: "/v2/gst",
   //   name: "GST",

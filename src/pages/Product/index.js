@@ -180,14 +180,13 @@ const ProductList = () => {
     const resp = await productEdit(user.token, payload);
     dispatch(setLoader(false));
     Toast.fire({
-      icon: resp.data.sucess == 1 ? "success" : "error",
-      title: resp.message,
+      icon: resp.data.success == 1 ? "success" : "error",
+      title: resp.message || "Product Updated Successfully",
     });
-    handleToggle();
-    // if (resp.data.sucess == 1) {
-    //   handleToggle();
-    //   getParties();
-    // }
+    if (resp.data.success == 1) {
+      handleToggle();
+      getProducts();
+    }
   };
 
   useEffect(() => {

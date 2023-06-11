@@ -163,11 +163,11 @@ const Register = () => {
     }
   };
   const validate = Yup.object({
-    // otp: Yup.string().required("Required"),
-    // name: Yup.string().required("Required"),
-    // owner: Yup.string().required("Required"),
-    // email: Yup.string().email("Email is invalid"),
-    // city: Yup.string().required("Required"),
+    otp: Yup.string().required("Required"),
+    name: Yup.string().required("Required"),
+    owner: Yup.string().required("Required"),
+    add: Yup.string().required("Address is required"),
+    city: Yup.string().required("Required"),
   });
 
   return (

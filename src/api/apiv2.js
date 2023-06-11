@@ -31,6 +31,7 @@ import {
   balanceUpdateAction,
   productListAction,
   productAddAction,
+  productEditAction,
   productUnitAction,
   productStockAction,
   productStockEntryAction,
@@ -47,6 +48,7 @@ import {
   getBillAction,
   viewSettingsAction,
   updateSettingAction,
+  productionAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -548,21 +550,17 @@ const productAdd = async (token, payload) => {
 
 const productEdit = async (token, payload) => {
   try {
-    // const resp = await axios.get(
-    //   baseUrl +
-    //     `?action=${partyEditAction}&token=${token}&${getParams(payload)}`
-    // );
-    // if (resp.data.login == 0) {
-    //   window.location.href = `${window.location.origin}/auth/login`;
-    // }
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${productEditAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
-      data: [],
-      message: "Api call success",
+      data: resp.data,
+      message: resp.data.msg,
     };
-    // return {
-    //   data: resp.data,
-    //   message: resp.data.msg,
-    // };
   } catch (error) {
     return {
       data: [],
@@ -613,17 +611,17 @@ const productStockEntryGet = async (token) => {
   }
 };
 
-const productionGet = async (token) => {
+const productionGet = async (token, st = "", en = "") => {
   try {
-    // const resp = await axios.get(
-    //   baseUrl + `?action=${partyListAction}&token=${token}`
-    // );
-    // if (resp.data.login == 0) {
-    //   window.location.href = `${window.location.origin}/auth/login`;
-    // }
+    const resp = await axios.get(
+      baseUrl + `?action=${productionAction}&token=${token}&st=${st}&en=${en}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
     return {
-      // data: resp.data,
-      data: [],
+      data: resp.data,
+      // data: [],
       message: "Api call success",
     };
   } catch (error) {

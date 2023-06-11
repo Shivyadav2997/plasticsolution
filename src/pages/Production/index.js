@@ -5,22 +5,12 @@ import CustomTable from "components/Custom/CustomTable";
 import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
-import ReactDOM from "react-dom/client";
 import CustomTab from "components/Custom/CustomTab";
 import { productionGet } from "api/api";
-import { Input } from "reactstrap";
-import $ from "jquery";
-import { format, parse } from "date-fns";
+import { format, lastDayOfMonth } from "date-fns";
 import Loader from "components/Custom/Loader";
-import CustomModal from "components/Custom/CustomModal";
-import { CustomInput } from "components/Custom/CustomInput";
-import ConfirmationDialog from "components/Custom/ConfirmationDialog";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { setLoader } from "features/User/UserSlice";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { useHistory } from "react-router-dom";
 const Production = () => {
@@ -34,7 +24,7 @@ const Production = () => {
   });
 
   const [productions, setProductions] = useState({
-    manufacture: [],
+    Manufacture: [],
     sale: [],
     purchase: [],
   });
@@ -47,25 +37,7 @@ const Production = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-  var colDefs = [
-    {
-      targets: -2,
-      render: function (data, type, row, meta) {
-        return new Date(data).toLocaleDateString("en-GB").replaceAll("/", "-");
-      },
-    },
-    {
-      targets: 2,
-      createdCell: (td, cellData, rowData, row, col) => {
-        const root = ReactDOM.createRoot(td);
-        root.render(
-          <span style={{ color: `${cellData == "payment" ? "red" : "green"}` }}>
-            {cellData}
-          </span>
-        );
-      },
-    },
-  ];
+  var colDefs = [];
 
   const columns = [
     {
@@ -102,17 +74,28 @@ const Production = () => {
   ];
   const getProductions = async () => {
     setLoading(true);
-    var data = await productionGet(user.token, filterDate.st, filterDate.et);
-    // if (data.data) {
-    //   var data2 = data.data;
-    //   setProductions({
-    //     payment: data2.payment || [],
-    //     recive: data2.recive || [],
-    //     transection: data2.transection || [],
-    //   });
-    // } else {
-    //   setProductions({ payment: [], recive: [], transection: [] });
-    // }
+    var data = { data: { Manufacture: [], sale: [], purchase: [] } };
+    if (month != "") {
+      const today = new Date();
+      today.setMonth(month - 1);
+      data = await productionGet(
+        user.token,
+        format(today, "yyyy-MM-01"),
+        format(lastDayOfMonth(today), "yyyy-MM-dd")
+      );
+    } else {
+      data = await productionGet(user.token, filterDate.st, filterDate.et);
+    }
+    if (data.data) {
+      var data2 = data.data;
+      setProductions({
+        Manufacture: data2.Manufacture || [],
+        sale: data2.sale || [],
+        purchase: data2.purchase || [],
+      });
+    } else {
+      setProductions({ Manufacture: [], sale: [], purchase: [] });
+    }
     setLoading(false);
   };
 
@@ -126,8 +109,8 @@ const Production = () => {
       cols={columns}
       columndefs={colDefs}
       dark={false}
-      data={productions.manufacture}
-      title="Transaction List"
+      data={productions.Manufacture}
+      title="Manufacture Product"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
@@ -137,10 +120,10 @@ const Production = () => {
     />,
     <CustomTable
       cols={columns}
-      columndefs={[colDefs[0]]}
+      columndefs={colDefs}
       dark={false}
       data={productions.sale}
-      title="Recieve List"
+      title="Sale Product"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
@@ -149,10 +132,10 @@ const Production = () => {
     />,
     <CustomTable
       cols={columns}
-      columndefs={[colDefs[0]]}
+      columndefs={colDefs}
       dark={false}
       data={productions.purchase}
-      title="Payment List"
+      title="Purchase Product"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
@@ -211,7 +194,10 @@ const Production = () => {
               />
               <Button
                 className="btn-md btn-outline-primary mb-1 ml-0"
-                onClick={() => setFilterDate({ st: "", et: "" })}
+                onClick={() => {
+                  setFilterDate({ st: "", et: "" });
+                  setMonth("");
+                }}
               >
                 All Production
               </Button>

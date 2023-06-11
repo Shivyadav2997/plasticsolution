@@ -292,7 +292,7 @@ const Sales = () => {
     if (selMonth > 0) {
       if (data.data) {
         var data2 = data.data;
-        setmonthSales(data2.sale);
+        setmonthSales(data2.sale || []);
       } else {
         setmonthSales([]);
       }
