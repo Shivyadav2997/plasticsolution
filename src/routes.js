@@ -4,7 +4,7 @@ import { GrTransaction } from "react-icons/gr";
 import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
-import { FaBalanceScale } from "react-icons/fa";
+import { FaBalanceScale, FaFileInvoiceDollar } from "react-icons/fa";
 import Party from "pages/Party/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
@@ -24,6 +24,7 @@ import ViewAccount from "pages/Account/view";
 import Setting from "pages/Setting";
 import Dashboard from "pages/Dashboard/Index";
 import Production from "pages/Production";
+import GST from "pages/GST";
 //v2
 import PartyV2 from "pages/v2/Party/index";
 import TransactionV2 from "pages/v2/Transaction";
@@ -44,6 +45,7 @@ import ViewAccountV2 from "pages/v2/Account/view";
 import SettingV2 from "pages/v2/Setting";
 import DashboardV2 from "pages/v2/Dashboard/Index";
 import ProductionV2 from "pages/v2/Production";
+import GSTV2 from "pages/v2/GST";
 
 import { GiFactory } from "react-icons/gi";
 var routes = [
@@ -181,14 +183,14 @@ var routes = [
     layout: "/admin",
     iconCmp: GiFactory,
   },
-  // {
-  //   path: "/v1/gst",
-  //   name: "GST",
-  //   icon: "text-success",
-  //   component: Icons,
-  //   layout: "/admin",
-  //   iconCmp: FaFileInvoiceDollar,
-  // },
+  {
+    path: "/v1/gst",
+    name: "GSTR-1",
+    icon: "text-success",
+    component: GST,
+    layout: "/admin",
+    iconCmp: FaFileInvoiceDollar,
+  },
   {
     path: "/v1/setting",
     name: "Setting",
@@ -369,14 +371,14 @@ var routes = [
     layout: "/admin",
     iconCmp: GiFactory,
   },
-  // {
-  //   path: "/v2/gst",
-  //   name: "GST",
-  //   icon: "text-success",
-  //   component: IconsV2,
-  //   layout: "/admin",
-  //   iconCmp: FaFileInvoiceDollar,
-  // },
+  {
+    path: "/v2/gst",
+    name: "GSTR-1",
+    icon: "text-success",
+    component: GSTV2,
+    layout: "/admin",
+    iconCmp: FaFileInvoiceDollar,
+  },
   {
     path: "/v2/setting",
     name: "Setting",

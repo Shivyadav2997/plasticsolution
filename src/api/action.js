@@ -46,3 +46,5 @@ export const createInvoiceAction = "create_invoice";
 export const viewSettingsAction = "setting";
 export const updateSettingAction = "update_setting";
 export const productionAction = "production";
+export const gstAction = "gstr1";
+export const gstMonthAction = "gstr1m";

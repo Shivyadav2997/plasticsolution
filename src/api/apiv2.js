@@ -49,6 +49,8 @@ import {
   viewSettingsAction,
   updateSettingAction,
   productionAction,
+  gstAction,
+  gstMonthAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1116,6 +1118,46 @@ const daybookDownload = async (token, payload) => {
   }
 };
 
+const gstListGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${gstAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const gstMonthListGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${gstMonthAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1168,4 +1210,6 @@ export {
   invoiceGet,
   invoiceDownload,
   daybookDownload,
+  gstListGet,
+  gstMonthListGet,
 };
