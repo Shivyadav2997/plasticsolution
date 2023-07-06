@@ -297,7 +297,7 @@ const ViewAccount = () => {
       filterDate.et == "" ? null : filterDate.et
     );
     dispatch(setLoader(false));
-    if (d == 1) {
+    if (d == 0) {
       if (resp.data.success == 1) {
         Toast.fire({
           icon: "success",
