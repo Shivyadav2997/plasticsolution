@@ -1,6 +1,6 @@
 import { Container, Row, Col, Button, Input, Table } from "reactstrap";
 import { useParams } from "react-router-dom";
-import { viewaccount } from "api/apiv2";
+import { viewaccount, accountpdf } from "api/apiv2";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import * as React from "react";
@@ -14,8 +14,17 @@ import { format } from "date-fns";
 import HTMLReactParser from "html-react-parser";
 import { pdfFromReact } from "generate-pdf-from-react-html";
 import { setLoader } from "features/User/UserSlice";
+import { FaWhatsapp, FaDownload } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const ViewAccount = () => {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    heightAuto: false,
+    timer: 1500,
+  });
   let { id } = useParams();
   const { user, fyear } = useSelector((store) => store.user);
   const [accountData, setAccountData] = useState({
@@ -240,6 +249,41 @@ const ViewAccount = () => {
       </tr>
     );
   };
+
+  const getAccountPdf = async (d, t) => {
+    dispatch(setLoader(true));
+    const resp = await accountpdf(
+      user.token,
+      id,
+      10,
+      d,
+      t,
+      filterDate.st == "" ? null : filterDate.st,
+      filterDate.et == "" ? null : filterDate.et
+    );
+    dispatch(setLoader(false));
+    if (d == 1) {
+      if (resp.data.success == 1) {
+        Toast.fire({
+          icon: "success",
+          title: resp.data.msg,
+        });
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.data.msg || "Something went wrong",
+        });
+      }
+    } else if (resp.data.pdfurl) {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.target = "_blank";
+      alink.download = url.substring(url.lastIndexOf("/") + 1);
+      alink.click();
+    }
+  };
+
   const tabPan = [
     <>
       <Row id="firstTabTable">
@@ -357,8 +401,21 @@ const ViewAccount = () => {
               </Col>
               <Col style={{ paddingRight: "unset" }}>
                 <Row className="justify-content-end mr-0">
-                  <Button className="btn-md btn-outline-primary">
+                  <Button className="btn-md text-primary mb-1 ml-0">
                     Pdf & Image
+                    <br />
+                    <Button
+                      className="btn-sm btn-outline-success mb-1 ml-0"
+                      onClick={() => getAccountPdf(0, 1)}
+                    >
+                      <FaWhatsapp size={18} color="primary" />
+                    </Button>
+                    <Button
+                      className="btn-sm btn-outline-primary mb-1 ml-0"
+                      onClick={() => getAccountPdf(1, 1)}
+                    >
+                      <FaDownload size={18} color="primary" />
+                    </Button>
                   </Button>
                 </Row>
               </Col>
@@ -426,8 +483,21 @@ const ViewAccount = () => {
               </Col>
               <Col style={{ paddingRight: "unset" }}>
                 <Row className="justify-content-end mr-0">
-                  <Button className="btn-md btn-outline-primary">
+                  <Button className="btn-md text-primary mb-1 ml-0">
                     Pdf & Image
+                    <br />
+                    <Button
+                      className="btn-sm btn-outline-success mb-1 ml-0"
+                      onClick={() => getAccountPdf(0, 2)}
+                    >
+                      <FaWhatsapp size={18} color="primary" />
+                    </Button>
+                    <Button
+                      className="btn-sm btn-outline-primary mb-1 ml-0"
+                      onClick={() => getAccountPdf(1, 2)}
+                    >
+                      <FaDownload size={18} color="primary" />
+                    </Button>
                   </Button>
                 </Row>
               </Col>
@@ -506,8 +576,21 @@ const ViewAccount = () => {
               </Col>
               <Col style={{ paddingRight: "unset" }}>
                 <Row className="justify-content-end mr-0">
-                  <Button className="btn-md btn-outline-primary">
+                  <Button className="btn-md text-primary mb-1 ml-0">
                     Pdf & Image
+                    <br />
+                    <Button
+                      className="btn-sm btn-outline-success mb-1 ml-0"
+                      onClick={() => getAccountPdf(0, 4)}
+                    >
+                      <FaWhatsapp size={18} color="primary" />
+                    </Button>
+                    <Button
+                      className="btn-sm btn-outline-primary mb-1 ml-0"
+                      onClick={() => getAccountPdf(1, 4)}
+                    >
+                      <FaDownload size={18} color="primary" />
+                    </Button>
                   </Button>
                 </Row>
               </Col>

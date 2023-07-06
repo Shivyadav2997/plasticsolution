@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
-import { gstListGet, gstMonthListGet } from "api/apiv2";
+import { gstListGet, gstMonthListGet, gstr1json } from "api/apiv2";
 import Loader from "components/Custom/Loader";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
@@ -19,6 +19,21 @@ const GST = () => {
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
+
+  const gstJSON = async (rowData) => {
+    const id = rowData.m1;
+    dispatch(setLoader(true));
+    const resp = await gstr1json(user.token, id, 0);
+    dispatch(setLoader(false));
+    if (resp.data.pdfurl) {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.target = "_blank";
+      alink.download = url.substring(url.lastIndexOf("/") + 1);
+      alink.click();
+    }
+  };
 
   const columns = [
     {
@@ -51,6 +66,30 @@ const GST = () => {
     {
       title: "Payable GST",
       data: "Payble gst",
+      className: "all",
+    },
+    {
+      title: "Action",
+      data: null,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            {" "}
+            <div className="d-flex gap-10">
+              <div>
+                <Button
+                  className="btn-outline-primary btn-icon btn-sm"
+                  color="default"
+                  onClick={() => gstJSON(rowData)}
+                >
+                  <span>EwayBillJSON</span>
+                </Button>
+              </div>
+            </div>
+          </>
+        );
+      },
       className: "all",
     },
   ];

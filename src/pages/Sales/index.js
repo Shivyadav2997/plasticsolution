@@ -20,6 +20,7 @@ import {
   invoiceGet,
   invoiceDownload,
   deleteRecord,
+  salejson,
 } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -145,6 +146,21 @@ const Sales = () => {
     dispatch(setLoader(false));
   };
 
+  const ewayJson = async (rowData) => {
+    const id = btoa(Number(rowData.pid));
+    dispatch(setLoader(true));
+    const resp = await salejson(user.token, id, 0);
+    dispatch(setLoader(false));
+    if (resp.data.pdfurl) {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.target = "_blank";
+      alink.download = url.substring(url.lastIndexOf("/") + 1);
+      alink.click();
+    }
+  };
+
   var colDefs = [
     {
       targets: -2,
@@ -210,7 +226,15 @@ const Sales = () => {
                   </span>
                 </Button>
               </div>
-
+              <div>
+                <Button
+                  className="btn-outline-info btn-icon btn-sm"
+                  color="default"
+                  onClick={() => ewayJson(rowData)}
+                >
+                  <span>EwayBillJSON</span>
+                </Button>
+              </div>
               <div>
                 <Button
                   className="btn-danger btn-icon btn-sm"

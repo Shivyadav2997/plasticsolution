@@ -1158,6 +1158,99 @@ const gstMonthListGet = async (token, payload) => {
   }
 };
 
+const accountpdf = async (token, id, type, d, t, st = null, en = null) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${homeLinkAction}&token=${token}&id=${id}&type=${type}&d=${d}&t=${t}`;
+    if (st != null) {
+      apiurlsend += `&st=${st}`;
+    }
+    if (en != null) {
+      apiurlsend += `&en=${en}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const salejson = async (token, id, d) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${homeLinkAction}&token=${token}&id=${id}&type=11&d=${d}`;
+
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const gstr1json = async (token, id, d) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${homeLinkAction}&token=${token}&m1=${id}&type=12&d=${d}`;
+
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const balanceView = async (token, id, d) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${homeLinkAction}&token=${token}&id=${id}&type=13&d=${d}`;
+
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1212,4 +1305,8 @@ export {
   daybookDownload,
   gstListGet,
   gstMonthListGet,
+  accountpdf,
+  salejson,
+  gstr1json,
+  balanceView,
 };

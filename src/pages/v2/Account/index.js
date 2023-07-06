@@ -13,6 +13,7 @@ import {
   bankListGet,
   addCreditDebit,
   deleteRecord,
+  accountpdf,
 } from "api/apiv2";
 import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom/client";
@@ -61,8 +62,22 @@ const Party = () => {
   const sendWhatsapp = (cellData, rowData, row, col) => {
     console.log(rowData);
   };
-  const sendWhatsappPdf = (cellData, rowData, row, col) => {
-    console.log(rowData);
+  const sendWhatsappPdf = async (cellData, rowData, row, col) => {
+    const id = btoa(Number(rowData.pid));
+    dispatch(setLoader(true));
+    const resp = await accountpdf(user.token, id, 10, 0, 1);
+    dispatch(setLoader(false));
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.data.msg || "Sent Successfully !!",
+      });
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.data.msg || "Something went wrong",
+      });
+    }
   };
 
   const handleShowConfirmation = () => {
