@@ -23,7 +23,7 @@ const GST = () => {
   const gstJSON = async (rowData) => {
     const id = rowData.m1;
     dispatch(setLoader(true));
-    const resp = await gstr1json(user.token, id, 0);
+    const resp = await gstr1json(user.token, id, 1);
     dispatch(setLoader(false));
     if (resp.data.pdfurl) {
       const url = resp.data.pdfurl;

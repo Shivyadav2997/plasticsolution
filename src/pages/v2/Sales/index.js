@@ -148,7 +148,7 @@ const Sales = () => {
   const ewayJson = async (rowData) => {
     const id = btoa(Number(rowData.pid));
     dispatch(setLoader(true));
-    const resp = await salejson(user.token, id, 0);
+    const resp = await salejson(user.token, id, 1);
     dispatch(setLoader(false));
     if (resp.data.pdfurl) {
       const url = resp.data.pdfurl;
