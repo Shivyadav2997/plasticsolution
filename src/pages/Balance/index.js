@@ -12,6 +12,7 @@ import {
   bankListGet,
   balanceUpdate,
   deleteRecord,
+  balanceView,
 } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -25,6 +26,8 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import { FaEye } from "react-icons/fa";
+import ReactDOM from "react-dom/client";
 
 const Balance = () => {
   var Toast = Swal.mixin({
@@ -50,21 +53,20 @@ const Balance = () => {
   const formRef = useRef(null);
   const [show, setShow] = useState(false);
 
-  var colDefs = [
-    // {
-    //   targets: -2,
-    //   // createdCell: (td, cellData, rowData, row, col) => {
-    //   //   const root = ReactDOM.createRoot(td);
-    //   //   root.render(
-    //   //     <>{format(parse(cellData, "yyyy-MM-dd", new Date()), "dd-MM-yyyy")}</>
-    //   //   );
-    //   // },
-    //   render: function (data, type, row, meta) {
-    //     return new Date(data).toLocaleDateString("en-GB").replaceAll("/", "-");
-    //   },
-    // },
-  ];
-
+  const downloadPDF = async (rowData) => {
+    const id = btoa(Number(rowData.id));
+    dispatch(setLoader(true));
+    const resp = await balanceView(user.token, id, 1);
+    dispatch(setLoader(false));
+    if (resp.data.pdfurl) {
+      const url = resp.data.pdfurl;
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.target = "_blank";
+      alink.download = url.substring(url.lastIndexOf("/") + 1);
+      alink.click();
+    }
+  };
   const handleShowConfirmation = () => {
     if (showDelete) {
       setBalance(null);
@@ -92,6 +94,35 @@ const Balance = () => {
     {
       title: "Balance",
       data: "Balance",
+    },
+    {
+      title: "Action",
+      data: null,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            {rowData.id ? (
+              <div className="d-flex gap-10">
+                <div>
+                  <Button
+                    className="btn-outline-primary btn-icon btn-sm"
+                    color="default"
+                    onClick={() => downloadPDF(rowData)}
+                  >
+                    <span>
+                      <FaEye size={12} />
+                    </span>
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              "-"
+            )}
+          </>
+        );
+      },
+      className: "all",
     },
   ];
 
@@ -382,7 +413,6 @@ const Balance = () => {
                       <div className="col">
                         <CustomTable
                           cols={columns}
-                          columndefs={colDefs}
                           dark={false}
                           data={balances}
                           title="Balance"
@@ -424,7 +454,6 @@ const Balance = () => {
                         <div>
                           <CustomTable
                             cols={columns2}
-                            columndefs={colDefs}
                             dark={false}
                             data={balanceEntries}
                             title="Balance"

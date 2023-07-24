@@ -27,6 +27,7 @@ import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import { logout } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import FinancialYear from "components/Custom/FinancialYear";
+import WhatsAppLogin from "components/Custom/WhatsAppLogin";
 import { BiChevronDown, BiChevronUp, BiChevronRight } from "react-icons/bi";
 
 var ps;
@@ -300,7 +301,11 @@ const Sidebar = (props) => {
           }}
         >
           {createLinks(routes)}
-          <FinancialYear className="mb-0 mr-1 d-sm-none" />
+          <FinancialYear className="mb-1 mr-1 d-sm-none" />
+          <WhatsAppLogin
+            className="mr-1 btn-sm btn-outline-success d-sm-none"
+            onClick={() => dispatch(toggleSidebar(false))}
+          />
         </Nav>
       </Container>
     </Navbar>

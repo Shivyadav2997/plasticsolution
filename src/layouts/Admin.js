@@ -83,7 +83,6 @@ const Admin = (props) => {
     return "Brand";
   };
 
-  console.log("test", getRoutes(routes));
   return (
     <>
       <LoadingOverlay active={loading} spinner>

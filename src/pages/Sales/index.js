@@ -147,7 +147,7 @@ const Sales = () => {
   };
 
   const ewayJson = async (rowData) => {
-    const id = btoa(Number(rowData.pid));
+    const id = btoa(Number(rowData.id));
     dispatch(setLoader(true));
     const resp = await salejson(user.token, id, 1);
     dispatch(setLoader(false));

@@ -593,6 +593,21 @@ const Index = () => {
                   </a>
                 </h3>
                 <p>
+                  Prisha Software Private Limited <br />
+                  406/A, 4th Floor ,Shivalay Complex, Near Mavdi Chowk,Mavdi
+                  <br />
+                  Main Road, Rajkot A108 Adam Street <br />
+                  {/* A108 Adam Street <br />
+                  New York, NY 535022
+                  <br />
+                  United States <br /> */}
+                  <br />
+                  <strong>Phone:</strong> +91 63536 51151
+                  <br />
+                  <strong>Email:</strong> info@accountdigi.com
+                  <br />
+                </p>
+                {/* <p>
                   A108 Adam Street <br />
                   New York, NY 535022
                   <br />
@@ -602,7 +617,7 @@ const Index = () => {
                   <br />
                   <strong>Email:</strong> info@example.com
                   <br />
-                </p>
+                </p> */}
               </div>
 
               <div class="col-lg-3 col-md-6 footer-links">
@@ -621,11 +636,15 @@ const Index = () => {
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="#">Terms of service</a>
+                    <a href="" onClick={() => history.push("/terms")}>
+                      Terms of service
+                    </a>
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="#">Privacy policy</a>
+                    <a href="" onClick={() => history.push("/privacy-policy")}>
+                      Privacy policy
+                    </a>
                   </li>
                 </ul>
               </div>

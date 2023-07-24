@@ -4,13 +4,18 @@ import "./arsha.js";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
+  BsEnvelope,
   BsFacebook,
+  BsGeoAlt,
   BsInstagram,
   BsLinkedin,
+  BsPhone,
   BsSkype,
   BsTwitter,
 } from "react-icons/bs";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+import { BiEnvelope, BiPhone } from "react-icons/bi";
+import { GrLocation } from "react-icons/gr";
 const Contact = () => {
   const history = useHistory();
   const [scroll, setScroll] = useState(false);
@@ -134,10 +139,9 @@ const Contact = () => {
             <div className="section-title">
               <h2>Contact</h2>
               <p>
-                Magnam dolores commodi suscipit. Necessitatibus eius consequatur
-                ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam
-                quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea.
-                Quia fugiat sit in iste officiis commodi quidem hic quas.
+                For any questions or support simply complete the form below and
+                a member of our support team will review and respond promptly to
+                your request.
               </p>
             </div>
 
@@ -145,21 +149,31 @@ const Contact = () => {
               <div className="col-lg-5 d-flex align-items-stretch">
                 <div className="info">
                   <div className="address">
-                    <i className="bi bi-geo-alt"></i>
+                    <i className="bi bi-geo-alt">
+                      <BsGeoAlt />
+                    </i>
                     <h4>Location:</h4>
-                    <p>A108 Adam Street, New York, NY 535022</p>
+                    <p>
+                      Prisha Software Private Limited <br />
+                      406/A, 4th Floor ,Shivalay Complex, Near Mavdi Chowk,Mavdi
+                      Main Road, Rajkot
+                    </p>
                   </div>
 
                   <div className="email">
-                    <i className="bi bi-envelope"></i>
+                    <i className="bi bi-envelope">
+                      <BsEnvelope />
+                    </i>
                     <h4>Email:</h4>
-                    <p>info@example.com</p>
+                    <p>info@accountdigi.com</p>
                   </div>
 
                   <div className="phone">
-                    <i className="bi bi-phone"></i>
+                    <i className="bi bi-phone">
+                      <BsPhone />
+                    </i>
                     <h4>Call:</h4>
-                    <p>+1 5589 55488 55s</p>
+                    <p>+91 63536 51151</p>
                   </div>
 
                   {/* <iframe
@@ -251,14 +265,18 @@ const Contact = () => {
                   </a>
                 </h3>
                 <p>
-                  A108 Adam Street <br />
+                  Prisha Software Private Limited <br />
+                  406/A, 4th Floor ,Shivalay Complex, Near Mavdi Chowk,Mavdi
+                  <br />
+                  Main Road, Rajkot A108 Adam Street <br />
+                  {/* A108 Adam Street <br />
                   New York, NY 535022
                   <br />
-                  United States <br />
+                  United States <br /> */}
                   <br />
-                  <strong>Phone:</strong> +1 5589 55488 55
+                  <strong>Phone:</strong> +91 63536 51151
                   <br />
-                  <strong>Email:</strong> info@example.com
+                  <strong>Email:</strong> info@accountdigi.com
                   <br />
                 </p>
               </div>
@@ -267,23 +285,30 @@ const Contact = () => {
                 <h4>Useful Links</h4>
                 <ul>
                   <li>
-                    <i class="bx bx-chevron-right"></i> <a href="#">Home</a>
+                    <i class="bx bx-chevron-right"></i>{" "}
+                    <a onClick={() => history.push("/index")}>Home</a>
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="#about">About us</a>
+                    <a onClick={() => history.push("/index#about")}>About us</a>
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="#services">Services</a>
+                    <a onClick={() => history.push("/index#services")}>
+                      Services
+                    </a>
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="#">Terms of service</a>
+                    <a href="" onClick={() => history.push("/terms")}>
+                      Terms of service
+                    </a>
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="#">Privacy policy</a>
+                    <a href="" onClick={() => history.push("/privacy-policy")}>
+                      Privacy policy
+                    </a>
                   </li>
                 </ul>
               </div>

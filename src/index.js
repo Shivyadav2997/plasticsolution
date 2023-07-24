@@ -15,6 +15,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Index from "pages/Index";
 import Contact from "pages/contact";
+import Terms from "pages/terms";
+import Privacy from "pages/privacy";
 import Pricing from "pages/pricing";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -34,6 +36,8 @@ root.render(
         />
         <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
         <Route path="/contactus" component={Contact} />
+        <Route path="/terms" component={Terms} />
+        <Route path="/privacy-policy" component={Privacy} />
         <Route path="/pricing" component={Pricing} />
 
         <Route path="/" component={Index} />

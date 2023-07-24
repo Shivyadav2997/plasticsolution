@@ -4,14 +4,19 @@ import "./arsha.js";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
+  BsEnvelope,
   BsFacebook,
+  BsGeoAlt,
   BsInstagram,
   BsLinkedin,
+  BsPhone,
   BsSkype,
   BsTwitter,
 } from "react-icons/bs";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-const Pricing = () => {
+import { BiEnvelope, BiPhone } from "react-icons/bi";
+import { GrLocation } from "react-icons/gr";
+const Contact = () => {
   const history = useHistory();
   const [scroll, setScroll] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -81,7 +86,7 @@ const Pricing = () => {
               </li>
               <li>
                 <a
-                  className="nav-link active"
+                  className="nav-link "
                   href="javascript:void(0)"
                   onClick={() => history.push("/pricing")}
                 >
@@ -90,7 +95,7 @@ const Pricing = () => {
               </li>
               <li>
                 <a
-                  className="nav-link scrollto"
+                  className="nav-link scrollto active"
                   href="javascript:void(0)"
                   onClick={() => history.push("/contactus")}
                 >
@@ -129,129 +134,16 @@ const Pricing = () => {
       </header>
 
       <main id="main">
-        <section id="pricing" className="pricing">
+        <section id="contact" className="contact">
           <div className="container" data-aos="fade-up">
             <div className="section-title">
-              <h2>Pricing</h2>
-              <p>
-                Magnam dolores commodi suscipit. Necessitatibus eius consequatur
-                ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam
-                quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea.
-                Quia fugiat sit in iste officiis commodi quidem hic quas.
-              </p>
-            </div>
-
-            <div className="row">
-              <div className="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                <div className="box">
-                  <h3>Free Plan</h3>
-                  <h4>
-                    <sup>$</sup>0<span>per month</span>
-                  </h4>
-                  <ul>
-                    <li>
-                      <i className="bx bx-check"></i> Quam adipiscing vitae
-                      proin
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Nec feugiat nisl pretium
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Nulla at volutpat diam
-                      uteera
-                    </li>
-                    <li className="na">
-                      <i className="bx bx-x"></i>{" "}
-                      <span>Pharetra massa massa ultricies</span>
-                    </li>
-                    <li className="na">
-                      <i className="bx bx-x"></i>{" "}
-                      <span>Massa ultricies mi quis hendrerit</span>
-                    </li>
-                  </ul>
-                  <a href="#" className="buy-btn">
-                    Get Started
-                  </a>
-                </div>
-              </div>
-
-              <div
-                className="col-lg-4 mt-4 mt-lg-0"
-                data-aos="fade-up"
-                data-aos-delay="200"
-              >
-                <div className="box featured">
-                  <h3>Business Plan</h3>
-                  <h4>
-                    <sup>$</sup>29<span>per month</span>
-                  </h4>
-                  <ul>
-                    <li>
-                      <i className="bx bx-check"></i> Quam adipiscing vitae
-                      proin
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Nec feugiat nisl pretium
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Nulla at volutpat diam
-                      uteera
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Pharetra massa massa
-                      ultricies
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Massa ultricies mi quis
-                      hendrerit
-                    </li>
-                  </ul>
-                  <a href="#" className="buy-btn">
-                    Get Started
-                  </a>
-                </div>
-              </div>
-
-              <div
-                className="col-lg-4 mt-4 mt-lg-0"
-                data-aos="fade-up"
-                data-aos-delay="300"
-              >
-                <div className="box">
-                  <h3>Developer Plan</h3>
-                  <h4>
-                    <sup>$</sup>49<span>per month</span>
-                  </h4>
-                  <ul>
-                    <li>
-                      <i className="bx bx-check"></i> Quam adipiscing vitae
-                      proin
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Nec feugiat nisl pretium
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Nulla at volutpat diam
-                      uteera
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Pharetra massa massa
-                      ultricies
-                    </li>
-                    <li>
-                      <i className="bx bx-check"></i> Massa ultricies mi quis
-                      hendrerit
-                    </li>
-                  </ul>
-                  <a href="#" className="buy-btn">
-                    Get Started
-                  </a>
-                </div>
-              </div>
+              <h2>Privacy Policy</h2>
+              <p>Coming soon !!</p>
             </div>
           </div>
         </section>
       </main>
+
       <footer id="footer">
         <div class="footer-top">
           <div class="container">
@@ -267,14 +159,18 @@ const Pricing = () => {
                   </a>
                 </h3>
                 <p>
-                  A108 Adam Street <br />
+                  Prisha Software Private Limited <br />
+                  406/A, 4th Floor ,Shivalay Complex, Near Mavdi Chowk,Mavdi
+                  <br />
+                  Main Road, Rajkot A108 Adam Street <br />
+                  {/* A108 Adam Street <br />
                   New York, NY 535022
                   <br />
-                  United States <br />
+                  United States <br /> */}
                   <br />
-                  <strong>Phone:</strong> +1 5589 55488 55
+                  <strong>Phone:</strong> +91 63536 51151
                   <br />
-                  <strong>Email:</strong> info@example.com
+                  <strong>Email:</strong> info@accountdigi.com
                   <br />
                 </p>
               </div>
@@ -304,9 +200,7 @@ const Pricing = () => {
                   </li>
                   <li>
                     <i class="bx bx-chevron-right"></i>{" "}
-                    <a href="" onClick={() => history.push("/privacy-policy")}>
-                      Privacy policy
-                    </a>
+                    <a href="#">Privacy policy</a>
                   </li>
                 </ul>
               </div>
@@ -378,4 +272,4 @@ const Pricing = () => {
     </>
   );
 };
-export default Pricing;
+export default Contact;
