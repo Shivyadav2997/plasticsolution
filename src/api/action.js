@@ -48,3 +48,6 @@ export const updateSettingAction = "update_setting";
 export const productionAction = "production";
 export const gstAction = "gstr1";
 export const gstMonthAction = "gstr1m";
+export const transportListAction = "transporter_list";
+export const transportAddAction = "add_transporter";
+export const transportEditAction = "edit_transporter";

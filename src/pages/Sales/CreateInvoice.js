@@ -1,4 +1,14 @@
-import { Container, Row, Col, Button, Card, CardBody } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+  CardBody,
+  FormGroup,
+  InputGroup,
+  InputGroupAddon,
+} from "reactstrap";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { format, parse } from "date-fns";
@@ -8,13 +18,25 @@ import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import {
   transactionPartyGet,
   productListGet,
+  productUnitGet,
   getBillNo,
   createInvoice,
+  transportListGet,
+  partyAdd,
+  checkGST,
+  transportAdd,
+  productAdd,
 } from "api/api";
 import { setLoader } from "features/User/UserSlice";
-import { GiNuclearPlant } from "react-icons/gi";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
+import React from "react";
+import { BiPlus } from "react-icons/bi";
+import { FaSearch } from "react-icons/fa";
+import CustomModal from "components/Custom/CustomModal";
+import { CustomInput } from "components/Custom/CustomInput";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 const CreateInvoice = () => {
   var Toast = Swal.mixin({
@@ -27,13 +49,21 @@ const CreateInvoice = () => {
 
   const history = useHistory();
   const [parties, setParties] = useState([]);
+  const [transporters, setTransporters] = useState([]);
   const [totalWAmt, setTotalWAmt] = useState(0);
   const [totalBAmt, setTotalBAmt] = useState(0);
   const [gstTax, setGstTax] = useState(0);
   const [total, setTotal] = useState(0);
   const [rowIndex, setRowIndex] = useState(0);
   const [products, setProducts] = useState([]);
-  const [show, setShow] = useState(false);
+  const [showParty, setShowParty] = useState(false);
+  const [showTransporter, setShowTransporter] = useState(false);
+  const [showProduct, setShowProduct] = useState(false);
+  const inputRef = useRef(null);
+
+  const [gstError, setGstError] = useState("");
+  const [gstSuccess, setGstSuccess] = useState("");
+  const [units, setUnits] = useState([]);
   const [upperData, setUpperData] = useState({
     party: "",
     bType: "",
@@ -42,6 +72,7 @@ const CreateInvoice = () => {
     trans: "",
     lrno: "",
     vno: "",
+    note: "",
   });
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -66,6 +97,147 @@ const CreateInvoice = () => {
       },
     },
   ]);
+
+  const handleToggleParty = () => {
+    setShowParty(!showParty);
+  };
+
+  const handleToggleTransporter = () => {
+    setShowTransporter(!showTransporter);
+  };
+
+  const handleToggleProduct = () => {
+    setShowProduct(!showProduct);
+  };
+
+  const validateParty = Yup.object({
+    name: Yup.string().required("Required"),
+    owner: Yup.string().required("Required"),
+    email: Yup.string().email("Email is invalid"),
+    mobile: Yup.string().required("Required"),
+    city: Yup.string().required("Required"),
+  });
+
+  const autoFillGSTParty = async (formik, gst) => {
+    if (gst.length < 15) {
+      setGstError("GST invalid");
+    } else {
+      setGstError("");
+      dispatch(setLoader(true));
+      const resp = await checkGST(gst);
+      dispatch(setLoader(false));
+      const data = resp.data;
+
+      if (data.status == "1") {
+        formik.setFieldValue("name", data.b_name);
+        formik.setFieldValue("owner", data.b_owner);
+        formik.setFieldValue("city", data.b_city);
+        formik.setFieldValue("add", data.b_add);
+      }
+      if (data.sts.toLowerCase() == "active") {
+        setGstSuccess(data.sts);
+      } else {
+        setGstError(data.sts);
+      }
+    }
+  };
+
+  const addParty = async (payload) => {
+    dispatch(setLoader(true));
+    const resp = await partyAdd(user.token, payload);
+    dispatch(setLoader(false));
+    if (resp.data.sucess == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.message,
+      });
+      handleToggleParty();
+      getTransactionParties();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.message,
+      });
+    }
+  };
+
+  const autoFillGSTTrasporter = async (formik, gst) => {
+    if (gst.length < 15) {
+      setGstError("GST invalid");
+    } else {
+      setGstError("");
+      dispatch(setLoader(true));
+      const resp = await checkGST(gst);
+      dispatch(setLoader(false));
+      const data = resp.data;
+
+      if (data.status == "1") {
+        formik.setFieldValue("name", data.b_name);
+        // formik.setFieldValue("owner", data.b_owner);
+        formik.setFieldValue("city", data.b_city);
+        formik.setFieldValue("add", data.b_add);
+      }
+      if (data.sts.toLowerCase() == "active") {
+        setGstSuccess(data.sts);
+      } else {
+        setGstError(data.sts);
+      }
+    }
+  };
+
+  const validateTransporter = Yup.object({
+    name: Yup.string().required("Required"),
+    add: Yup.string().required("Required"),
+    city: Yup.string().required("Required"),
+  });
+
+  const addTransporter = async (payload) => {
+    dispatch(setLoader(true));
+    const resp = await transportAdd(user.token, payload);
+    dispatch(setLoader(false));
+    if (resp.data.sucess == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.message,
+      });
+      handleToggleTransporter();
+      getTransporters();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.message,
+      });
+    }
+  };
+
+  const addProduct = async (payload) => {
+    dispatch(setLoader(true));
+    const resp = await productAdd(user.token, payload);
+    dispatch(setLoader(false));
+    handleToggleProduct();
+
+    if (resp.data.success == 1) {
+      Toast.fire({
+        icon: "success",
+        title: "Product Added Successfully",
+      });
+      handleToggleProduct();
+      getProducts();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: "Something wen't wrong",
+      });
+    }
+  };
+
+  const validateProduct = Yup.object({
+    item_name: Yup.string().required("Required"),
+    item_type: Yup.string().required("Required"),
+    unit: Yup.string().required("Required"),
+    hsn: Yup.number().required("Required"),
+    // gst: Yup.string().required("Required"),
+  });
 
   const addInvoice = async () => {
     if (upperData.party == "") {
@@ -92,6 +264,7 @@ const CreateInvoice = () => {
           tr: upperData.trans,
           lr: upperData.lrno,
           veh: upperData.vno,
+          note: upperData.note,
           tkachu: totalWAmt,
           tpaku: totalBAmt,
           gst: gstTax,
@@ -224,12 +397,31 @@ const CreateInvoice = () => {
     }
   };
 
+  const getTransporters = async () => {
+    dispatch(setLoader(true));
+    var data = await transportListGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setTransporters(data.data);
+    }
+  };
+
   const getProducts = async () => {
     dispatch(setLoader(true));
     const data = await productListGet(user.token);
     setProducts(data.data);
     dispatch(setLoader(false));
   };
+
+  const getProductUnits = async () => {
+    dispatch(setLoader(true));
+    var data = await productUnitGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setUnits(data.data);
+    }
+  };
+
   const billNoGenerate = async (curDate) => {
     dispatch(setLoader(true));
     const data = await getBillNo(user.token, { date: curDate, type: "Sale" });
@@ -241,7 +433,9 @@ const CreateInvoice = () => {
 
   useEffect(() => {
     getTransactionParties();
+    getTransporters();
     getProducts();
+    getProductUnits();
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
   }, []);
@@ -252,11 +446,310 @@ const CreateInvoice = () => {
 
   return (
     <>
+      {/* Party Modal */}
+      <CustomModal
+        show={showParty}
+        handleToggle={handleToggleParty}
+        title="Add Party"
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={() => {
+              inputRef.current.handleSubmit();
+            }}
+          >
+            Save
+          </Button>
+        }
+      >
+        <Formik
+          initialValues={{
+            name: "",
+            owner: "",
+            mobile: "",
+            email: "",
+            gst: "",
+            city: "",
+            add: "",
+          }}
+          validationSchema={validateParty}
+          onSubmit={(values) => {
+            addParty(values);
+          }}
+          validateOnBlur={false}
+          validateOnChange={false}
+          innerRef={inputRef}
+        >
+          {(formik) => (
+            <div>
+              <Form>
+                <FormGroup className="mb-1">
+                  <label className="form-control-label">GST No.</label>
+                  <InputGroup className="input-group-alternative">
+                    <CustomInput
+                      placeholder="Bussiness GST No."
+                      name="gst"
+                      type="text"
+                      withFormGroup={false}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button
+                        className="pt-0 pb-0"
+                        color="primary"
+                        type="button"
+                        onClick={() => {
+                          autoFillGSTParty(formik, formik.values.gst);
+                        }}
+                      >
+                        <FaSearch />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                  {gstError && <label className="errorMsg">{gstError}</label>}
+                  {gstSuccess && (
+                    <label className="text-success">{gstSuccess}</label>
+                  )}
+                </FormGroup>
+                <CustomInput
+                  placeholder="Bussiness Name"
+                  label="Bussiness Name"
+                  name="name"
+                  type="text"
+                />
+
+                <CustomInput
+                  placeholder="Owner Name"
+                  label="Owner Name"
+                  name="owner"
+                  type="text"
+                />
+                <CustomInput
+                  placeholder="Bussiness Mobile No."
+                  label="Mobile No."
+                  name="mobile"
+                  type="number"
+                />
+                <CustomInput
+                  placeholder="Bussiness Email"
+                  label="Email"
+                  name="email"
+                  type="email"
+                />
+
+                <CustomInput
+                  placeholder="Bussiness City"
+                  label="City"
+                  name="city"
+                  type="text"
+                />
+                <CustomInput
+                  placeholder="Bussiness Address"
+                  label="Address"
+                  name="add"
+                  type="text"
+                />
+              </Form>
+            </div>
+          )}
+        </Formik>
+      </CustomModal>
+      <CustomModal
+        show={showTransporter}
+        handleToggle={handleToggleTransporter}
+        title={`Add Transporter`}
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={() => {
+              inputRef.current.handleSubmit();
+            }}
+          >
+            Save
+          </Button>
+        }
+      >
+        <Formik
+          initialValues={{
+            name: "",
+            mobile: "",
+            gst: "",
+            city: "",
+            add: "",
+          }}
+          validationSchema={validateTransporter}
+          onSubmit={(values) => {
+            addTransporter(values);
+          }}
+          validateOnBlur={false}
+          validateOnChange={false}
+          innerRef={inputRef}
+        >
+          {(formik) => (
+            <div>
+              <Form>
+                <FormGroup className="mb-1">
+                  <label className="form-control-label">GST No.</label>
+                  <InputGroup className="input-group-alternative">
+                    <CustomInput
+                      placeholder="GST No."
+                      name="gst"
+                      type="text"
+                      withFormGroup={false}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button
+                        className="pt-0 pb-0"
+                        color="primary"
+                        type="button"
+                        onClick={() => {
+                          autoFillGSTTrasporter(formik, formik.values.gst);
+                        }}
+                      >
+                        <FaSearch />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                  {gstError && <label className="errorMsg">{gstError}</label>}
+                  {gstSuccess && (
+                    <label className="text-success">{gstSuccess}</label>
+                  )}
+                </FormGroup>
+                <CustomInput
+                  placeholder="Transporter Name"
+                  label="Transporter Name"
+                  name="name"
+                  type="text"
+                />
+                <CustomInput
+                  placeholder="Mobile No."
+                  label="Mobile No."
+                  name="mobile"
+                  type="number"
+                />
+                <CustomInput
+                  placeholder="City"
+                  label="City"
+                  name="city"
+                  type="text"
+                />
+                <CustomInput
+                  placeholder="Address"
+                  label="Address"
+                  name="add"
+                  type="text"
+                />
+              </Form>
+            </div>
+          )}
+        </Formik>
+      </CustomModal>
+      <CustomModal
+        show={showProduct}
+        handleToggle={handleToggleProduct}
+        title={`Add Product`}
+        footer={
+          <Button
+            type="submit"
+            className="mr-1"
+            color="primary"
+            block
+            size="md"
+            onClick={() => {
+              inputRef.current.handleSubmit();
+            }}
+          >
+            Save
+          </Button>
+        }
+      >
+        <Formik
+          initialValues={{
+            item_name: "",
+            item_type: "Goods",
+            unit: "",
+            hsn: "",
+            gst: "",
+            description: "",
+          }}
+          validationSchema={validateProduct}
+          onSubmit={(values) => {
+            addProduct(values);
+          }}
+          validateOnBlur={false}
+          validateOnChange={false}
+          innerRef={inputRef}
+        >
+          {(formik) => (
+            <div>
+              <Form>
+                <CustomInput
+                  placeholder="Item Name"
+                  label="Item Name"
+                  name="item_name"
+                  type="text"
+                />
+                <CustomInput
+                  name="item_type"
+                  type="select"
+                  label="Type"
+                  options={[
+                    { label: "Goods", value: "Goods" },
+                    { label: "Services", value: "Services" },
+                  ].map((opt) => {
+                    return <option value={opt.value}>{opt.label}</option>;
+                  })}
+                />
+                <CustomInput
+                  name="unit"
+                  type="select"
+                  label="Unit"
+                  options={[
+                    <option value="">Select Unit</option>,
+                    ...units.map((opt) => {
+                      return (
+                        <option value={opt.code}>
+                          {opt.name}-{opt.code}
+                        </option>
+                      );
+                    }),
+                  ]}
+                />
+                <CustomInput
+                  placeholder="HSN"
+                  label="HSN"
+                  name="hsn"
+                  type="number"
+                />
+                <CustomInput
+                  placeholder="GST Rate %"
+                  label="GST Rate %"
+                  name="gst"
+                  type="text"
+                />
+                <CustomInput
+                  placeholder="Description"
+                  label="Description"
+                  name="description"
+                  type="text"
+                />
+              </Form>
+            </div>
+          )}
+        </Formik>
+      </CustomModal>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Card>
           <CardBody>
             <Row>
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="Party Name *"
                   type="select"
@@ -272,9 +765,17 @@ const CreateInvoice = () => {
                     setError({ ...error, party: "" });
                     setUpperData({ ...upperData, party: e.target.value });
                   }}
+                  addon={
+                    <Button
+                      className="btn-sm btn-outline-primary"
+                      onClick={handleToggleParty}
+                    >
+                      <BiPlus />
+                    </Button>
+                  }
                 />
               </Col>
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="Bill Type"
                   type="select"
@@ -293,7 +794,7 @@ const CreateInvoice = () => {
                 />
               </Col>
 
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="Date"
                   type="date"
@@ -307,7 +808,7 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="Bill No *"
                   errorMsg={error.bNo}
@@ -318,19 +819,31 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="Transport"
+                  type="select"
+                  options={[
+                    <option value="">Select Transport</option>,
+                    ...transporters.map((opt) => {
+                      return <option value={opt.id}>{opt.t_name}</option>;
+                    }),
+                  ]}
                   value={upperData.trans}
                   onChange={(e) => {
-                    setUpperData({
-                      ...upperData,
-                      trans: e.target.value,
-                    });
+                    setUpperData({ ...upperData, trans: e.target.value });
                   }}
+                  addon={
+                    <Button
+                      className="btn-sm btn-outline-primary"
+                      onClick={handleToggleTransporter}
+                    >
+                      <BiPlus />
+                    </Button>
+                  }
                 />
               </Col>
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="L.R.No."
                   value={upperData.lrno}
@@ -342,7 +855,7 @@ const CreateInvoice = () => {
                   }}
                 />
               </Col>
-              <Col xs="4" lg="3">
+              <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
                   label="Vehicle No."
                   value={upperData.vno}
@@ -353,6 +866,28 @@ const CreateInvoice = () => {
                     });
                   }}
                 />
+              </Col>
+              <Col xs="6" sm="4" lg="3">
+                <CustomInputWoutFormik
+                  label="Note"
+                  value={upperData.note}
+                  onChange={(e) => {
+                    setUpperData({
+                      ...upperData,
+                      note: e.target.value,
+                    });
+                  }}
+                />
+              </Col>
+              <Col xs="6" sm="4" lg="3">
+                <FormGroup className="mb-1">
+                  <Button
+                    className="btn-sm btn-outline-primary mt-xs-2 mt-sm-4 mt-lg-2"
+                    onClick={handleToggleProduct}
+                  >
+                    <BiPlus /> Add Product
+                  </Button>
+                </FormGroup>
               </Col>
             </Row>
 

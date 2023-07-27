@@ -4,8 +4,9 @@ import { GrTransaction } from "react-icons/gr";
 import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
-import { FaBalanceScale, FaFileInvoiceDollar } from "react-icons/fa";
+import { FaBalanceScale, FaFileInvoiceDollar, FaTruck } from "react-icons/fa";
 import Party from "pages/Party/index";
+import Transport from "pages/Transport/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
@@ -46,6 +47,7 @@ import SettingV2 from "pages/v2/Setting";
 import DashboardV2 from "pages/v2/Dashboard/Index";
 import ProductionV2 from "pages/v2/Production";
 import GSTV2 from "pages/v2/GST";
+import TransportV2 from "pages/v2/Transport/index";
 
 import { GiFactory } from "react-icons/gi";
 var routes = [
@@ -61,6 +63,15 @@ var routes = [
     name: "Party",
     icon: "ni ni-single-02 text-yellow",
     component: Party,
+    layout: "/admin",
+  },
+  {
+    path: "/v1/transporter",
+    name: "Transporter",
+    icon: " text-success",
+    component: Transport,
+    iconCmp: FaTruck,
+
     layout: "/admin",
   },
   {
@@ -249,6 +260,14 @@ var routes = [
     name: "Party",
     icon: "ni ni-single-02 text-yellow",
     component: PartyV2,
+    layout: "/admin",
+  },
+  {
+    path: "/v2/transporter",
+    name: "Transporter",
+    icon: " text-success",
+    component: TransportV2,
+    iconCmp: FaTruck,
     layout: "/admin",
   },
   {

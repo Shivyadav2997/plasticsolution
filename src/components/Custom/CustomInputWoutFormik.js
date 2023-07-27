@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, FormGroup } from "reactstrap";
+import { Input, FormGroup, InputGroup, InputGroupAddon } from "reactstrap";
 
 export const CustomInputWoutFormik = ({
   label,
@@ -8,6 +8,7 @@ export const CustomInputWoutFormik = ({
   withFormGroup,
   ref,
   errorMsg = "",
+  addon,
   ...props
 }) => {
   const errorClass = errorMsg != "" ? "has-error" : "";
@@ -22,15 +23,28 @@ export const CustomInputWoutFormik = ({
               {label}
             </label>
           )}
-
-          <Input
-            className={errorClass}
-            bsSize={size || "sm"}
-            innerRef={ref}
-            {...props}
-          >
-            {options}
-          </Input>
+          {addon ? (
+            <InputGroup>
+              <Input
+                className={errorClass}
+                bsSize={size || "sm"}
+                innerRef={ref}
+                {...props}
+              >
+                {options}
+              </Input>
+              <InputGroupAddon addonType="append">{addon}</InputGroupAddon>
+            </InputGroup>
+          ) : (
+            <Input
+              className={errorClass}
+              bsSize={size || "sm"}
+              innerRef={ref}
+              {...props}
+            >
+              {options}
+            </Input>
+          )}
         </FormGroup>
       )}
     </>
