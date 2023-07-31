@@ -51,3 +51,5 @@ export const gstMonthAction = "gstr1m";
 export const transportListAction = "transporter_list";
 export const transportAddAction = "add_transporter";
 export const transportEditAction = "edit_transporter";
+export const ewayGetAction = "ewayregister";
+export const ewayAddEditAction = "edit_ewayregister";

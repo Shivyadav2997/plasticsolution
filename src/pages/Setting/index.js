@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
-import { getSettings, updateSettings } from "api/api";
+import { getSettings, updateSettings, ewayGet, ewayAddEdit } from "api/api";
 
 const Setting = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,24 @@ const Setting = () => {
     primary_bank: "",
     create_date: "",
   });
+  const [ewayData, setEwayData] = useState({
+    id: "",
+    ewbuser: "",
+    ewbpass: "",
+    govuser: "",
+    govpass: "",
+  });
   const [bankList, setBankList] = useState([]);
+
+  const onChangeEvents = [
+    () => {
+      getSetting();
+    },
+    () => {
+      getEwayBill();
+    },
+  ];
+
   const getSetting = async () => {
     dispatch(setLoader(true));
     const resp = await getSettings(user.token);
@@ -53,8 +70,33 @@ const Setting = () => {
     });
     dispatch(setLoader(false));
   };
+
+  const getEwayBill = async () => {
+    dispatch(setLoader(true));
+    const resp = await ewayGet(user.token);
+    if (resp.data && resp.data.length > 0) {
+      setEwayData(resp.data[0]);
+    }
+    dispatch(setLoader(false));
+  };
+
+  const saveEwayBill = async () => {
+    dispatch(setLoader(true));
+    const resp = await ewayAddEdit(user.token, {
+      ewbuser: ewayData.ewbuser,
+      ewbpass: ewayData.ewbpass,
+      govuser: ewayData.govuser,
+      govpass: ewayData.govpass,
+    });
+    Toast.fire({
+      icon: resp.data.sucess == 1 ? "success" : "error",
+      title: resp.data.msg || "Something wen't wrong",
+    });
+    dispatch(setLoader(false));
+  };
+
   useEffect(() => {
-    getSetting();
+    // getSetting();
   }, []);
   const tabPan = [
     <>
@@ -131,13 +173,68 @@ const Setting = () => {
         </Row>
       </div>
     </>,
+    <>
+      <div className="p-4">
+        <Row>
+          <Col xs="12" sm="6" lg="3">
+            <CustomInputWoutFormik
+              label="Eway bill User"
+              type="input"
+              value={ewayData.ewbuser}
+              onChange={(e) => {
+                setEwayData({ ...ewayData, ewbuser: e.target.value });
+              }}
+            />
+          </Col>
+          <Col xs="12" sm="6" lg="3">
+            <CustomInputWoutFormik
+              label="Eway bill Pass"
+              type="input"
+              value={ewayData.ewbpass}
+              onChange={(e) => {
+                setEwayData({ ...ewayData, ewbpass: e.target.value });
+              }}
+            />
+          </Col>
+          <Col xs="12" sm="6" lg="3">
+            <CustomInputWoutFormik
+              label="Gov User"
+              type="input"
+              value={ewayData.govuser}
+              onChange={(e) => {
+                setEwayData({ ...ewayData, govuser: e.target.value });
+              }}
+            />
+          </Col>
+          <Col xs="12" sm="6" lg="3">
+            <CustomInputWoutFormik
+              label="Gov Pass"
+              type="input"
+              value={ewayData.govpass}
+              onChange={(e) => {
+                setEwayData({ ...ewayData, govpass: e.target.value });
+              }}
+            />
+          </Col>
+        </Row>
+        <Row className="justify-content-end mr-0 pt-1">
+          <Button className="btn-md btn-outline-success" onClick={saveEwayBill}>
+            Update
+          </Button>
+        </Row>
+      </div>
+    </>,
   ];
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
         <Row>
           <Col>
-            <CustomTab tabnames={["Setting"]} tabpanes={tabPan} />
+            <CustomTab
+              tabnames={["Setting", "Eway Bill"]}
+              tabpanes={tabPan}
+              onChangeEvents={onChangeEvents}
+            />
           </Col>
         </Row>
       </Container>

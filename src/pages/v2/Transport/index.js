@@ -92,6 +92,14 @@ const Transport = () => {
       data: "city",
     },
     {
+      title: "GST",
+      data: "gst",
+    },
+    {
+      title: "Address",
+      data: "address",
+    },
+    {
       title: "Action",
       data: null,
     },

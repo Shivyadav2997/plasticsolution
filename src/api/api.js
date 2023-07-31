@@ -54,6 +54,8 @@ import {
   transportListAction,
   transportAddAction,
   transportEditAction,
+  ewayAddEditAction,
+  ewayGetAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1345,6 +1347,47 @@ const transportEdit = async (token, payload) => {
   }
 };
 
+const ewayGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${ewayGetAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const ewayAddEdit = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${ewayAddEditAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1408,4 +1451,6 @@ export {
   transportListGet,
   transportAdd,
   transportEdit,
+  ewayGet,
+  ewayAddEdit,
 };
