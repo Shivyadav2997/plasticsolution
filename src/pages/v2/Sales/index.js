@@ -15,22 +15,25 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
+import { CustomInput } from "components/Custom/CustomInput";
 import {
   saleListGet,
   invoiceGet,
   invoiceDownload,
   deleteRecord,
   salejson,
+  ewayCreate,
 } from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
+import { Formik, Form } from "formik";
 import Loader from "components/Custom/Loader";
 import * as Yup from "yup";
 
 import ReactDOM from "react-dom/client";
 import { getMonthName } from "api/apiv2";
 import { useHistory } from "react-router-dom";
-import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
+import { FaDownload, FaEye, FaPlus, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import { useDispatch } from "react-redux";
@@ -54,7 +57,9 @@ const Sales = () => {
   });
 
   const [show, setShow] = useState(false);
+  const [showCreateEway, setShowCreateEway] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [ewayId, setEwayId] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const history = useHistory();
   const childRef = useRef(null);
@@ -69,6 +74,7 @@ const Sales = () => {
   const [transport, setTransport] = useState(false);
   const [office, setOffice] = useState(false);
   const [duplicate, setDuplicate] = useState(false);
+  const [ewayInvoice, setEwayInvoice] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
   const formRef = useRef(null);
@@ -86,6 +92,13 @@ const Sales = () => {
 
   const handleToggle = () => {
     setShow(!show);
+  };
+
+  const handleToggleEway = () => {
+    setShowCreateEway(!showCreateEway);
+    if (showCreateEway) {
+      setEwayId("");
+    }
   };
 
   const handleShowConfirmation = () => {
@@ -131,6 +144,7 @@ const Sales = () => {
     setDuplicate(false);
     setOffice(false);
     setTransport(false);
+    setEwayInvoice(false);
     handleToggle();
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
@@ -145,19 +159,32 @@ const Sales = () => {
     dispatch(setLoader(false));
   };
 
+  const openEWAYModel = async (rowData) => {
+    setEwayId(rowData.id);
+    handleToggleEway();
+  };
+
   const ewayJson = async (rowData) => {
     const id = btoa(Number(rowData.id));
+    setInvId(id);
+    setOriginal(false);
+    setDuplicate(false);
+    setOffice(false);
+    setTransport(false);
+    setEwayInvoice(true);
+    handleToggle();
     dispatch(setLoader(true));
-    const resp = await salejson(user.token, id, 1);
+    const resp = await invoiceGet(user.token, {
+      id: id,
+      a: 0,
+      b: 0,
+      c: 0,
+      d: 0,
+      w: 0,
+      eway: 1,
+    });
+    setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
-    if (resp.data.pdfurl) {
-      const url = resp.data.pdfurl;
-      let alink = document.createElement("a");
-      alink.href = url;
-      alink.target = "_blank";
-      alink.download = url.substring(url.lastIndexOf("/") + 1);
-      alink.click();
-    }
   };
 
   var colDefs = [
@@ -222,13 +249,23 @@ const Sales = () => {
                 </Button>
               </div>
               <div>
-                <Button
-                  className="btn-outline-info btn-icon btn-sm"
-                  color="default"
-                  onClick={() => ewayJson(rowData)}
-                >
-                  <span>EwayBillJSON</span>
-                </Button>
+                {rowData.ewaynumber == null ? (
+                  <Button
+                    className="btn-outline-danger btn-icon btn-sm"
+                    color="default"
+                    onClick={() => openEWAYModel(rowData)}
+                  >
+                    Create EWAY
+                  </Button>
+                ) : (
+                  <Button
+                    className="btn-outline-success btn-icon btn-sm"
+                    color="default"
+                    onClick={() => ewayJson(rowData)}
+                  >
+                    View EWAY
+                  </Button>
+                )}
               </div>
               <div>
                 <Button
@@ -329,15 +366,26 @@ const Sales = () => {
     getData();
   }, [filterDate, selMonth, fyear]);
 
-  //   const addExpense = async (payload) => {
-  //     handleToggle();
-  //     setLoading(true);
-  //     let resp = await expenseAdd(user.token, payload);
-  //     toast(resp.message);
-  //     if (resp.data.sucess == 1) {
-  //       getExpenses();
-  //     }
-  //   };
+  const createEway = async (payload) => {
+    dispatch(setLoader(true));
+    let resp = await ewayCreate(user.token, { id: ewayId, ...payload });
+    dispatch(setLoader(false));
+
+    if (resp.data.sucess == 1) {
+      Toast.fire({
+        icon: "success",
+        title: resp.message,
+      });
+      ewayJson({ id: ewayId });
+      getData();
+      handleToggleEway();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: resp.message,
+      });
+    }
+  };
 
   const tabPan = [
     <CustomTable
@@ -387,10 +435,10 @@ const Sales = () => {
   };
 
   const validate = Yup.object({
-    amount: Yup.number().required("Required"),
-    type: Yup.string().required("Required"),
-    mode: Yup.string().required("Required"),
-    date: Yup.date().required("Required"),
+    supplytype: Yup.string().required("Required"),
+    subtype: Yup.string().required("Required"),
+    dtype: Yup.string().required("Required"),
+    ttype: Yup.string().required("Required"),
   });
 
   const invoiceWithChecks = async () => {
@@ -401,6 +449,7 @@ const Sales = () => {
       b: transport ? 1 : 0,
       c: office ? 1 : 0,
       d: duplicate ? 1 : 0,
+      eway: ewayInvoice ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -415,6 +464,7 @@ const Sales = () => {
       c: office ? 1 : 0,
       d: duplicate ? 1 : 0,
       wp: whatsapp ? 1 : 0,
+      eway: ewayInvoice ? 1 : 0,
     });
     dispatch(setLoader(false));
     if (whatsapp) {
@@ -436,13 +486,13 @@ const Sales = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [original, duplicate, transport, office]);
+  }, [original, duplicate, transport, office, ewayInvoice]);
   return (
     <>
-      {/* <CustomModal
-        show={show}
-        title={`Recieve`}
-        handleToggle={handleToggle}
+      <CustomModal
+        show={showCreateEway}
+        title={`Create EWAY`}
+        handleToggle={handleToggleEway}
         footer={
           <Button
             type="submit"
@@ -452,21 +502,20 @@ const Sales = () => {
             size="md"
             onClick={() => formRef.current.handleSubmit()}
           >
-            Save
+            Create
           </Button>
         }
       >
         <Formik
           initialValues={{
-            amount: "",
-            type: "",
-            mode: "",
-            date: format(new Date(), "yyyy-MM-dd"),
-            desc: "",
+            supplytype: "O",
+            subtype: "1",
+            dtype: "INV",
+            ttype: "1",
           }}
           validationSchema={validate}
           onSubmit={(values) => {
-            addExpense(values);
+            createEway(values);
           }}
           innerRef={formRef}
           validateOnChange={false}
@@ -476,56 +525,91 @@ const Sales = () => {
             <div>
               <Form>
                 <CustomInput
-                  name="type"
+                  name="supplytype"
                   type="select"
-                  label="Expense Type"
+                  label="Supply Type"
                   options={[
-                    { label: "Select Type", value: "" },
-                    { label: "Salary", value: "Salary" },
-                    { label: "Rent", value: "Rent" },
-                    { label: "Machine", value: "Machine" },
-                    { label: "Transsport", value: "Transsport" },
-                    { label: "Other", value: "Other" },
+                    { label: "Outward", value: "O" },
+                    { label: "Inward", value: "I" },
                   ].map((opt) => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}
-                />
-                <CustomInput
-                  name="mode"
-                  type="select"
-                  label="Expense Mode"
-                  options={[
-                    { label: "Select Mode", value: "" },
-                    { label: "Cash", value: "Cash" },
-                    { label: "Bank", value: "Bank" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-                <CustomInput
-                  placeholder="Amount"
-                  name="amount"
-                  type="number"
-                  label="Amount"
                 />
 
                 <CustomInput
-                  placeholder=""
-                  name="date"
-                  type="date"
-                  label="Date"
+                  name="subtype"
+                  type="select"
+                  label="Sub Type"
+                  options={[
+                    { label: "Supply", value: "1" },
+                    { label: "Import", value: "2" },
+                    { label: "Export", value: "3" },
+                    { label: "Job Work", value: "4" },
+                    { label: "For Own Use", value: "5" },
+                    { label: "Job work Returns", value: "6" },
+                    { label: "Sales Return", value: "7" },
+                    { label: "Others", value: "8" },
+                    { label: "SKD/CKD/Lots", value: "9" },
+                    { label: "Line Sales", value: "10" },
+                    { label: "Recipient Not Known", value: "11" },
+                    { label: "Exhibition or Fairs", value: "12" },
+                  ].map((opt) => {
+                    return <option value={opt.value}>{opt.label}</option>;
+                  })}
+                />
+                <CustomInput
+                  name="dtype"
+                  type="select"
+                  label="Document Type"
+                  options={[
+                    { label: "Tax Invoice", value: "INV" },
+                    { label: "Bill of Supply", value: "BIL" },
+                    { label: "Delivery Challan", value: "CHL" },
+                    { label: "Bill of Entry", value: "BOE" },
+                    { label: "Others", value: "OTH" },
+                  ].map((opt) => {
+                    return <option value={opt.value}>{opt.label}</option>;
+                  })}
+                />
+                <CustomInput
+                  name="ttype"
+                  type="select"
+                  label="Transaction Type"
+                  options={[
+                    { label: "Regular", value: "1" },
+                    { label: "Bill To - Ship To", value: "2" },
+                    { label: "Bill From - Dispatch From", value: "3" },
+                    { label: "Combination of 2 and 3", value: "4" },
+                  ].map((opt) => {
+                    return <option value={opt.value}>{opt.label}</option>;
+                  })}
+                />
+                <CustomInput
+                  placeholder="Distance"
+                  name="distance"
+                  type="number"
+                  label="Approximate Distance (in KM)"
+                />
+                <hr
+                  className="mb-0"
+                  style={{ borderTop: "2px dotted", width: "50%" }}
+                />
+                <h2 className="mb-0 text-center">PART B</h2>
+                <hr
+                  className="mt-0"
+                  style={{ borderTop: "2px dotted", width: "50%" }}
                 />
                 <CustomInput
                   placeholder=""
-                  name="desc"
-                  type="textarea"
-                  label="Note"
+                  name="vnumber"
+                  type="text"
+                  label="Vehicle No"
                 />
               </Form>
             </div>
           )}
         </Formik>
-      </CustomModal> */}
+      </CustomModal>
       <ConfirmationDialog
         show={showDelete}
         handleToggle={handleShowConfirmation}
@@ -629,6 +713,19 @@ const Sales = () => {
                     />
                     <label className="ml-2" htmlFor=" duplicate">
                       Duplicate
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="ewayInvoice"
+                      checked={ewayInvoice}
+                      onChange={(e) => {
+                        setEwayInvoice(e.currentTarget.checked);
+                      }}
+                    />
+                    <label className="ml-2" htmlFor=" duplicate">
+                      EWAY
                     </label>
                   </Col>
                 </Row>

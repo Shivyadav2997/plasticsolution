@@ -56,6 +56,7 @@ import {
   transportEditAction,
   ewayAddEditAction,
   ewayGetAction,
+  createewayAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1388,6 +1389,27 @@ const ewayAddEdit = async (token, payload) => {
   }
 };
 
+const ewayCreate = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${createewayAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1453,4 +1475,5 @@ export {
   transportEdit,
   ewayGet,
   ewayAddEdit,
+  ewayCreate,
 };

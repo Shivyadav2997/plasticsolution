@@ -53,3 +53,4 @@ export const transportAddAction = "add_transporter";
 export const transportEditAction = "edit_transporter";
 export const ewayGetAction = "ewayregister";
 export const ewayAddEditAction = "edit_ewayregister";
+export const createewayAction = "createeway";
