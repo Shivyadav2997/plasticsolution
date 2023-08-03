@@ -90,15 +90,15 @@ const Sales = () => {
     return false;
   };
 
-  const handleToggle = () => {
-    setShow(!show);
+  const handleToggle = (showModal) => {
+    setShow(showModal);
   };
 
   const handleToggleEway = () => {
-    setShowCreateEway(!showCreateEway);
     if (showCreateEway) {
       setEwayId("");
     }
+    setShowCreateEway(!showCreateEway);
   };
 
   const handleShowConfirmation = () => {
@@ -145,7 +145,7 @@ const Sales = () => {
     setOffice(false);
     setTransport(false);
     setEwayInvoice(false);
-    handleToggle();
+    handleToggle(true);
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
@@ -172,7 +172,7 @@ const Sales = () => {
     setOffice(false);
     setTransport(false);
     setEwayInvoice(true);
-    handleToggle();
+    handleToggle(true);
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
@@ -632,7 +632,7 @@ const Sales = () => {
       <CustomModal
         show={show}
         title="View/Print Invoice"
-        handleToggle={handleToggle}
+        handleToggle={() => (show ? handleToggle(false) : handleToggle(true))}
         centered={false}
         iframe={true}
         fullscreen={true}
