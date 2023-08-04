@@ -59,6 +59,8 @@ const Party = () => {
     if (show) {
       setParty(null);
     }
+    setGstError("");
+    setGstSuccess("");
     setShow(!show);
   };
   const handleShowConfirmation = () => {
@@ -71,7 +73,7 @@ const Party = () => {
     name: Yup.string().required("Required"),
     owner: Yup.string().required("Required"),
     email: Yup.string().email("Email is invalid"),
-    mobile: Yup.string().required("Required"),
+    // mobile: Yup.string().required("Required"),
     city: Yup.string().required("Required"),
   });
 
@@ -245,6 +247,9 @@ const Party = () => {
         formik.setFieldValue("owner", data.b_owner);
         formik.setFieldValue("city", data.b_city);
         formik.setFieldValue("add", data.b_add);
+        if (data.pincode) {
+          formik.setFieldValue("pincode", data.pincode);
+        }
       }
       if (data.sts.toLowerCase() == "active") {
         setGstSuccess(data.sts);
@@ -284,6 +289,7 @@ const Party = () => {
               gst: party?.gst,
               city: party?.b_city,
               add: party?.b_add,
+              pincode: party?.pincode,
             }}
             validationSchema={validate}
             onSubmit={(values) => {
@@ -304,7 +310,7 @@ const Party = () => {
                     <label className="form-control-label">GST No.</label>
                     <InputGroup className="input-group-alternative">
                       <CustomInput
-                        placeholder="Bussiness GST No."
+                        placeholder="Business GST No."
                         name="gst"
                         type="text"
                         withFormGroup={false}
@@ -328,8 +334,8 @@ const Party = () => {
                     )}
                   </FormGroup>
                   <CustomInput
-                    placeholder="Bussiness Name"
-                    label="Bussiness Name"
+                    placeholder="Business Name"
+                    label="Business Name"
                     name="name"
                     type="text"
                   />
@@ -341,29 +347,35 @@ const Party = () => {
                     type="text"
                   />
                   <CustomInput
-                    placeholder="Bussiness Mobile No."
+                    placeholder="Business Mobile No."
                     label="Mobile No."
                     name="mobile"
                     type="number"
                   />
                   <CustomInput
-                    placeholder="Bussiness Email"
+                    placeholder="Business Email"
                     label="Email"
                     name="email"
                     type="email"
                   />
 
                   <CustomInput
-                    placeholder="Bussiness City"
+                    placeholder="Business City"
                     label="City"
                     name="city"
                     type="text"
                   />
                   <CustomInput
-                    placeholder="Bussiness Address"
+                    placeholder="Business Address"
                     label="Address"
                     name="add"
                     type="text"
+                  />
+                  <CustomInput
+                    placeholder="Pincode"
+                    label="Pincode"
+                    name="pincode"
+                    type="number"
                   />
                 </Form>
               </div>

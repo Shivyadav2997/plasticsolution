@@ -29,7 +29,7 @@ import { MdBusiness, MdEmail, MdLocationCity } from "react-icons/md";
 import { BsDisplay, BsPerson } from "react-icons/bs";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { BiHome } from "react-icons/bi";
-import { TbLetterG, TbMessageCode } from "react-icons/tb";
+import { TbLetterG, TbMapPin, TbMessageCode } from "react-icons/tb";
 
 const Register = () => {
   var Toast = Swal.mixin({
@@ -154,6 +154,9 @@ const Register = () => {
         formik.setFieldValue("owner", data.b_owner);
         formik.setFieldValue("city", data.b_city);
         formik.setFieldValue("add", data.b_add);
+        if (data.pincode) {
+          formik.setFieldValue("pincode", data.pincode);
+        }
       }
       if (data.sts.toLowerCase() == "active") {
         setGstSuccess(data.sts);
@@ -229,6 +232,7 @@ const Register = () => {
                   mob2: "",
                   mob3: "",
                   mob4: "",
+                  pincode: "",
                 }}
                 validationSchema={validate}
                 onSubmit={async (values, actions) => {
@@ -244,6 +248,7 @@ const Register = () => {
                     b_mobile2: values.mob2,
                     b_mobile3: values.mob3,
                     b_mobile4: values.mob4,
+                    pincode: values.pincode,
                   });
                   // actions.resetForm();
                   // console.log(logo);
@@ -407,6 +412,22 @@ const Register = () => {
                         <InputGroup className="input-group-alternative">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
+                              <TbMapPin />
+                            </InputGroupText>
+                          </InputGroupAddon>
+
+                          <CustomInput
+                            placeholder="Pincode"
+                            name="pincode"
+                            type="number"
+                            withFormGroup={false}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <FormGroup className="mb-3">
+                        <InputGroup className="input-group-alternative">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
                               <FaPhoneAlt />
                             </InputGroupText>
                           </InputGroupAddon>
@@ -451,7 +472,8 @@ const Register = () => {
                           />
                         </InputGroup>
                       </FormGroup>
-                      <FormGroup className="mb-3">
+
+                      {/* <FormGroup className="mb-3">
                         <InputGroup className="input-group-alternative">
                           <Input
                             type="file"
@@ -463,7 +485,7 @@ const Register = () => {
                             }}
                           />
                         </InputGroup>
-                      </FormGroup>
+                      </FormGroup> */}
                       <div className="text-center">
                         <Button
                           className="my-4"

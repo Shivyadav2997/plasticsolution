@@ -44,11 +44,11 @@ const Register = () => {
     if (uname === "") {
       setErrorUname("User name is required");
     }
-    // if (pass === "") {
-    //   setErrorPass("Password is required");
-    // }
+    if (pass === "") {
+      setErrorPass("Password is required");
+    }
     // if (uname && pass) {
-    if (uname) {
+    if (uname && pass) {
       dispatch(setLoader(true));
       const loginResponse = await loginApi(uname, pass);
       dispatch(setLoader(false));
@@ -82,6 +82,12 @@ const Register = () => {
         icon: resp.data.success == 1 ? "success" : "error",
         title: resp.data.msg,
       });
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key == "Enter") {
+      loginSubmit();
     }
   };
   return (
@@ -135,6 +141,7 @@ const Register = () => {
                       setUname(e.target.value);
                       setErrorUname("");
                     }}
+                    onKeyDown={handleKeyDown}
                     ref={unameRef}
                     autoFocus
                     // invalid={errorUname !== ""}
@@ -154,6 +161,7 @@ const Register = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    onKeyDown={handleKeyDown}
                     onChange={(e) => {
                       setPass(e.target.value);
                       setErrorPass("");

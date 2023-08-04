@@ -71,12 +71,18 @@ const getMonthName = (monthNumber) => {
 
   return date.toLocaleString("en-US", { month: "long" });
 };
+
 const getParams = (payload) => {
   const strParams = Object.keys(payload).map((k) => {
-    return `${k}=${payload[k]}`;
+    if (payload[k] != null && payload[k] != undefined) {
+      return `${k}=${payload[k]}`;
+    } else {
+      return null;
+    }
   });
-  return strParams.join("&");
+  return strParams.filter((x) => x != null).join("&");
 };
+
 const getData = async (type) => {
   try {
     const resp = await axios.get(baseUrltest + type);
