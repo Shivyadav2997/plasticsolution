@@ -115,6 +115,10 @@ const CreateInvoice = () => {
     city: Yup.string().required("Required"),
   });
 
+  useEffect(() => {
+    setRows(rows);
+  }, products);
+
   const autoFillGSTParty = async (formik, gst) => {
     if (gst.length < 15) {
       setGstError("GST invalid");

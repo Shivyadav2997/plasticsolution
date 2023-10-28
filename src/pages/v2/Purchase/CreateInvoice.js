@@ -108,6 +108,10 @@ const CreateInvoice = () => {
     setShowProduct(!showProduct);
   };
 
+  useEffect(() => {
+    setRows(rows);
+  }, products);
+
   const validateParty = Yup.object({
     name: Yup.string().required("Required"),
     owner: Yup.string().required("Required"),

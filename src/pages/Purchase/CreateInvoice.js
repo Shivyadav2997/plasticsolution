@@ -99,6 +99,10 @@ const CreateInvoice = () => {
     },
   ]);
 
+  useEffect(() => {
+    setRows(rows);
+  }, products);
+
   const handleToggleParty = () => {
     setShowParty(!showParty);
   };
