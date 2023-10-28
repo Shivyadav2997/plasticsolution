@@ -204,9 +204,14 @@ const partyAdd = async (token, payload) => {
 
 const partyEdit = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${partyEditAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, partyEditAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -286,11 +291,14 @@ const transactionPartyGet = async (token, payload) => {
 
 const transactionRecieveAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${transactionRecieveAction}&token=${token}&${getParams(
-          payload
-        )}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, transactionRecieveAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -309,11 +317,14 @@ const transactionRecieveAdd = async (token, payload) => {
 
 const transactionPaymentAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${transactionPaymentAction}&token=${token}&${getParams(
-          payload
-        )}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, transactionPaymentAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -352,9 +363,14 @@ const expensesListGet = async (token, st = "", en = "") => {
 
 const expenseAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${expenseAddAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, expenseAddAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -600,9 +616,14 @@ const productUnitGet = async (token) => {
 
 const productAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${productAddAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, productAddAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -625,9 +646,14 @@ const productAdd = async (token, payload) => {
 
 const productEdit = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${productEditAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, productEditAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -789,9 +815,14 @@ const balanceEntryListGet = async (token) => {
 
 const balanceUpdate = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${balanceUpdateAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, balanceUpdateAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -810,8 +841,14 @@ const balanceUpdate = async (token, payload) => {
 
 const bankAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl + `?action=${bankAddAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, bankAddAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -830,9 +867,14 @@ const bankAdd = async (token, payload) => {
 
 const bankUpdate = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${bankUpdateAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, bankUpdateAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -851,9 +893,14 @@ const bankUpdate = async (token, payload) => {
 
 const addCreditDebit = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${creditDebitAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, creditDebitAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -1053,21 +1100,8 @@ const getBillNo = async (token, payload) => {
   }
 };
 
-function objectToFormData(obj) {
-  const formData = new FormData();
-
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      formData.append(`${key}[]`, obj[key]);
-    }
-  }
-
-  return formData;
-}
-
 const createInvoice = async (token, payload, json) => {
   try {
-    // const formData = objectToFormData(json);
     const formData = new FormData();
     formData.append("rows", json);
     const resp = await axios.post(
@@ -1346,9 +1380,14 @@ const transportListGet = async (token) => {
 
 const transportAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${transportAddAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, transportAddAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -1367,9 +1406,14 @@ const transportAdd = async (token, payload) => {
 
 const transportEdit = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl +
-        `?action=${transportEditAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, transportEditAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
