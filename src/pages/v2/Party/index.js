@@ -20,6 +20,8 @@ import {
   partyEdit,
   deleteRecord,
   checkGST,
+  stateCodeGet,
+  groupNameGet,
 } from "api/apiv2";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
@@ -47,6 +49,8 @@ const Party = () => {
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [party, setParty] = useState(null);
+  const [stateL, setStateL] = useState([]);
+  const [groupname, setGroupName] = useState([]);
   const [loading, setLoading] = useState(true);
   const inputRef = useRef(null);
 
@@ -55,9 +59,14 @@ const Party = () => {
 
   const dispatch = useDispatch();
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     if (show) {
       setParty(null);
+    } else {
+      dispatch(setLoader(true));
+      await getStateList();
+      await getGroupNameList();
+      dispatch(setLoader(false));
     }
     setGstError("");
     setGstSuccess("");
@@ -75,6 +84,10 @@ const Party = () => {
     email: Yup.string().email("Email is invalid"),
     // mobile: Yup.string().required("Required"),
     city: Yup.string().required("Required"),
+    pancard: Yup.string().required("Required"),
+    reg_type: Yup.string().required("Required"),
+    gpname: Yup.string().required("Required"),
+    state: Yup.string().required("Required"),
   });
 
   const columns = [
@@ -147,6 +160,20 @@ const Party = () => {
       },
     },
   ];
+
+  const getStateList = async () => {
+    var data = await stateCodeGet(user.token);
+    if (data.data) {
+      setStateL(data.data);
+    }
+  };
+
+  const getGroupNameList = async () => {
+    var data = await groupNameGet(user.token);
+    if (data.data) {
+      setGroupName(data.data);
+    }
+  };
 
   const deleteParty = async () => {
     if (party != null) {
@@ -250,6 +277,12 @@ const Party = () => {
         if (data.pincode) {
           formik.setFieldValue("pincode", data.pincode);
         }
+        if (data.pancard) {
+          formik.setFieldValue("pancard", data.pancard);
+        }
+        if (data.state) {
+          formik.setFieldValue("state", data.state);
+        }
       }
       if (data.sts.toLowerCase() == "active") {
         setGstSuccess(data.sts);
@@ -290,6 +323,12 @@ const Party = () => {
               city: party?.b_city,
               add: party?.b_add,
               pincode: party?.pincode,
+              pancard: party?.pancard,
+              credit_day: party?.credit_day,
+              credit_limit: party?.credit_limit,
+              reg_type: party?.reg_type,
+              gpname: party?.gpname,
+              state: party?.b_state,
             }}
             validationSchema={validate}
             onSubmit={(values) => {
@@ -366,6 +405,42 @@ const Party = () => {
                     type="text"
                   />
                   <CustomInput
+                    name="state"
+                    type="select"
+                    label="State"
+                    options={[
+                      <option value="">Select State</option>,
+                      ...stateL.map((opt) => {
+                        return <option value={opt.code}>{opt.state}</option>;
+                      }),
+                    ]}
+                  />
+                  <CustomInput
+                    name="gpname"
+                    type="select"
+                    label="Group Name"
+                    options={[
+                      <option value="">Select Group Name</option>,
+                      ...groupname.map((opt) => {
+                        return <option value={opt.id}>{opt.name}</option>;
+                      }),
+                    ]}
+                  />
+                  <CustomInput
+                    name="reg_type"
+                    type="select"
+                    label="Reg. Type"
+                    options={[
+                      { label: "Select Type", value: "" },
+                      { label: "Regular", value: "Regular" },
+                      { label: "Consumer", value: "Consumer" },
+                      { label: "Unregistered", value: "Unregistered" },
+                      { label: "Composition", value: "Composition" },
+                    ].map((opt) => {
+                      return <option value={opt.value}>{opt.label}</option>;
+                    })}
+                  />
+                  <CustomInput
                     placeholder="Business Address"
                     label="Address"
                     name="add"
@@ -376,6 +451,25 @@ const Party = () => {
                     label="Pincode"
                     name="pincode"
                     type="number"
+                  />
+                  <CustomInput
+                    placeholder="Credit Limit"
+                    label="Credit Limit"
+                    name="credit_limit"
+                    type="number"
+                  />
+                  <CustomInput
+                    placeholder="Credit Days"
+                    label="Credit Days"
+                    name="credit_day"
+                    type="number"
+                  />
+                  <CustomInput
+                    placeholder="PAN Card"
+                    label="PAN Card"
+                    name="pancard"
+                    type="text"
+                    maxLength={10}
                   />
                 </Form>
               </div>

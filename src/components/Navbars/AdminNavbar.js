@@ -51,7 +51,7 @@ const AdminNavbar = (props) => {
           </button>
           <Link
             className="h4 mb-0 text-dark text-uppercase d-inline-block"
-            to="/"
+            to="#"
           >
             {props.brandText}
           </Link>

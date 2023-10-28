@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import {
   userLoginAction,
+  autoLoginAction,
   partyListAction,
   transactionListAction,
   partyAddAction,
@@ -57,6 +58,8 @@ import {
   ewayAddEditAction,
   ewayGetAction,
   createewayAction,
+  groupNameAction,
+  stateCodeAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -81,6 +84,17 @@ const getParams = (payload) => {
     }
   });
   return strParams.filter((x) => x != null).join("&");
+};
+
+const getFormData = (payload, action) => {
+  let data = new FormData();
+  data.append("action", action);
+  Object.keys(payload).forEach((k) => {
+    if (payload[k] != null && payload[k] != undefined) {
+      data.append(k, payload[k]);
+    }
+  });
+  return data;
 };
 
 const getData = async (type) => {
@@ -130,6 +144,18 @@ const logoutApi = async () => {
   }
 };
 
+const autoLoginCheck = async () => {
+  try {
+    const resp = await axios.get(baseUrl + `?action=${autoLoginAction}`);
+    return resp.data;
+  } catch (error) {
+    return {
+      sucess: 0,
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const partyListGet = async (token) => {
   try {
     const resp = await axios.get(
@@ -152,8 +178,14 @@ const partyListGet = async (token) => {
 
 const partyAdd = async (token, payload) => {
   try {
-    const resp = await axios.get(
-      baseUrl + `?action=${partyAddAction}&token=${token}&${getParams(payload)}`
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, partyAddAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -1416,6 +1448,46 @@ const ewayCreate = async (token, payload) => {
   }
 };
 
+const stateCodeGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${stateCodeAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const groupNameGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${groupNameAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1482,4 +1554,7 @@ export {
   ewayGet,
   ewayAddEdit,
   ewayCreate,
+  autoLoginCheck,
+  stateCodeGet,
+  groupNameGet,
 };

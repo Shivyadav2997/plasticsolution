@@ -1,5 +1,6 @@
 export const userLoginAction = "user_login";
 export const userLogoutAction = "user_logout";
+export const autoLoginAction = "user_auth";
 export const partyListAction = "party_list";
 export const partyAddAction = "add_party";
 export const partyEditAction = "edit_party";
@@ -54,3 +55,5 @@ export const transportEditAction = "edit_transporter";
 export const ewayGetAction = "ewayregister";
 export const ewayAddEditAction = "edit_ewayregister";
 export const createewayAction = "createeway";
+export const stateCodeAction = "statecode";
+export const groupNameAction = "groupname";

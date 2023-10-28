@@ -1,7 +1,6 @@
 import axios from "axios";
 import React from "react";
 import {
-  userLoginAction,
   partyListAction,
   transactionListAction,
   partyAddAction,
@@ -12,7 +11,6 @@ import {
   transactionPaymentAction,
   expensesListAction,
   expenseAddAction,
-  userLogoutAction,
   saleListAction,
   purchaseListAction,
   homeAction,
@@ -57,6 +55,8 @@ import {
   ewayAddEditAction,
   ewayGetAction,
   createewayAction,
+  groupNameAction,
+  stateCodeAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1385,6 +1385,46 @@ const ewayCreate = async (token, payload) => {
   }
 };
 
+const stateCodeGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${stateCodeAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const groupNameGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${groupNameAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1449,4 +1489,6 @@ export {
   ewayGet,
   ewayAddEdit,
   ewayCreate,
+  stateCodeGet,
+  groupNameGet,
 };

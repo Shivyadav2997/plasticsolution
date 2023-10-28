@@ -1,5 +1,6 @@
 import Register from "pages/Register.js";
 import Login from "pages/Login.js";
+import AutoLogin from "pages/AutoLogin.js";
 import { GrTransaction } from "react-icons/gr";
 import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
@@ -238,6 +239,13 @@ var routes = [
     name: "Login",
     icon: "ni ni-circle-08 text-pink",
     component: Login,
+    layout: "/auth",
+  },
+  {
+    path: "/autologin",
+    name: "AutoLogin",
+    icon: "ni ni-circle-08 text-pink",
+    component: AutoLogin,
     layout: "/auth",
   },
   // {
