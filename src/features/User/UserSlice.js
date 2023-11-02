@@ -9,14 +9,14 @@ const initialState = {
 };
 
 try {
-  initialState.user = sessionStorage.getItem("userData")
-    ? JSON.parse(sessionStorage.getItem("userData"))
+  initialState.user = localStorage.getItem("userData")
+    ? JSON.parse(localStorage.getItem("userData"))
     : null;
 } catch {}
 
 try {
-  initialState.fyear = sessionStorage.getItem("fyear")
-    ? sessionStorage.getItem("fyear")
+  initialState.fyear = localStorage.getItem("fyear")
+    ? localStorage.getItem("fyear")
     : "";
 } catch {}
 
@@ -43,21 +43,21 @@ export const userSlice = createSlice({
     login: (state, { payload }) => {
       state.user = payload;
       state.fyear = getFinancialYear();
-      sessionStorage.setItem("userData", JSON.stringify(payload));
-      sessionStorage.setItem("fyear", state.fyear);
+      localStorage.setItem("userData", JSON.stringify(payload));
+      localStorage.setItem("fyear", state.fyear);
     },
     logout: (state, { payload }) => {
       logoutApi();
       state.user = null;
-      sessionStorage.removeItem("fyear", payload);
-      sessionStorage.removeItem("userData");
+      localStorage.removeItem("fyear", payload);
+      localStorage.removeItem("userData");
     },
     setLoader: (state, { payload }) => {
       state.loading = payload;
     },
     setFyear: (state, { payload }) => {
       state.fyear = payload;
-      sessionStorage.setItem("fyear", payload);
+      localStorage.setItem("fyear", payload);
     },
     toggleSidebar: (state, { payload }) => {
       state.collapseSidebar = payload;

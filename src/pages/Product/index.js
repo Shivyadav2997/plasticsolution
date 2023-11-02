@@ -223,6 +223,9 @@ const ProductList = () => {
               hsn: product?.hsn,
               gst: product?.gst,
               description: product?.description,
+              srate: product?.srate,
+              prate: product?.srate,
+              mstock: product?.mstock,
             }}
             validationSchema={validate}
             onSubmit={(values) => {
@@ -281,6 +284,24 @@ const ProductList = () => {
                     placeholder="GST Rate %"
                     label="GST Rate %"
                     name="gst"
+                    type="text"
+                  />
+                  <CustomInput
+                    placeholder="Sale Rate"
+                    label="Sale Rate"
+                    name="srate"
+                    type="text"
+                  />
+                  <CustomInput
+                    placeholder="Purchase Rate"
+                    label="Purchase Rate"
+                    name="prate"
+                    type="text"
+                  />
+                  <CustomInput
+                    placeholder="Minimum Stock"
+                    label="Minimum Stock"
+                    name="mstock"
                     type="text"
                   />
                   <CustomInput

@@ -44,7 +44,6 @@ import ProfileV2 from "pages/v2/Profile";
 import ProductListV2 from "pages/v2/Product";
 import ProductStockV2 from "pages/v2/Product/stock";
 import ViewAccountV2 from "pages/v2/Account/view";
-import SettingV2 from "pages/v2/Setting";
 import DashboardV2 from "pages/v2/Dashboard/Index";
 import ProductionV2 from "pages/v2/Production";
 import GSTV2 from "pages/v2/GST";
@@ -410,7 +409,7 @@ var routes = [
     path: "/v2/setting",
     name: "Setting",
     icon: "ni ni-settings text-yellow",
-    component: SettingV2,
+    component: Setting,
     layout: "/admin",
     wOutLink: true,
   },

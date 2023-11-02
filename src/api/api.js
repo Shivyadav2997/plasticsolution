@@ -60,6 +60,9 @@ import {
   createewayAction,
   groupNameAction,
   stateCodeAction,
+  getAccountantAction,
+  findAccountantAction,
+  saveAccountantAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1532,6 +1535,68 @@ const groupNameGet = async (token) => {
   }
 };
 
+const getAccountant = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${getAccountantAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const findaccountant = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${findAccountantAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateAccountant = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${saveAccountantAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1601,4 +1666,7 @@ export {
   autoLoginCheck,
   stateCodeGet,
   groupNameGet,
+  getAccountant,
+  findaccountant,
+  updateAccountant,
 };

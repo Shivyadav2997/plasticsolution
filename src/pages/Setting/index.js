@@ -1,4 +1,13 @@
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Label,
+  InputGroup,
+  InputGroupAddon,
+  FormGroup,
+} from "reactstrap";
 // core components
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -9,7 +18,16 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
-import { getSettings, updateSettings, ewayGet, ewayAddEdit } from "api/api";
+import {
+  getSettings,
+  updateSettings,
+  ewayGet,
+  ewayAddEdit,
+  getAccountant,
+  findaccountant,
+  updateAccountant,
+} from "api/api";
+import { FaSearch } from "react-icons/fa";
 
 const Setting = () => {
   const dispatch = useDispatch();
@@ -36,15 +54,23 @@ const Setting = () => {
     ewbpass: "",
     govuser: "",
     govpass: "",
+    gstuser: "",
+    gstpass: "",
   });
   const [bankList, setBankList] = useState([]);
-
+  const [accountCa, setAccountCa] = useState({
+    auth_token: "",
+    Name: "",
+  });
   const onChangeEvents = [
     () => {
       getSetting();
     },
     () => {
       getEwayBill();
+    },
+    () => {
+      getAccountantData();
     },
   ];
 
@@ -87,9 +113,43 @@ const Setting = () => {
       ewbpass: ewayData.ewbpass,
       govuser: ewayData.govuser,
       govpass: ewayData.govpass,
+      gstuser: ewayData.gstuser,
+      gstpass: ewayData.gstpass,
     });
     Toast.fire({
       icon: resp.data.sucess == 1 ? "success" : "error",
+      title: resp.data.msg || "Something wen't wrong",
+    });
+    dispatch(setLoader(false));
+  };
+
+  const getAccountantData = async () => {
+    dispatch(setLoader(true));
+    const resp = await getAccountant(user.token);
+    if (resp.data && resp.data.length > 0) {
+      setAccountCa(resp.data[0]);
+    }
+    dispatch(setLoader(false));
+  };
+
+  const findAccount = async () => {
+    dispatch(setLoader(true));
+    const resp = await findaccountant(user.token, {
+      auth_token: accountCa.auth_token,
+    });
+    if (resp.data && resp.data.length > 0) {
+      setAccountCa(resp.data[0]);
+    }
+    dispatch(setLoader(false));
+  };
+
+  const saveAccount = async () => {
+    dispatch(setLoader(true));
+    const resp = await updateAccountant(user.token, {
+      auth_token: accountCa.auth_token,
+    });
+    Toast.fire({
+      icon: resp.data.success == 1 ? "success" : "error",
       title: resp.data.msg || "Something wen't wrong",
     });
     dispatch(setLoader(false));
@@ -216,11 +276,75 @@ const Setting = () => {
               }}
             />
           </Col>
+          <Col xs="12" sm="6" lg="3">
+            <CustomInputWoutFormik
+              label="GST User"
+              type="input"
+              value={ewayData.gstuser}
+              onChange={(e) => {
+                setEwayData({ ...ewayData, gstuser: e.target.value });
+              }}
+            />
+          </Col>
+          <Col xs="12" sm="6" lg="3">
+            <CustomInputWoutFormik
+              label="GST Pass"
+              type="input"
+              value={ewayData.gstpass}
+              onChange={(e) => {
+                setEwayData({ ...ewayData, gstpass: e.target.value });
+              }}
+            />
+          </Col>
         </Row>
         <Row className="justify-content-end mr-0 pt-1">
           <Button className="btn-md btn-outline-success" onClick={saveEwayBill}>
             Update
           </Button>
+        </Row>
+      </div>
+    </>,
+    <>
+      <div className="p-4">
+        <Row>
+          <Col xs="12" sm="6" lg="3">
+            <FormGroup className="mb-1">
+              <label className="form-control-label">Auth Token</label>
+              <InputGroup className="input-group-alternative">
+                <CustomInputWoutFormik
+                  placeholder="Auth Token"
+                  name="gst"
+                  type="text"
+                  withFormGroup={false}
+                  value={accountCa.auth_token}
+                  onChange={(e) => {
+                    setAccountCa({ Name: "", auth_token: e.target.value });
+                  }}
+                />
+                <InputGroupAddon addonType="append">
+                  <Button
+                    className="pt-0 pb-0"
+                    color="primary"
+                    type="button"
+                    onClick={findAccount}
+                  >
+                    <FaSearch />
+                  </Button>
+                </InputGroupAddon>
+              </InputGroup>
+              <label>Name: {accountCa.Name}</label>
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row className="justify-content-end mr-0 pt-1">
+          {accountCa.Name.replace("-", "") != "" && (
+            <Button
+              className="btn-md btn-outline-success"
+              onClick={saveAccount}
+            >
+              Save
+            </Button>
+          )}
         </Row>
       </div>
     </>,
@@ -231,7 +355,7 @@ const Setting = () => {
         <Row>
           <Col>
             <CustomTab
-              tabnames={["Setting", "Eway Bill"]}
+              tabnames={["Setting", "Eway Bill", "Accountant_CA"]}
               tabpanes={tabPan}
               onChangeEvents={onChangeEvents}
             />

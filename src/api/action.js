@@ -57,3 +57,6 @@ export const ewayAddEditAction = "edit_ewayregister";
 export const createewayAction = "createeway";
 export const stateCodeAction = "statecode";
 export const groupNameAction = "groupname";
+export const getAccountantAction = "accountant";
+export const findAccountantAction = "findaccountant";
+export const saveAccountantAction = "edit_accountant";
