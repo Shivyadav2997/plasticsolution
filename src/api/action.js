@@ -60,3 +60,4 @@ export const groupNameAction = "groupname";
 export const getAccountantAction = "accountant";
 export const findAccountantAction = "findaccountant";
 export const saveAccountantAction = "edit_accountant";
+export const sendWhatsappMsgAction = "accountwpmsg";

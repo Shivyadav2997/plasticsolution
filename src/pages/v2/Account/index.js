@@ -18,6 +18,7 @@ import {
 import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
+import WhatsappModal from "components/Custom/WhatsappModal";
 import { CustomInput } from "components/Custom/CustomInput";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
@@ -51,6 +52,7 @@ const Party = () => {
   const [show, setShow] = useState(false);
   const [addType, setAddType] = useState(1);
   const [showDelete, setShowDelete] = useState(false);
+  const [wpData, setWPData] = useState({ show: false, mobile: "", msg: "" });
   const dispatch = useDispatch();
   const formRef = useRef(null);
 
@@ -60,7 +62,16 @@ const Party = () => {
     history.push(`/admin/v2/viewAccount/${id}`);
   };
   const sendWhatsapp = (cellData, rowData, row, col) => {
-    console.log(rowData);
+    const { party, total } = rowData;
+    const totalDebit = total.includes("Dr") ? "Debit" : "Credit";
+
+    const msg = `Account Ledger(${format(new Date(), "dd-MM-yyyy")})
+${party}
+Total ${totalDebit} = ${total
+      .replace("&nbsp;", "")
+      .replace("Dr", "")
+      .replace("Cr", "")}`;
+    setWPData({ mobile: rowData.mobile, msg: msg, show: true });
   };
   const sendWhatsappPdf = async (cellData, rowData, row, col) => {
     const id = btoa(Number(rowData.pid));
@@ -314,6 +325,10 @@ const Party = () => {
     setLoading(false);
   };
 
+  const toggleWPModal = async (payload) => {
+    setWPData({ ...wpData, show: !wpData.show });
+  };
+
   useEffect(() => {
     if (showAccount) {
       getAccounts();
@@ -446,6 +461,13 @@ const Party = () => {
           )}
         </Formik>
       </CustomModal>
+      <WhatsappModal
+        show={wpData.show}
+        handleToggle={toggleWPModal}
+        mobile={wpData.mobile}
+        msg={wpData.msg}
+        withMsg={true}
+      />
       <ConfirmationDialog
         show={showDelete}
         handleToggle={handleShowConfirmation}

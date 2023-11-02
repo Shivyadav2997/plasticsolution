@@ -61,6 +61,7 @@ const Setting = () => {
   const [accountCa, setAccountCa] = useState({
     auth_token: "",
     Name: "",
+    type: "",
   });
   const onChangeEvents = [
     () => {
@@ -147,6 +148,7 @@ const Setting = () => {
     dispatch(setLoader(true));
     const resp = await updateAccountant(user.token, {
       auth_token: accountCa.auth_token,
+      type: accountCa.type,
     });
     Toast.fire({
       icon: resp.data.success == 1 ? "success" : "error",
@@ -312,13 +314,52 @@ const Setting = () => {
               <label className="form-control-label">Auth Token</label>
               <InputGroup className="input-group-alternative">
                 <CustomInputWoutFormik
+                  label="Type"
+                  type="select"
+                  options={[
+                    <option value="">Select Type</option>,
+                    ...["1", "2", "All"].map((opt) => (
+                      <option value={opt}>{`${opt}`}</option>
+                    )),
+                  ]}
+                  value={accountCa.type}
+                  onChange={(e) => {
+                    setAccountCa({ ...accountCa, type: e.target.value });
+                  }}
+                  withFormGroup={false}
+                />
+                {/* <CustomInputWoutFormik
+                  placeholder="Auth Token"
+                  name="gst"
+                  type="text"
+                  value={accountCa.auth_token}
+                  onChange={(e) => {
+                    setAccountCa({
+                      ...accountCa,
+                      Name: "",
+                      auth_token: e.target.value,
+                    });
+                  }}
+                /> */}
+              </InputGroup>
+            </FormGroup>
+          </Col>
+          <Col xs="12" sm="6" lg="3">
+            <FormGroup className="mb-1">
+              <label className="form-control-label">Auth Token</label>
+              <InputGroup className="input-group-alternative">
+                <CustomInputWoutFormik
                   placeholder="Auth Token"
                   name="gst"
                   type="text"
                   withFormGroup={false}
                   value={accountCa.auth_token}
                   onChange={(e) => {
-                    setAccountCa({ Name: "", auth_token: e.target.value });
+                    setAccountCa({
+                      ...accountCa,
+                      Name: "",
+                      auth_token: e.target.value,
+                    });
                   }}
                 />
                 <InputGroupAddon addonType="append">

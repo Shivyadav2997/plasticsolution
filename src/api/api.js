@@ -63,6 +63,7 @@ import {
   getAccountantAction,
   findAccountantAction,
   saveAccountantAction,
+  sendWhatsappMsgAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1597,6 +1598,32 @@ const updateAccountant = async (token, payload) => {
   }
 };
 
+const sendWhatsappMsg = async (token, payload) => {
+  try {
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, sendWhatsappMsgAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1669,4 +1696,5 @@ export {
   getAccountant,
   findaccountant,
   updateAccountant,
+  sendWhatsappMsg,
 };
