@@ -198,28 +198,6 @@ const ViewAccount = () => {
     );
   };
 
-  const getThirdTabData = (row, index, type) => {
-    return (
-      <tr>
-        <td style={{ width: "40%" }}>
-          {type == 1
-            ? HTMLReactParser(row.desc)
-            : index < accountData.creditarraywith.length
-            ? HTMLReactParser(accountData.creditarraywith[index].desc)
-            : ""}
-        </td>
-
-        <td style={{ width: "40%" }}>
-          {type == 2
-            ? HTMLReactParser(row.desc)
-            : index < accountData.debitarraywith.length
-            ? HTMLReactParser(accountData.debitarraywith[index].desc)
-            : ""}
-        </td>
-      </tr>
-    );
-  };
-
   const getFourthTabData = (row, index, type) => {
     return (
       <tr>
@@ -254,6 +232,10 @@ const ViewAccount = () => {
         </td>
       </tr>
     );
+  };
+
+  const toggleWPModal = async (payload) => {
+    setWPData({ ...wpData, show: !wpData.show });
   };
 
   const getAccountPdf = async (d, t, mo = null) => {
@@ -608,6 +590,7 @@ const ViewAccount = () => {
       </Row>
     </>,
   ];
+
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
@@ -661,6 +644,14 @@ const ViewAccount = () => {
           <Loader loading={loading} />
         ) : (
           <>
+            <WhatsappModal
+              show={wpData.show}
+              handleToggle={toggleWPModal}
+              mobile={wpData.mobile}
+              withMsg={false}
+              api={getAccountPdf}
+              params={[0, wpData.t]}
+            />
             <CustomTab
               tabnames={["Ledger", "Full Ledger", "Bill Ledger"]}
               tabpanes={tabPan}
