@@ -42,6 +42,8 @@ import CustomModal from "components/Custom/CustomModal";
 import { setIn } from "formik";
 import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
+import WhatsappModal from "components/Custom/WhatsappModal";
+
 const Sales = () => {
   var Toast = Swal.mixin({
     toast: true,
@@ -77,6 +79,11 @@ const Sales = () => {
   const [ewayInvoice, setEwayInvoice] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
+  const [wpData, setWPData] = useState({
+    show: false,
+    mobile: "",
+    t: 0,
+  });
   const formRef = useRef(null);
   const printIframe = (id) => {
     const iframe = document.frames
@@ -145,6 +152,7 @@ const Sales = () => {
     setOffice(false);
     setTransport(false);
     setEwayInvoice(false);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle(true);
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
@@ -464,7 +472,7 @@ const Sales = () => {
     dispatch(setLoader(false));
   };
 
-  const downloadOrWhatsappInvoice = async (whatsapp) => {
+  const downloadOrWhatsappInvoice = async (whatsapp, mob) => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
@@ -475,6 +483,7 @@ const Sales = () => {
       w: without ? 1 : 0,
       wp: whatsapp ? 1 : 0,
       eway: ewayInvoice ? 1 : 0,
+      mo: mob,
     });
     dispatch(setLoader(false));
     if (whatsapp) {
@@ -497,6 +506,11 @@ const Sales = () => {
       invoiceWithChecks();
     }
   }, [without, original, duplicate, transport, office, ewayInvoice]);
+
+  const toggleWPModal = () => {
+    setWPData({ ...wpData, show: !wpData.show });
+  };
+
   return (
     <>
       <CustomModal
@@ -780,7 +794,7 @@ const Sales = () => {
                     type="submit"
                     className="mr-1 btn-outline-success"
                     size="sm"
-                    onClick={() => downloadOrWhatsappInvoice(true)}
+                    onClick={toggleWPModal}
                   >
                     <FaWhatsapp color="success" /> Whatsapp
                   </Button>
@@ -905,6 +919,14 @@ const Sales = () => {
           </>
         )}
       </Container>
+      <WhatsappModal
+        show={wpData.show}
+        handleToggle={toggleWPModal}
+        mobile={wpData.mobile}
+        withMsg={false}
+        api={downloadOrWhatsappInvoice}
+        params={[true]}
+      />
     </>
   );
 };
