@@ -16,6 +16,7 @@ import { pdfFromReact } from "generate-pdf-from-react-html";
 import { setLoader } from "features/User/UserSlice";
 import { FaWhatsapp, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
+import WhatsappModal from "components/Custom/WhatsappModal";
 
 const ViewAccount = () => {
   var Toast = Swal.mixin({
@@ -37,6 +38,11 @@ const ViewAccount = () => {
   });
   const [loading, setLoading] = useState(true);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
+  const [wpData, setWPData] = useState({
+    show: false,
+    mobile: sessionStorage.getItem("mobile"),
+    t: 0,
+  });
   const dispatch = useDispatch();
 
   const getAccountData = async () => {
@@ -250,7 +256,7 @@ const ViewAccount = () => {
     );
   };
 
-  const getAccountPdf = async (d, t) => {
+  const getAccountPdf = async (d, t, mo = null) => {
     dispatch(setLoader(true));
     const resp = await accountpdf(
       user.token,
@@ -259,11 +265,13 @@ const ViewAccount = () => {
       d,
       t,
       filterDate.st == "" ? null : filterDate.st,
-      filterDate.et == "" ? null : filterDate.et
+      filterDate.et == "" ? null : filterDate.et,
+      mo
     );
     dispatch(setLoader(false));
     if (d == 0) {
       if (resp.data.success == 1) {
+        toggleWPModal();
         Toast.fire({
           icon: "success",
           title: resp.data.msg,
@@ -406,7 +414,7 @@ const ViewAccount = () => {
                     <br />
                     <Button
                       className="btn-sm btn-outline-success mb-1 ml-0"
-                      onClick={() => getAccountPdf(0, 1)}
+                      onClick={() => setWPData({ ...wpData, show: true, t: 1 })}
                     >
                       <FaWhatsapp size={18} color="primary" />
                     </Button>
@@ -488,7 +496,7 @@ const ViewAccount = () => {
                     <br />
                     <Button
                       className="btn-sm btn-outline-success mb-1 ml-0"
-                      onClick={() => getAccountPdf(0, 2)}
+                      onClick={() => setWPData({ ...wpData, show: true, t: 2 })}
                     >
                       <FaWhatsapp size={18} color="primary" />
                     </Button>
@@ -581,7 +589,7 @@ const ViewAccount = () => {
                     <br />
                     <Button
                       className="btn-sm btn-outline-success mb-1 ml-0"
-                      onClick={() => getAccountPdf(0, 4)}
+                      onClick={() => setWPData({ ...wpData, show: true, t: 4 })}
                     >
                       <FaWhatsapp size={18} color="primary" />
                     </Button>

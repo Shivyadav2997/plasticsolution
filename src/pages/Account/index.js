@@ -58,6 +58,7 @@ const Party = () => {
 
   const viewInvoice = (cellData, rowData, row, col) => {
     sessionStorage.setItem("party", rowData.party);
+    sessionStorage.setItem("mobile", rowData.mobile);
     const id = btoa(Number(rowData.pid));
     history.push(`/admin/v1/viewAccount/${id}`);
   };

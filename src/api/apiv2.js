@@ -1222,7 +1222,16 @@ const gstMonthListGet = async (token, payload) => {
   }
 };
 
-const accountpdf = async (token, id, type, d, t, st = null, en = null) => {
+const accountpdf = async (
+  token,
+  id,
+  type,
+  d,
+  t,
+  st = null,
+  en = null,
+  mo = null
+) => {
   try {
     let apiurlsend =
       baseUrl +
@@ -1232,6 +1241,9 @@ const accountpdf = async (token, id, type, d, t, st = null, en = null) => {
     }
     if (en != null) {
       apiurlsend += `&en=${en}`;
+    }
+    if (mo != null) {
+      apiurlsend += `&mo=${mo}`;
     }
     const resp = await axios.get(apiurlsend);
     if (resp.data.login == 0) {

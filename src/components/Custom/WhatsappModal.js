@@ -13,7 +13,16 @@ import * as Yup from "yup";
 import Swal from "sweetalert2";
 import { setLoader } from "features/User/UserSlice";
 
-const WhatsappModal = ({ show, handleToggle, title, mobile, msg, withMsg }) => {
+const WhatsappModal = ({
+  show,
+  handleToggle,
+  title,
+  mobile,
+  msg,
+  withMsg,
+  api,
+  params,
+}) => {
   var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -34,23 +43,27 @@ const WhatsappModal = ({ show, handleToggle, title, mobile, msg, withMsg }) => {
     msg: withMsg ? Yup.string().required("Required") : null,
   });
   const sendWhatsapp = async (payload) => {
-    dispatch(setLoader(true));
-
-    const resp = await sendWhatsappMsg(user.token, {
-      mo: payload.mo,
-      msg: payload.msg,
-    });
-    dispatch(setLoader(false));
-    if (resp.data.sucess == 1) {
-      Toast.fire({
-        icon: "success",
-        title: resp.message,
-      });
+    if (api) {
+      api(...params, payload.mo);
     } else {
-      Toast.fire({
-        icon: "error",
-        title: resp.message,
+      dispatch(setLoader(true));
+      const resp = await sendWhatsappMsg(user.token, {
+        mo: payload.mo,
+        msg: payload.msg,
       });
+      dispatch(setLoader(false));
+      if (resp.data.sucess == 1) {
+        handleToggle();
+        Toast.fire({
+          icon: "success",
+          title: resp.message,
+        });
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.message,
+        });
+      }
     }
   };
   return (

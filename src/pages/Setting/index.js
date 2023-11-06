@@ -151,7 +151,7 @@ const Setting = () => {
       type: accountCa.type,
     });
     Toast.fire({
-      icon: resp.data.success == 1 ? "success" : "error",
+      icon: resp.data.sucess == 1 ? "success" : "error",
       title: resp.data.msg || "Something wen't wrong",
     });
     dispatch(setLoader(false));
