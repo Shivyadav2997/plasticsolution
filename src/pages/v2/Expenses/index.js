@@ -183,6 +183,13 @@ const Expense = () => {
     getExpenses();
   }, [filterDate, fyear]);
 
+  useEffect(() => {
+    if (sessionStorage.getItem("openAdd")) {
+      handleToggle();
+      sessionStorage.removeItem("openAdd");
+    }
+  }, []);
+
   const addExpense = async (payload) => {
     dispatch(setLoader(true));
     let resp = await expenseAdd(user.token, payload);
@@ -252,7 +259,7 @@ const Expense = () => {
     <>
       <CustomModal
         show={show}
-        title={`Recieve`}
+        title={`Expense`}
         handleToggle={handleToggle}
         footer={
           <Button

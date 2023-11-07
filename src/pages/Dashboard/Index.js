@@ -20,6 +20,7 @@ import {
   FaWallet,
   FaShoppingCart,
   FaDownload,
+  FaMoneyBill,
 } from "react-icons/fa";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
@@ -30,6 +31,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { format } from "date-fns";
+import { BsArrowDownLeft, BsArrowUpRight } from "react-icons/bs";
 const Index = (props) => {
   let history = useHistory();
 
@@ -44,6 +46,22 @@ const Index = (props) => {
     timer: 1500,
   });
   const [dashboardData, setDashboardData] = useState({
+    totalsale: {
+      WithtAmt: "0.00",
+      billAmt: "0.00",
+      gst: "0.00",
+      total: "0.00",
+    },
+    totalpurchase: {
+      WithtAmt: "0.00",
+      billAmt: "0.00",
+      gst: "0.00",
+      total: "0.00",
+    },
+    balance: {
+      cash: "0.00",
+      bank: "0.00",
+    },
     current_sale: {
       title: "",
       WithtAmt: "0.00",
@@ -61,6 +79,7 @@ const Index = (props) => {
     expenses: {
       daily: "0.00",
       monthly: "0.00",
+      yearly: "0.00",
     },
     debit: {
       WithtAmt: "0.00",
@@ -231,6 +250,35 @@ const Index = (props) => {
                   <FaShoppingCart size={18} color="info" /> Purchase Invoice
                 </Button>
                 <Button
+                  className="btn-md btn-outline-default mb-1 ml-0"
+                  onClick={() => {
+                    sessionStorage.setItem("openAdd", true);
+                    history.push("/admin/v1/expenses");
+                  }}
+                >
+                  <FaMoneyBill size={18} color="default" /> Expense
+                </Button>
+                <Button
+                  className="btn-md btn-outline-success mb-1 ml-0"
+                  onClick={() => {
+                    sessionStorage.setItem("openAdd", 1);
+                    history.push("/admin/v1/transaction");
+                  }}
+                >
+                  <BsArrowDownLeft size={18} color="success" />
+                  Receive
+                </Button>
+                <Button
+                  className="btn-md btn-outline-primary mb-1 ml-0"
+                  onClick={() => {
+                    sessionStorage.setItem("openAdd", 2);
+                    history.push("/admin/v1/transaction");
+                  }}
+                >
+                  <BsArrowUpRight size={18} color="primary" />
+                  Payment
+                </Button>
+                <Button
                   className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => history.push("/admin/v1/day-book")}
                 >
@@ -377,11 +425,163 @@ const Index = (props) => {
                         ₹ {dashboardData?.expenses?.monthly}
                       </td>
                     </tr>
+                    <tr>
+                      <td>Yearly</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.expenses?.yearly}
+                      </td>
+                    </tr>
                   </tbody>
                 </Table>
               </CardBody>
             </Card>
           </Col>
+
+          <Col xs={12} sm={6} md={4}>
+            <Card className="mb-4">
+              <CardBody>
+                <Row>
+                  <div className="col">
+                    <CardTitle
+                      tag="h5"
+                      className="text-uppercase text-muted mb-0"
+                    >
+                      Total Sale
+                    </CardTitle>
+                    <span className="h2 font-weight-bold mb-0">
+                      ₹ {dashboardData?.totalsale?.total}
+                    </span>
+                  </div>
+                  <Col className="col-auto">
+                    <div className="icon icon-shape bg-primary text-white rounded-circle shadow">
+                      <TbPackageExport />
+                    </div>
+                  </Col>
+                </Row>
+                <Table
+                  className="align-items-center table-flush "
+                  responsive
+                  style={{ width: "100%" }}
+                >
+                  <tbody>
+                    <tr>
+                      <td>WithtAmt</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.totalsale?.WithtAmt}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>BillAmt</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.totalsale?.billAmt}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>GST</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.totalsale?.gst}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs={12} sm={6} md={4}>
+            <Card className="mb-4">
+              <CardBody>
+                <Row>
+                  <div className="col">
+                    <CardTitle
+                      tag="h5"
+                      className="text-uppercase text-muted mb-0"
+                    >
+                      Total Purchase
+                    </CardTitle>
+                    <span className="h2 font-weight-bold mb-0">
+                      ₹ {dashboardData?.totalpurchase?.total}
+                    </span>
+                  </div>
+                  <Col className="col-auto">
+                    <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
+                      <TbPackageImport />
+                    </div>
+                  </Col>
+                </Row>
+                <Table
+                  className="align-items-center table-flush "
+                  responsive
+                  style={{ width: "100%" }}
+                >
+                  <tbody>
+                    <tr>
+                      <td>WithtAmt</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.totalpurchase?.WithtAmt}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>BillAmt</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.totalpurchase?.billAmt}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>GST</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.totalpurchase?.gst}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs={12} sm={6} md={4}>
+            <Card className="mb-4">
+              <CardBody>
+                <Row>
+                  <div className="col">
+                    <CardTitle
+                      tag="h5"
+                      className="text-uppercase text-muted mb-0"
+                    >
+                      Balance
+                    </CardTitle>
+                    {/* <span className="h2 font-weight-bold mb-0">
+                      ₹ {dashboardData?.closing?.total}
+                    </span> */}
+                  </div>
+                  <Col className="col-auto">
+                    <div className="icon icon-shape bg-default text-white rounded-circle shadow">
+                      <BiRupee width="12px" />
+                    </div>
+                  </Col>
+                </Row>
+                <Table
+                  className="align-items-center table-flush "
+                  responsive
+                  style={{ width: "100%" }}
+                >
+                  <tbody>
+                    <tr>
+                      <td>Cash</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.balance?.cash}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Bank</td>
+                      <td className="text-right">
+                        ₹ {dashboardData?.balance?.bank}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+
           <Col xs={12} sm={6} md={4}>
             <Card className="mb-4">
               <CardBody>

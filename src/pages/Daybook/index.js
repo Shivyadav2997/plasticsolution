@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { isDate } from "moment";
-import { FaDownload, FaWhatsapp } from "react-icons/fa";
+import { FaEye, FaWhatsapp } from "react-icons/fa";
 import Swal from "sweetalert2";
 const DayBook = () => {
   var Toast = Swal.mixin({
@@ -66,11 +66,7 @@ const DayBook = () => {
       });
     } else {
       const url = resp.data.pdfurl;
-      let alink = document.createElement("a");
-      alink.href = url;
-      alink.target = "_blank";
-      alink.download = url.substring(url.lastIndexOf("/") + 1);
-      alink.click();
+      window.open(url, "_blank");
     }
   };
 
@@ -157,13 +153,13 @@ const DayBook = () => {
           className=" btn-md btn-outline-success "
           onClick={() => whatsappDownloadClick(true)}
         >
-          <FaWhatsapp /> Whatsapp
+          <FaWhatsapp size={18} color="success" /> Whatsapp
         </Button>
         <Button
           className=" btn-md btn-outline-primary"
           onClick={() => whatsappDownloadClick(false)}
         >
-          <FaDownload /> Download
+          <FaEye size="18" color="primary" /> View
         </Button>
       </Row>
       <Row className="text-center mb-2 justify-content-between align-items-center d-flex d-sm-none">
@@ -194,7 +190,7 @@ const DayBook = () => {
               className="btn-sm btn-outline-primary"
               onClick={() => whatsappDownloadClick(false)}
             >
-              Download
+              View
             </Button>
           </div>
         </Col>
