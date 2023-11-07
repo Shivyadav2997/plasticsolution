@@ -343,12 +343,15 @@ const expenseAdd = async (token, payload) => {
   }
 };
 
-const purchaseListGet = async (token, st = "", en = "", m = "") => {
+const purchaseListGet = async (token, st = "", en = "", m = "", pid = null) => {
   try {
-    const resp = await axios.get(
+    let apiurlsend =
       baseUrl +
-        `?action=${purchaseListAction}&token=${token}&st=${st}&en=${en}&m=${m}`
-    );
+      `?action=${purchaseListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
     }
@@ -364,12 +367,15 @@ const purchaseListGet = async (token, st = "", en = "", m = "") => {
   }
 };
 
-const saleListGet = async (token, st = "", en = "", m = "") => {
+const saleListGet = async (token, st = "", en = "", m = "", pid = null) => {
   try {
-    const resp = await axios.get(
+    let apiurlsend =
       baseUrl +
-        `?action=${saleListAction}&token=${token}&st=${st}&en=${en}&m=${m}`
-    );
+      `?action=${saleListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
     }

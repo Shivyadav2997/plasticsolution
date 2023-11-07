@@ -23,6 +23,7 @@ import {
   deleteRecord,
   salejson,
   ewayCreate,
+  transactionPartyGet,
 } from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -44,6 +45,7 @@ import { setIn } from "formik";
 import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import WhatsappModal from "components/Custom/WhatsappModal";
+import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 
 const Sales = () => {
   var Toast = Swal.mixin({
@@ -58,6 +60,7 @@ const Sales = () => {
     monthly: [],
   });
 
+  const [parties, setParties] = useState([]);
   const [show, setShow] = useState(false);
   const [showCreateEway, setShowCreateEway] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -70,6 +73,7 @@ const Sales = () => {
   const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
+  const [selParty, setSelParty] = useState({ id: null, name: "" });
   const [monthSales, setmonthSales] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
@@ -197,6 +201,24 @@ const Sales = () => {
   };
 
   var colDefs = [
+    {
+      targets: 1,
+      createdCell: (td, cellData, rowData, row, col) => {
+        console.log("partyTest", rowData);
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <a
+            className="text-primary cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelParty({ id: rowData.pid, name: rowData.b_name });
+            }}
+          >
+            {cellData}
+          </a>
+        );
+      },
+    },
     {
       targets: -2,
       render: function (data) {
@@ -347,7 +369,13 @@ const Sales = () => {
     if (selMonth > 0) {
       data = await saleListGet(user.token, "", "", selMonth);
     } else {
-      data = await saleListGet(user.token, filterDate.st, filterDate.et);
+      data = await saleListGet(
+        user.token,
+        filterDate.st,
+        filterDate.et,
+        "",
+        selParty.id
+      );
     }
 
     if (selMonth > 0) {
@@ -371,9 +399,22 @@ const Sales = () => {
     setLoading(false);
   };
 
+  const getTransactionParties = async () => {
+    dispatch(setLoader(true));
+    var data = await transactionPartyGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setParties(data.data);
+    }
+  };
+
   useEffect(() => {
     getData();
-  }, [filterDate, selMonth, fyear]);
+  }, [filterDate, selMonth, fyear, selParty.id]);
+
+  useEffect(() => {
+    getTransactionParties();
+  }, []);
 
   const createEway = async (payload) => {
     dispatch(setLoader(true));
@@ -825,6 +866,32 @@ const Sales = () => {
           </>
         ) : (
           <>
+            {selParty.id != null && <h1>{selParty.name} Sales</h1>}
+            {selParty.id == null && (
+              <Row sm="4" md="6" xs="1" className="mb-2">
+                <Col>
+                  <Row className="ml-0"></Row>
+                  <CustomInputWoutFormik
+                    type="select"
+                    value={selParty.id ?? 0}
+                    options={[
+                      <option value={0}>All Parties</option>,
+                      ...parties.map((opt) => {
+                        return <option value={opt.pid}>{opt.b_name}</option>;
+                      }),
+                    ]}
+                    withFormGroup={false}
+                    onChange={(e) => {
+                      setSelParty({
+                        id: e.target.value,
+                        name: parties.find((x) => x.pid == e.target.value)
+                          .b_name,
+                      });
+                    }}
+                  />
+                </Col>
+              </Row>
+            )}
             <Row sm="2" xs="1" className="mb-2">
               <Col>
                 <Row className="ml-0">
@@ -834,7 +901,10 @@ const Sales = () => {
                   />
                   <Button
                     className="btn-md btn-outline-primary mb-1"
-                    onClick={() => setFilterDate({ st: "", et: "" })}
+                    onClick={() => {
+                      setFilterDate({ st: "", et: "" });
+                      setSelParty({ id: null, name: "" });
+                    }}
                   >
                     All Sales
                   </Button>

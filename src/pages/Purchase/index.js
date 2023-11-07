@@ -11,6 +11,7 @@ import {
   invoiceGet,
   invoiceDownload,
   deleteRecord,
+  transactionPartyGet,
 } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -28,6 +29,9 @@ import { setLoader } from "features/User/UserSlice";
 import CustomModal from "components/Custom/CustomModal";
 import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
+import WhatsappModal from "components/Custom/WhatsappModal";
+import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+
 const Purchase = () => {
   var Toast = Swal.mixin({
     toast: true,
@@ -41,6 +45,7 @@ const Purchase = () => {
     monthly: [],
   });
 
+  const [parties, setParties] = useState([]);
   const [show, setShow] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -57,6 +62,12 @@ const Purchase = () => {
   const [without, setWithout] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
+  const [wpData, setWPData] = useState({
+    show: false,
+    mobile: "",
+    t: 0,
+  });
+  const [selParty, setSelParty] = useState({ id: null, name: "" });
   const formRef = useRef(null);
   const printIframe = (id) => {
     const iframe = document.frames
@@ -114,6 +125,7 @@ const Purchase = () => {
     const id = btoa(Number(rowData.id));
     setInvId(id);
     setOriginal(true);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle();
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
@@ -127,6 +139,24 @@ const Purchase = () => {
   };
 
   var colDefs = [
+    {
+      targets: 1,
+      createdCell: (td, cellData, rowData, row, col) => {
+        console.log("partyTest", rowData);
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <a
+            className="text-primary cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelParty({ id: rowData.pid, name: rowData.b_name });
+            }}
+          >
+            {cellData}
+          </a>
+        );
+      },
+    },
     {
       targets: -2,
       render: function (data) {
@@ -267,7 +297,13 @@ const Purchase = () => {
     if (selMonth > 0) {
       data = await purchaseListGet(user.token, "", "", selMonth);
     } else {
-      data = await purchaseListGet(user.token, filterDate.st, filterDate.et);
+      data = await purchaseListGet(
+        user.token,
+        filterDate.st,
+        filterDate.et,
+        "",
+        selParty.id
+      );
     }
 
     if (selMonth > 0) {
@@ -291,9 +327,22 @@ const Purchase = () => {
     setLoading(false);
   };
 
+  const getTransactionParties = async () => {
+    dispatch(setLoader(true));
+    var data = await transactionPartyGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setParties(data.data);
+    }
+  };
+
   useEffect(() => {
     getData();
-  }, [filterDate, selMonth, fyear]);
+  }, [filterDate, selMonth, fyear, selParty.id]);
+
+  useEffect(() => {
+    getTransactionParties();
+  }, []);
 
   //   const addExpense = async (payload) => {
   //     handleToggle();
@@ -371,7 +420,7 @@ const Purchase = () => {
     dispatch(setLoader(false));
   };
 
-  const downloadOrWhatsappInvoice = async (whatsapp) => {
+  const downloadOrWhatsappInvoice = async (whatsapp, mob) => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
@@ -379,6 +428,7 @@ const Purchase = () => {
       a: original && !without ? 1 : 0,
       w: without ? 1 : 0,
       wp: whatsapp ? 1 : 0,
+      mo: mob,
     });
     dispatch(setLoader(false));
     if (whatsapp) {
@@ -401,6 +451,11 @@ const Purchase = () => {
       invoiceWithChecks();
     }
   }, [without, original]);
+
+  const toggleWPModal = () => {
+    setWPData({ ...wpData, show: !wpData.show });
+  };
+
   return (
     <>
       <ConfirmationDialog
@@ -464,7 +519,7 @@ const Purchase = () => {
                     type="submit"
                     className="mr-1 btn-outline-success"
                     size="sm"
-                    onClick={() => downloadOrWhatsappInvoice(true)}
+                    onClick={toggleWPModal}
                   >
                     <FaWhatsapp color="success" /> Whatsapp
                   </Button>
@@ -538,6 +593,32 @@ const Purchase = () => {
           </>
         ) : (
           <>
+            {selParty.id != null && <h1>{selParty.name} Purchases</h1>}
+            {selParty.id == null && (
+              <Row sm="4" md="6" xs="1" className="mb-2">
+                <Col>
+                  <Row className="ml-0"></Row>
+                  <CustomInputWoutFormik
+                    type="select"
+                    value={selParty.id ?? 0}
+                    options={[
+                      <option value={0}>All Parties</option>,
+                      ...parties.map((opt) => {
+                        return <option value={opt.pid}>{opt.b_name}</option>;
+                      }),
+                    ]}
+                    withFormGroup={false}
+                    onChange={(e) => {
+                      setSelParty({
+                        id: e.target.value,
+                        name: parties.find((x) => x.pid == e.target.value)
+                          .b_name,
+                      });
+                    }}
+                  />
+                </Col>
+              </Row>
+            )}
             <Row sm="2" xs="1" className="mb-2">
               <Col>
                 <Row className="ml-0">
@@ -547,7 +628,10 @@ const Purchase = () => {
                   />
                   <Button
                     className="btn-md btn-outline-primary mb-1"
-                    onClick={() => setFilterDate({ st: "", et: "" })}
+                    onClick={() => {
+                      setFilterDate({ st: "", et: "" });
+                      setSelParty({ id: null, name: "" });
+                    }}
                   >
                     All Purchase
                   </Button>
@@ -589,6 +673,14 @@ const Purchase = () => {
           </>
         )}
       </Container>
+      <WhatsappModal
+        show={wpData.show}
+        handleToggle={toggleWPModal}
+        mobile={wpData.mobile}
+        withMsg={false}
+        api={downloadOrWhatsappInvoice}
+        params={[true]}
+      />
     </>
   );
 };
