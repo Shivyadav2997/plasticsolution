@@ -12,6 +12,7 @@ import {
   bankAdd,
   bankUpdate,
   deleteRecord,
+  groupNameGet,
 } from "api/api";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -37,6 +38,7 @@ const Bank = () => {
 
   const [banks, setbanks] = useState([]);
   const [bankNames, setBankNames] = useState([]);
+  const [groupname, setGroupName] = useState([]);
   const [show, setShow] = useState(false);
   const [bank, setBank] = useState(null);
   const childRef = useRef(null);
@@ -126,6 +128,7 @@ const Bank = () => {
       setBank(null);
     } else {
       await getBankNames();
+      await getGroupNameList();
     }
     setShow(!show);
   };
@@ -133,6 +136,7 @@ const Bank = () => {
   const validate = Yup.object({
     bank_name: Yup.string().required("Required"),
     ac_holder: Yup.string().required("Required"),
+    gpname: Yup.string().required("Required"),
     // ac: Yup.string().required("Required"),
     // op: Yup.number().when("ac", {
     //   is: bank == null,
@@ -142,6 +146,13 @@ const Bank = () => {
     // branch: Yup.string().required("Required"),
     // description: Yup.string().required("Required"),
   });
+
+  const getGroupNameList = async () => {
+    var data = await groupNameGet(user.token);
+    if (data.data) {
+      setGroupName(data.data);
+    }
+  };
 
   const addBank = async (payload) => {
     let resp = null;
@@ -269,6 +280,7 @@ const Bank = () => {
                 ifsc: bank?.ifsc,
                 branch: bank?.branch,
                 description: bank?.description,
+                gpname: bank?.gpname,
               }}
               validationSchema={validate}
               onSubmit={(values) => {
@@ -338,6 +350,17 @@ const Bank = () => {
                       label="Branch Name"
                       name="branch"
                       type="text"
+                    />
+                    <CustomInput
+                      name="gpname"
+                      type="select"
+                      label="Group Name"
+                      options={[
+                        <option value="">Select Group Name</option>,
+                        ...groupname.map((opt) => {
+                          return <option value={opt.id}>{opt.name}</option>;
+                        }),
+                      ]}
                     />
                     {bank == null && (
                       <CustomInput

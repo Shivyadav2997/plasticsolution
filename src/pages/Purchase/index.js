@@ -432,6 +432,7 @@ const Purchase = () => {
     });
     dispatch(setLoader(false));
     if (whatsapp) {
+      toggleWPModal();
       Toast.fire({
         icon: resp.data.success == 1 ? "success" : "error",
         title: resp.data.msg || "Something went wrong",
@@ -593,32 +594,28 @@ const Purchase = () => {
           </>
         ) : (
           <>
-            {selParty.id != null && <h1>{selParty.name} Purchases</h1>}
-            {selParty.id == null && (
-              <Row sm="4" md="6" xs="1" className="mb-2">
-                <Col>
-                  <Row className="ml-0"></Row>
-                  <CustomInputWoutFormik
-                    type="select"
-                    value={selParty.id ?? 0}
-                    options={[
-                      <option value={0}>All Parties</option>,
-                      ...parties.map((opt) => {
-                        return <option value={opt.pid}>{opt.b_name}</option>;
-                      }),
-                    ]}
-                    withFormGroup={false}
-                    onChange={(e) => {
-                      setSelParty({
-                        id: e.target.value,
-                        name: parties.find((x) => x.pid == e.target.value)
-                          .b_name,
-                      });
-                    }}
-                  />
-                </Col>
-              </Row>
-            )}
+            <Row sm="4" md="6" xs="1" className="mb-2">
+              <Col>
+                <Row className="ml-0"></Row>
+                <CustomInputWoutFormik
+                  type="select"
+                  value={selParty.id ?? 0}
+                  options={[
+                    <option value={0}>All Parties</option>,
+                    ...parties.map((opt) => {
+                      return <option value={opt.pid}>{opt.b_name}</option>;
+                    }),
+                  ]}
+                  withFormGroup={false}
+                  onChange={(e) => {
+                    setSelParty({
+                      id: e.target.value,
+                      name: parties.find((x) => x.pid == e.target.value).b_name,
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
             <Row sm="2" xs="1" className="mb-2">
               <Col>
                 <Row className="ml-0">
@@ -638,6 +635,7 @@ const Purchase = () => {
 
                   <h1>
                     <span style={{ fontSize: "18px" }}>
+                      {selParty.id != null && `${selParty.name} Purchases`}
                       {filterDate.st != "" &&
                         ` (${filterDate.st} to ${filterDate.et})`}
                     </span>{" "}

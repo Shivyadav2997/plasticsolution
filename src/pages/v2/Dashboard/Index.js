@@ -264,13 +264,13 @@ const Index = (props) => {
                   Receive
                 </Button>
                 <Button
-                  className="btn-md btn-outline-primary mb-1 ml-0"
+                  className="btn-md btn-outline-danger mb-1 ml-0"
                   onClick={() => {
                     sessionStorage.setItem("openAdd", 2);
                     history.push("/admin/v1/transaction");
                   }}
                 >
-                  <BsArrowUpRight size={18} color="primary" />
+                  <BsArrowUpRight size={18} />
                   Payment
                 </Button>
                 <Button
