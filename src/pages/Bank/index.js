@@ -239,6 +239,13 @@ const Bank = () => {
     getbanks();
   }, [fyear]);
 
+  useEffect(() => {
+    if (sessionStorage.getItem("openAdd")) {
+      handleToggle();
+      sessionStorage.removeItem("openAdd");
+    }
+  }, [sessionStorage.getItem("openAdd")]);
+
   return (
     <>
       <ConfirmationDialog

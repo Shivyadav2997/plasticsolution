@@ -19,6 +19,7 @@ import { logout, toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import FinancialYear from "components/Custom/FinancialYear";
+import PageNavigator from "components/Custom/PageNavigator";
 import WhatsAppLogin from "components/Custom/WhatsAppLogin";
 
 const AdminNavbar = (props) => {
@@ -69,6 +70,7 @@ const AdminNavbar = (props) => {
           </Form> */}
 
           <FinancialYear className="mb-0 mr-1 ml-auto d-none d-sm-block " />
+          <PageNavigator className="mb-0 mr-1 ml-auto d-none d-sm-block " />
           <WhatsAppLogin className="btn-sm btn-outline-success d-none d-sm-block" />
           <Nav className="align-items-center d-flex" navbar>
             <UncontrolledDropdown nav>

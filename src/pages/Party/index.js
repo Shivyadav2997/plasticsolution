@@ -260,6 +260,13 @@ const Party = () => {
     getParties();
   }, [fyear]);
 
+  useEffect(() => {
+    if (sessionStorage.getItem("openAdd")) {
+      handleToggle();
+      sessionStorage.removeItem("openAdd");
+    }
+  }, [sessionStorage.getItem("openAdd")]);
+
   const autoFillGST = async (formik, gst) => {
     if (gst.length < 15) {
       setGstError("GST invalid");

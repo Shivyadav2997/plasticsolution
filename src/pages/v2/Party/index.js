@@ -291,6 +291,14 @@ const Party = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (sessionStorage.getItem("openAdd")) {
+      handleToggle();
+      sessionStorage.removeItem("openAdd");
+    }
+  }, [sessionStorage.getItem("openAdd")]);
+
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>

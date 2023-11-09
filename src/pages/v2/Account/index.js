@@ -338,6 +338,15 @@ Total ${totalDebit} = ${total
     }
   }, [showAccount, fyear]);
 
+  useEffect(() => {
+    const open = sessionStorage.getItem("openAdd");
+    if (open != null) {
+      setAddType(open);
+      handleToggle();
+      sessionStorage.removeItem("openAdd");
+    }
+  }, [sessionStorage.getItem("openAdd")]);
+
   return (
     <>
       <CustomModal

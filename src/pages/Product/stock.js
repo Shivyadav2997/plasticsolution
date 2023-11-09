@@ -5,7 +5,13 @@ import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
 import * as React from "react";
 import { useState } from "react";
-import { productStockGet, productStockEntryGet, productListGet,addUseProductStock,deleteRecord } from "api/api";
+import {
+  productStockGet,
+  productStockEntryGet,
+  productListGet,
+  addUseProductStock,
+  deleteRecord,
+} from "api/api";
 import ReactDOM from "react-dom/client";
 import CustomModal from "components/Custom/CustomModal";
 import { CustomInput } from "components/Custom/CustomInput";
@@ -13,7 +19,7 @@ import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Loader from "components/Custom/Loader";
-import { FaPlus,FaCopy } from "react-icons/fa";
+import { FaPlus, FaCopy } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
@@ -60,18 +66,16 @@ const ProductStock = () => {
     }
     setShow(!show);
   };
-  
-  const addUseProduct = async (productEdit,type) => {
+
+  const addUseProduct = async (productEdit, type) => {
     if (!show) {
       await getProducts();
-      setAddType(type)
+      setAddType(type);
       setProduct(productEdit);
     }
     setShow(!show);
   };
-  
 
-  
   const addUseStock = async (payload) => {
     dispatch(setLoader(true));
     const resp = await addUseProductStock(user.token, payload);
@@ -81,7 +85,8 @@ const ProductStock = () => {
     if (resp.data.success == 1) {
       Toast.fire({
         icon: "success",
-        title: addType == 1?"Stock Added Successfully":"Stock Used Successfully",
+        title:
+          addType == 1 ? "Stock Added Successfully" : "Stock Used Successfully",
       });
       handleToggle();
       getProductStock();
@@ -104,7 +109,6 @@ const ProductStock = () => {
     date: Yup.date().required("Required"),
     qty: Yup.number().required("Required"),
   });
-
 
   const columns = [
     {
@@ -141,7 +145,7 @@ const ProductStock = () => {
                 <Button
                   className="btn-outline-primary btn-icon btn-sm"
                   color="default"
-                  onClick={() => addUseProduct(rowData,1)}
+                  onClick={() => addUseProduct(rowData, 1)}
                 >
                   <span>
                     <FaPlus size={12} /> Add
@@ -151,7 +155,7 @@ const ProductStock = () => {
               <div>
                 <Button
                   className="btn-outline-info btn-icon btn-sm"
-                  onClick={() => addUseProduct(rowData,2)}
+                  onClick={() => addUseProduct(rowData, 2)}
                 >
                   <span>
                     <FaCopy size={12} /> Use
@@ -168,7 +172,6 @@ const ProductStock = () => {
                   </span>
                 </Button>
               </div>
-              
             </div>
           </>
         );
@@ -258,6 +261,13 @@ const ProductStock = () => {
     }
   }, [showAllStock, fyear]);
 
+  useEffect(() => {
+    if (sessionStorage.getItem("openAdd")) {
+      handleToggle();
+      sessionStorage.removeItem("openAdd");
+    }
+  }, [sessionStorage.getItem("openAdd")]);
+
   return (
     <>
       <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
@@ -266,7 +276,7 @@ const ProductStock = () => {
             <CustomModal
               show={show}
               handleToggle={handleToggle}
-              title={`${addType==1 ? "Add" : "Use"} Stock`}
+              title={`${addType == 1 ? "Add" : "Use"} Stock`}
               footer={
                 <Button
                   type="submit"
@@ -291,17 +301,16 @@ const ProductStock = () => {
                 }}
                 validationSchema={validate}
                 onSubmit={(values) => {
-                  if(addType==1){
+                  if (addType == 1) {
                     addUseStock({
                       type: "ADD",
                       ...values,
-                    })
-                  }
-                  else{
+                    });
+                  } else {
                     addUseStock({
                       type: "USE",
                       ...values,
-                    })
+                    });
                   }
                 }}
                 validateOnBlur={false}
@@ -320,23 +329,20 @@ const ProductStock = () => {
                           <option value="">Select Product</option>,
                           ...products.map((opt) => {
                             return (
-                              <option value={opt.id}>
-                                {opt.item_name}
-                              </option>
+                              <option value={opt.id}>{opt.item_name}</option>
                             );
                           }),
                         ]}
                       />
-                      {
-                        product!=null &&
+                      {product != null && (
                         <CustomInput
-                        placeholder="Quantity"
-                        label="Stock"
-                        name="curStock"
-                        type="number"
-                        disabled={true}
-                      />
-                      }
+                          placeholder="Quantity"
+                          label="Stock"
+                          name="curStock"
+                          type="number"
+                          disabled={true}
+                        />
+                      )}
                       <CustomInput
                         placeholder="Quantity"
                         label="Quantity"
