@@ -209,7 +209,7 @@ const Production = () => {
                 className="btn-md btn-outline-primary"
                 onClick={(e) => {
                   e.preventDefault();
-                  history.push("/admin/v1/product-stock");
+                  history.push("/admin/v2/product-stock");
                 }}
               >
                 Product Stock
