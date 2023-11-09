@@ -1,6 +1,6 @@
 import { Container, Row, Col, Button, Input, Table } from "reactstrap";
 import { useParams } from "react-router-dom";
-import { viewaccount, accountpdf } from "api/apiv2";
+import { viewaccount, accountpdf, partyListGet } from "api/apiv2";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import * as React from "react";
@@ -17,6 +17,8 @@ import { setLoader } from "features/User/UserSlice";
 import { FaWhatsapp, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import WhatsappModal from "components/Custom/WhatsappModal";
+import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+import { useHistory } from "react-router-dom";
 
 const ViewAccount = () => {
   var Toast = Swal.mixin({
@@ -27,6 +29,7 @@ const ViewAccount = () => {
     timer: 1500,
   });
   let { id } = useParams();
+  const history = useHistory();
   const { user, fyear } = useSelector((store) => store.user);
   const [accountData, setAccountData] = useState({
     creditarray: [],
@@ -35,8 +38,12 @@ const ViewAccount = () => {
     debitarraybill: [],
     fullarray: [],
     total1: [],
+    saleby: [],
+    sale_outstanding: [],
   });
   const [loading, setLoading] = useState(true);
+  const [parties, setParties] = useState([]);
+  const [selParty, setSelParty] = useState(atob(id));
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const [wpData, setWPData] = useState({
     show: false,
@@ -57,6 +64,8 @@ const ViewAccount = () => {
         debitarraybill: data2.debitarraybill || [],
         fullarray: data2.fullarray || [],
         total1: data2.total1 || [],
+        saleby: data2.saleby || [],
+        sale_outstanding: data2.Sale_outstanding || [],
       });
     } else {
       setAccountData({
@@ -66,10 +75,29 @@ const ViewAccount = () => {
         debitarraybill: [],
         fullarray: [],
         total1: [],
+        saleby: [],
+        sale_outstanding: data2.Sale_outstanding || [],
       });
     }
 
     setLoading(false);
+  };
+
+  const changeParty = (e) => {
+    const party = parties.find((x) => x.id == e.target.value);
+    setSelParty(e.target.value);
+    sessionStorage.setItem("party", party.b_name);
+    sessionStorage.setItem("mobile", party.mobile);
+    const id = btoa(Number(party.id));
+    history.push(`/admin/v2/viewAccount/${id}`);
+  };
+  const getTransactionParties = async () => {
+    dispatch(setLoader(true));
+    var data = await partyListGet(user.token);
+    dispatch(setLoader(false));
+    if (data.data) {
+      setParties(data.data);
+    }
   };
 
   const dateSelect = (start, end) => {
@@ -135,7 +163,11 @@ const ViewAccount = () => {
 
   useEffect(() => {
     getAccountData();
-  }, [filterDate, fyear]);
+  }, [filterDate, fyear, selParty]);
+
+  useEffect(() => {
+    getTransactionParties();
+  }, [selParty]);
 
   const getFirstTabData = (row, index, type) => {
     return (
@@ -236,6 +268,18 @@ const ViewAccount = () => {
 
   const toggleWPModal = async (payload) => {
     setWPData({ ...wpData, show: !wpData.show });
+  };
+
+  const getFifthSixthTabData = (row) => {
+    return (
+      <tr>
+        <td>{row.Date}</td>
+        <td>{row.Invoice}</td>
+        <td>{row.DueDays}</td>
+        <td>{row.Amount}</td>
+        <td>{row["closing Bal"]}</td>
+      </tr>
+    );
   };
 
   const getAccountPdf = async (d, t, mo = null) => {
@@ -589,6 +633,134 @@ const ViewAccount = () => {
         </Col>
       </Row>
     </>,
+    <>
+      <Row>
+        <Col xs="12">
+          <div className=" p-3 mb-3">
+            <Col xs="12" responsive>
+              <Table className="ledger-table" style={{ width: "100%" }}>
+                <thead>
+                  <tr>
+                    <td>
+                      <b>Date</b>
+                    </td>
+                    <td>
+                      <b>Invoice</b>
+                    </td>
+                    <td>
+                      <b>Due Days</b>
+                    </td>
+                    <td>
+                      <b>Amount</b>
+                    </td>
+                    <td>
+                      <b>Balance Amt</b>
+                    </td>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {accountData.saleby.map((val, index) => {
+                    return getFifthSixthTabData(val);
+                  })}
+                </tbody>
+              </Table>
+            </Col>
+            <Row sm="2" className="mb-2 p-3">
+              <Col>
+                <Row>
+                  <Button className="btn-md">Print</Button>
+                </Row>
+              </Col>
+              <Col style={{ paddingRight: "unset" }}>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md text-primary mb-1 ml-0">
+                    Pdf & Image
+                    <br />
+                    <Button
+                      className="btn-sm btn-outline-success mb-1 ml-0"
+                      onClick={() => setWPData({ ...wpData, show: true, t: 5 })}
+                    >
+                      <FaWhatsapp size={18} color="primary" />
+                    </Button>
+                    <Button
+                      className="btn-sm btn-outline-primary mb-1 ml-0"
+                      onClick={() => getAccountPdf(1, 5)}
+                    >
+                      <FaDownload size={18} color="primary" />
+                    </Button>
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
+    </>,
+    <>
+      <Row>
+        <Col xs="12">
+          <div className=" p-3 mb-3">
+            <Col xs="12" responsive>
+              <Table className="ledger-table" style={{ width: "100%" }}>
+                <thead>
+                  <tr>
+                    <td>
+                      <b>Date</b>
+                    </td>
+                    <td>
+                      <b>Invoice</b>
+                    </td>
+                    <td>
+                      <b>Due Days</b>
+                    </td>
+                    <td>
+                      <b>Amount</b>
+                    </td>
+                    <td>
+                      <b>Balance Amt</b>
+                    </td>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {accountData.sale_outstanding.map((val, index) => {
+                    return getFifthSixthTabData(val);
+                  })}
+                </tbody>
+              </Table>
+            </Col>
+            <Row sm="2" className="mb-2 p-3">
+              <Col>
+                <Row>
+                  <Button className="btn-md">Print</Button>
+                </Row>
+              </Col>
+              <Col style={{ paddingRight: "unset" }}>
+                <Row className="justify-content-end mr-0">
+                  <Button className="btn-md text-primary mb-1 ml-0">
+                    Pdf & Image
+                    <br />
+                    <Button
+                      className="btn-sm btn-outline-success mb-1 ml-0"
+                      onClick={() => setWPData({ ...wpData, show: true, t: 6 })}
+                    >
+                      <FaWhatsapp size={18} color="primary" />
+                    </Button>
+                    <Button
+                      className="btn-sm btn-outline-primary mb-1 ml-0"
+                      onClick={() => getAccountPdf(1, 6)}
+                    >
+                      <FaDownload size={18} color="primary" />
+                    </Button>
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
+    </>,
   ];
 
   return (
@@ -640,6 +812,23 @@ const ViewAccount = () => {
           </Col>
           <Col></Col>
         </Row>
+        <Row sm="2" md="4" xs="1" className="mb-2">
+          <Col>
+            <CustomInputWoutFormik
+              type="select"
+              value={selParty}
+              options={[
+                <option value={0}>All Parties</option>,
+                ...parties.map((opt) => {
+                  return <option value={opt.id}>{opt.b_name}</option>;
+                }),
+              ]}
+              withFormGroup={false}
+              onChange={changeParty}
+            />
+          </Col>
+          <Col></Col>
+        </Row>
         {loading ? (
           <Loader loading={loading} />
         ) : (
@@ -653,7 +842,13 @@ const ViewAccount = () => {
               params={[0, wpData.t]}
             />
             <CustomTab
-              tabnames={["Ledger", "Full Ledger", "Bill Ledger"]}
+              tabnames={[
+                "Ledger",
+                "Full Ledger",
+                "Bill Ledger",
+                "Sale By",
+                "Sale Outstanding",
+              ]}
               tabpanes={tabPan}
             />
           </>
