@@ -248,7 +248,7 @@ const Index = (props) => {
                   className="btn-md btn-outline-default mb-1 ml-0"
                   onClick={() => {
                     sessionStorage.setItem("openAdd", true);
-                    history.push("/admin/v1/expenses");
+                    history.push("/admin/v2/expenses");
                   }}
                 >
                   <FaMoneyBill size={18} color="default" /> Expense
@@ -257,7 +257,7 @@ const Index = (props) => {
                   className="btn-md btn-outline-success mb-1 ml-0"
                   onClick={() => {
                     sessionStorage.setItem("openAdd", 1);
-                    history.push("/admin/v1/transaction");
+                    history.push("/admin/v2/transaction");
                   }}
                 >
                   <BsArrowDownLeft size={18} color="success" />
@@ -267,7 +267,7 @@ const Index = (props) => {
                   className="btn-md btn-outline-danger mb-1 ml-0"
                   onClick={() => {
                     sessionStorage.setItem("openAdd", 2);
-                    history.push("/admin/v1/transaction");
+                    history.push("/admin/v2/transaction");
                   }}
                 >
                   <BsArrowUpRight size={18} />
