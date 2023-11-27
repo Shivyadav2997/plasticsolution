@@ -143,6 +143,10 @@ const Transaction = () => {
       data: "type",
     },
     {
+      title: "Desc.",
+      data: "description",
+    },
+    {
       title: "Mode",
       data: "mode",
     },

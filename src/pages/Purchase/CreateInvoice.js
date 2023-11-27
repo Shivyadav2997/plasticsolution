@@ -450,7 +450,7 @@ const CreateInvoice = () => {
 
   useEffect(() => {
     billNoGenerate(upperData.bDate);
-  }, [upperData.bDate]);
+  }, []);
 
   return (
     <>

@@ -16,7 +16,7 @@ import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import DynamicDataTable from "@langleyfoxall/react-dynamic-data-table";
 import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import {
-  transactionPartyGet,
+  partyListGet,
   productListGet,
   productUnitGet,
   getBillNo,
@@ -48,17 +48,21 @@ const CreateInvoice = () => {
   });
 
   const history = useHistory();
+  const [partyactive, setpartyActive] = useState("");
+  const [partyInactive, setpartyInActive] = useState("");
   const [parties, setParties] = useState([]);
   const [transporters, setTransporters] = useState([]);
   const [totalWAmt, setTotalWAmt] = useState(0);
   const [totalBAmt, setTotalBAmt] = useState(0);
   const [gstTax, setGstTax] = useState(0);
+  const [round, setRound] = useState(0);
   const [total, setTotal] = useState(0);
   const [rowIndex, setRowIndex] = useState(0);
   const [products, setProducts] = useState([]);
   const [showParty, setShowParty] = useState(false);
   const [showTransporter, setShowTransporter] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
+  const [discount, setDiscount] = useState({ percentage: 0, value: 0 });
   const inputRef = useRef(null);
 
   const [gstError, setGstError] = useState("");
@@ -73,6 +77,7 @@ const CreateInvoice = () => {
     lrno: "",
     vno: "",
     note: "",
+    delivery: "",
   });
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -269,6 +274,7 @@ const CreateInvoice = () => {
           lr: upperData.lrno,
           veh: upperData.vno,
           note: upperData.note,
+          delivery: upperData.delivery,
           tkachu: totalWAmt,
           tpaku: totalBAmt,
           gst: gstTax,
@@ -315,24 +321,32 @@ const CreateInvoice = () => {
             { id: "20", name: "20KGS BAG" },
             { id: "25", name: "25KGS BAG" },
             { id: "50", name: "50KGS BAG" },
-            { id: "0", name: "NOS" },
+            { id: "-10", name: "NOS" },
           ];
           break;
         default:
-          rowsInput["units"] = [{ id: "0", name: product.unit }];
+          rowsInput["units"] = [{ id: "-10", name: product.unit }];
           break;
       }
 
+      rowsInput["pUnit"] = rowsInput["units"][0].id;
+      if (product != null && !isNaN(product.srate)) {
+        rowsInput["rate"] = product.srate;
+      }
       rowsInput["gst"] =
         product != null ? (isNaN(product.gst) ? "0" : product.gst) : "0";
     } else {
       rowsInput["gst"] = "0";
     }
+    // console.log("rowsInput1", rowsInput);
+    rowsInput = calCulateTotal(rowsInput, true, true);
+    // console.log("rowsInput2", rowsInput);
+
     const curData = [...rows];
     curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
     setRows(curData);
   };
-  const calCulateTotal = (rowsInput, calcQty = false) => {
+  const calCulateTotal = (rowsInput, calcQty = false, onlyreturn = false) => {
     if (calcQty) {
       switch (rowsInput["pUnit"]) {
         case "1":
@@ -345,15 +359,22 @@ const CreateInvoice = () => {
           rowsInput["uQty"] = rowsInput["pQty"];
       }
     }
+
     if (rowsInput["bRate"] && rowsInput["uQty"]) {
       rowsInput["bAmt"] = rowsInput["bRate"] * rowsInput["uQty"];
+    } else {
+      rowsInput["bAmt"] = 0;
     }
     if (rowsInput["bRate"] && rowsInput["uQty"] && rowsInput["rate"]) {
       rowsInput["wAmt"] =
         (rowsInput["rate"] - rowsInput["bRate"]) * rowsInput["uQty"];
+    } else {
+      rowsInput["wAmt"] = 0;
     }
     if (rowsInput["gst"] && rowsInput["bAmt"]) {
       rowsInput["tax"] = (rowsInput["bAmt"] * rowsInput["gst"]) / 100;
+    } else {
+      rowsInput["tax"] = 0;
     }
 
     let sub1 = 0,
@@ -382,19 +403,80 @@ const CreateInvoice = () => {
         }
       }
     }
-    setGstTax(gst);
+
     setTotalBAmt(sub2);
     setTotalWAmt(sub1);
-    setTotal(sub1 + sub2 + gst);
+    if (discount.percentage > 0) {
+      calculateDiscount(
+        discount.percentage,
+        true,
+        false,
+        true,
+        gst,
+        sub1,
+        sub2
+      );
+    } else {
+      setGstTax(getRoundAmount(gst));
+      setTotal(sub1 + sub2 + gst);
+    }
 
-    const curData = [...rows];
-    curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
-    setRows(curData);
+    if (onlyreturn) {
+      return rowsInput;
+    } else {
+      const curData = [...rows];
+      curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
+      setRows(curData);
+    }
   };
 
+  const calculateDiscount = async (
+    discountValue = 0,
+    percentage = false,
+    value = false,
+    withGSt = false,
+    gst = null,
+    wamt = null,
+    bamt = null
+  ) => {
+    let discountObj = { value: 0, percentage: 0 };
+    gst = gst == null ? gstTax : gst;
+    wamt = wamt == null ? totalWAmt : wamt;
+    bamt = bamt == null ? totalBAmt : bamt;
+
+    if (bamt <= 0) {
+      setDiscount(discountObj);
+      return;
+    }
+    if (percentage) {
+      discountObj.percentage = discountValue;
+      discountObj.value = (bamt * discountValue) / 100;
+    } else if (value) {
+      discountObj.value = discountValue;
+      discountObj.percentage = getRoundAmount((discountValue * 100) / bamt);
+    }
+
+    let gstAMount = withGSt ? gst : getTotal();
+    if (gstAMount > 0 && discountObj.value > 0) {
+      gstAMount = gstAMount - (gstAMount * discountObj.percentage) / 100;
+      setGstTax(getRoundAmount(gstAMount));
+    }
+    setDiscount(discountObj);
+    setTotal(bamt + wamt + gstAMount - discountObj.value);
+  };
+
+  const getTotal = () => {
+    let gst = 0;
+    for (let index = 0; index < rows.length; index++) {
+      if (rows[index]["row"]["tax"]) {
+        gst += rows[index]["row"]["tax"];
+      }
+    }
+    return gst;
+  };
   const getTransactionParties = async () => {
     dispatch(setLoader(true));
-    var data = await transactionPartyGet(user.token);
+    var data = await partyListGet(user.token);
     dispatch(setLoader(false));
     if (data.data) {
       setParties(data.data);
@@ -442,11 +524,49 @@ const CreateInvoice = () => {
     getProductUnits();
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
+    billNoGenerate(upperData.bDate);
   }, []);
 
   useEffect(() => {
-    billNoGenerate(upperData.bDate);
-  }, [upperData.bDate]);
+    const roundAmount = Math.ceil(total);
+    if (roundAmount != total) {
+      setRound(getRoundAmount(roundAmount - total));
+      setTotal(roundAmount);
+    }
+    if (total == 0) {
+      setRound(0);
+    }
+  }, [total]);
+
+  const getRoundAmount = (amount) => {
+    return Math.round(amount * 100) / 100;
+  };
+  const getSelectedPartyGSTInfo = async () => {
+    const party = parties.find((X) => X.id == upperData.party);
+    if (party != null && party.gst != "") {
+      dispatch(setLoader(true));
+      const resp = await checkGST(party.gst);
+      dispatch(setLoader(false));
+      const data = resp.data;
+
+      if (data.sts.toLowerCase() == "active") {
+        setpartyActive(data.sts);
+      } else {
+        setpartyInActive(data.sts);
+      }
+    } else {
+      setpartyActive("");
+      setpartyInActive("");
+    }
+  };
+
+  useEffect(() => {
+    setpartyActive("");
+    setpartyInActive("");
+    if (upperData.party != "") {
+      getSelectedPartyGSTInfo();
+    }
+  }, [upperData.party]);
 
   return (
     <>
@@ -760,7 +880,7 @@ const CreateInvoice = () => {
                   options={[
                     <option value="">Select Party</option>,
                     ...parties.map((opt) => {
-                      return <option value={opt.pid}>{opt.b_name}</option>;
+                      return <option value={opt.id}>{opt.b_name}</option>;
                     }),
                   ]}
                   errorMsg={error.party}
@@ -778,6 +898,12 @@ const CreateInvoice = () => {
                     </Button>
                   }
                 />
+                {partyInactive && (
+                  <label className="errorMsg">{partyInactive}</label>
+                )}
+                {partyactive && (
+                  <label className="text-success">{partyactive}</label>
+                )}
               </Col>
               <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
@@ -884,9 +1010,25 @@ const CreateInvoice = () => {
                 />
               </Col>
               <Col xs="6" sm="4" lg="3">
+                <CustomInputWoutFormik
+                  label="Delivery"
+                  type="select"
+                  options={[
+                    <option value="">Select Delivery</option>,
+                    ...parties.map((opt) => {
+                      return <option value={opt.id}>{opt.b_name}</option>;
+                    }),
+                  ]}
+                  value={upperData.delivery}
+                  onChange={(e) => {
+                    setUpperData({ ...upperData, delivery: e.target.value });
+                  }}
+                />
+              </Col>
+              <Col xs="6" sm="4" lg="3">
                 <FormGroup className="mb-1">
                   <Button
-                    className="btn-sm btn-outline-primary mt-xs-2 mt-sm-4 mt-lg-2"
+                    className="btn-sm btn-outline-primary mt-xs-2 mt-sm-4"
                     onClick={handleToggleProduct}
                   >
                     <BiPlus /> Add Product
@@ -956,6 +1098,7 @@ const CreateInvoice = () => {
                           }),
                         ]}
                         defaultValue={value}
+                        value={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
                           calCulateTotal(row, true);
@@ -991,6 +1134,7 @@ const CreateInvoice = () => {
                       <CustomInputWoutFormik
                         type="number"
                         defaultValue={value}
+                        value={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
                           calCulateTotal(row);
@@ -1149,6 +1293,31 @@ const CreateInvoice = () => {
                   </tr>
                   <tr>
                     <td colSpan={8}></td>
+                    <td align="right">Discount</td>
+                    <td>
+                      <CustomInputWoutFormik
+                        className="text-right"
+                        value={discount.percentage}
+                        maxLength={3}
+                        onChange={(event) =>
+                          calculateDiscount(event.target.value, true)
+                        }
+                        disabled={totalBAmt <= 0}
+                      />
+                    </td>
+                    <td>
+                      <CustomInputWoutFormik
+                        className="text-right"
+                        value={discount.value}
+                        onChange={(event) =>
+                          calculateDiscount(event.target.value, false, true)
+                        }
+                        disabled={totalBAmt <= 0}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={8}></td>
                     <td align="right">GST Tax</td>
                     <td></td>
                     <td>
@@ -1159,6 +1328,22 @@ const CreateInvoice = () => {
                       />
                     </td>
                   </tr>
+                  {round != 0 && (
+                    <tr>
+                      <td colSpan={8}></td>
+                      <td align="right">
+                        <strong>Round</strong>
+                      </td>
+                      <td></td>
+                      <td>
+                        <CustomInputWoutFormik
+                          className="text-right"
+                          value={round}
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  )}
                   <tr>
                     <td colSpan={8}></td>
                     <td align="right">

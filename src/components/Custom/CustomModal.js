@@ -1,4 +1,4 @@
-import React, { Children, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import { Modal, Button, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { createPortal } from "react-dom";
 import { FaCross } from "react-icons/fa";
@@ -15,6 +15,20 @@ const CustomModal = ({
 }) => {
   const [contentRef, setContentRef] = useState(null);
   const mountNode = contentRef?.contentWindow?.document?.body;
+
+  useEffect(() => {
+    if (show) {
+      const intervalId = setInterval(() => {
+        const firstInput = document.querySelector(
+          ".modal-body input:not([disabled]), .modal-body select:not([disabled])"
+        );
+        if (firstInput) {
+          clearInterval(intervalId);
+          firstInput.focus();
+        }
+      }, 500);
+    }
+  }, [show]);
   return (
     <>
       <Modal

@@ -52,7 +52,14 @@ const Party = () => {
   const [show, setShow] = useState(false);
   const [addType, setAddType] = useState(1);
   const [showDelete, setShowDelete] = useState(false);
-  const [wpData, setWPData] = useState({ show: false, mobile: "", msg: "" });
+  const [wpData, setWPData] = useState({
+    show: false,
+    mobile: "",
+    msg: "",
+    withMsg: false,
+    withApi: false,
+    params: [],
+  });
   const dispatch = useDispatch();
   const formRef = useRef(null);
 
@@ -72,14 +79,32 @@ Total ${totalDebit} = ${total
       .replace("&nbsp;", "")
       .replace("Dr", "")
       .replace("Cr", "")}`;
-    setWPData({ mobile: rowData.mobile, msg: msg, show: true });
+    setWPData({
+      mobile: rowData.mobile,
+      msg: msg,
+      show: true,
+      withMsg: true,
+      withApi: false,
+    });
   };
-  const sendWhatsappPdf = async (cellData, rowData, row, col) => {
+
+  const openWhatsappPdfModal = (cellData, rowData, row, col) => {
     const id = btoa(Number(rowData.pid));
+    setWPData({
+      mobile: rowData.mobile,
+      show: true,
+      withMsg: false,
+      withApi: true,
+      params: [id],
+    });
+  };
+
+  const sendWhatsappPdf = async (id, mo) => {
     dispatch(setLoader(true));
-    const resp = await accountpdf(user.token, id, 10, 0, 1);
+    const resp = await accountpdf(user.token, id, 10, 0, 1, null, null, mo);
     dispatch(setLoader(false));
     if (resp.data.success == 1) {
+      toggleWPModal();
       Toast.fire({
         icon: "success",
         title: resp.data.msg || "Sent Successfully !!",
@@ -219,7 +244,9 @@ Total ${totalDebit} = ${total
               <div>
                 <Button
                   className="btn-outline-success btn-icon btn-sm"
-                  onClick={() => sendWhatsappPdf(cellData, rowData, row, col)}
+                  onClick={() =>
+                    openWhatsappPdfModal(cellData, rowData, row, col)
+                  }
                 >
                   <span>
                     <FaWhatsapp size={12} /> Pdf
@@ -476,7 +503,9 @@ Total ${totalDebit} = ${total
         handleToggle={toggleWPModal}
         mobile={wpData.mobile}
         msg={wpData.msg}
-        withMsg={true}
+        withMsg={wpData.withMsg}
+        api={wpData.withApi ? sendWhatsappPdf : null}
+        params={wpData.params}
       />
       <ConfirmationDialog
         show={showDelete}

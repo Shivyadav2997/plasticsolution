@@ -679,13 +679,13 @@ const ViewAccount = () => {
                     <br />
                     <Button
                       className="btn-sm btn-outline-success mb-1 ml-0"
-                      onClick={() => setWPData({ ...wpData, show: true, t: 5 })}
+                      onClick={() => setWPData({ ...wpData, show: true, t: 6 })}
                     >
                       <FaWhatsapp size={18} color="primary" />
                     </Button>
                     <Button
                       className="btn-sm btn-outline-primary mb-1 ml-0"
-                      onClick={() => getAccountPdf(1, 5)}
+                      onClick={() => getAccountPdf(1, 6)}
                     >
                       <FaDownload size={18} color="primary" />
                     </Button>
@@ -743,13 +743,13 @@ const ViewAccount = () => {
                     <br />
                     <Button
                       className="btn-sm btn-outline-success mb-1 ml-0"
-                      onClick={() => setWPData({ ...wpData, show: true, t: 6 })}
+                      onClick={() => setWPData({ ...wpData, show: true, t: 5 })}
                     >
                       <FaWhatsapp size={18} color="primary" />
                     </Button>
                     <Button
                       className="btn-sm btn-outline-primary mb-1 ml-0"
-                      onClick={() => getAccountPdf(1, 6)}
+                      onClick={() => getAccountPdf(1, 5)}
                     >
                       <FaDownload size={18} color="primary" />
                     </Button>

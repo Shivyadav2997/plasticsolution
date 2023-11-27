@@ -68,9 +68,8 @@ const AdminNavbar = (props) => {
               </InputGroup>
             </FormGroup>
           </Form> */}
-
           <FinancialYear className="mb-0 mr-1 ml-auto d-none d-sm-block " />
-          <PageNavigator className="mb-0 mr-1 ml-auto d-none d-sm-block " />
+          <PageNavigator className="mb-0 mr-1 ml-0 d-none d-sm-block " />
           <WhatsAppLogin className="btn-sm btn-outline-success d-none d-sm-block" />
           <Nav className="align-items-center d-flex" navbar>
             <UncontrolledDropdown nav>
