@@ -181,11 +181,7 @@ const Transaction = () => {
       dispatch(setLoader(false));
       if (resp.data.pdf && resp.data.success) {
         const url = resp.data.pdf;
-        let alink = document.createElement("a");
-        alink.href = url;
-        alink.target = "_blank";
-        alink.download = url.substring(url.lastIndexOf("/") + 1);
-        alink.click();
+        window.open(url, "_blank");
       }
     }
   };
