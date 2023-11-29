@@ -525,6 +525,15 @@ const CreateInvoice = () => {
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
     billNoGenerate(upperData.bDate);
+    const intervalId = setInterval(() => {
+      const firstInput = document.querySelector(
+        ".createInvoiceClass input:not([disabled]), .createInvoiceClass select:not([disabled])"
+      );
+      if (firstInput) {
+        clearInterval(intervalId);
+        firstInput.focus();
+      }
+    }, 500);
   }, []);
 
   useEffect(() => {
@@ -869,7 +878,11 @@ const CreateInvoice = () => {
           )}
         </Formik>
       </CustomModal>
-      <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
+      <Container
+        className="pt-6 createInvoiceClass"
+        fluid
+        style={{ minHeight: "80vh" }}
+      >
         <Card>
           <CardBody>
             <Row>

@@ -14,6 +14,9 @@ import {
   transactionPaymentAdd,
   deleteRecord,
   bankListGet,
+  sendTransactionWp,
+  sendTransactionWpReceipt,
+  downloadTransactionPdf,
 } from "api/apiv2";
 import { Input } from "reactstrap";
 import $ from "jquery";
@@ -28,6 +31,10 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import WhatsappModal from "components/Custom/WhatsappModal";
+import { FaDownload, FaWhatsapp } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+
 const Transaction = () => {
   var Toast = Swal.mixin({
     toast: true,
@@ -54,10 +61,19 @@ const Transaction = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [transId, setTransId] = useState(null);
   const [addType, setAddType] = useState(1);
+  const [wpData, setWPData] = useState({
+    show: false,
+    mobile: "",
+    receipt: false,
+    tid: 0,
+  });
   const dispatch = useDispatch();
 
   const formRef = useRef(null);
 
+  const toggleWPModal = async (payload) => {
+    setWPData({ ...wpData, show: !wpData.show });
+  };
   const handleShowConfirmation = () => {
     if (showDelete) {
       setTransId(null);
@@ -108,6 +124,71 @@ const Transaction = () => {
     }
   };
 
+  const sendWhatsapp = (cellData, rowData, row, col) => {
+    setWPData({
+      mobile: rowData.mobile || "",
+      show: true,
+      receipt: false,
+      tid: rowData.id,
+    });
+  };
+
+  const sendWhatsappPdf = (cellData, rowData, row, col) => {
+    setWPData({
+      mobile: rowData.mobile || "",
+      show: true,
+      receipt: true,
+      tid: rowData.id,
+    });
+  };
+
+  const whatsappPdfReceipt = async (download = 0, mo = "") => {
+    if (download == 0) {
+      let resp;
+      if (wpData.receipt) {
+        dispatch(setLoader(true));
+        resp = await sendTransactionWpReceipt(user.token, {
+          tid: wpData.tid,
+          mo: mo,
+        });
+        dispatch(setLoader(false));
+      } else {
+        dispatch(setLoader(true));
+        resp = await sendTransactionWp(user.token, {
+          tid: wpData.tid,
+          mo: mo,
+        });
+        dispatch(setLoader(false));
+      }
+      if (resp.data.sucess == 1) {
+        toggleWPModal();
+        Toast.fire({
+          icon: "success",
+          title: resp.data.msg || "Sent Successfully !!",
+        });
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: resp.data.msg || "Something went wrong",
+        });
+      }
+    } else {
+      dispatch(setLoader(true));
+      const resp = await downloadTransactionPdf(user.token, {
+        tid: download,
+      });
+      dispatch(setLoader(false));
+      if (resp.data.pdf && resp.data.success) {
+        const url = resp.data.pdf;
+        let alink = document.createElement("a");
+        alink.href = url;
+        alink.target = "_blank";
+        alink.download = url.substring(url.lastIndexOf("/") + 1);
+        alink.click();
+      }
+    }
+  };
+
   var colDefs = [
     {
       targets: -2,
@@ -146,11 +227,6 @@ const Transaction = () => {
       title: "Mode",
       data: "mode",
     },
-    // {
-    //   title: "WithAmt",
-    //   data: "tkachu",
-    //   type: "number",
-    // },
     {
       title: "BillAmt",
       data: "tpaku",
@@ -159,10 +235,6 @@ const Transaction = () => {
     {
       title: "Date",
       data: "Date",
-    },
-    {
-      title: "Action",
-      data: null,
     },
   ];
 
@@ -242,20 +314,85 @@ const Transaction = () => {
   const tabPan = [
     <CustomTable
       // rowCallBack={rowCallBack}
-      cols={columns}
+      cols={[
+        ...columns,
+        {
+          title: "Action",
+          data: null,
+          createdCell: (td, cellData, rowData, row, col) => {
+            const root = ReactDOM.createRoot(td);
+            root.render(
+              <>
+                {" "}
+                <div className="d-flex gap-10">
+                  <div>
+                    <Button
+                      className="btn-outline-info btn-icon btn-sm"
+                      onClick={() => sendWhatsapp(cellData, rowData, row, col)}
+                    >
+                      <span>
+                        <FaWhatsapp size={12} />
+                      </span>
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      className="btn-outline-success btn-icon btn-sm"
+                      onClick={() =>
+                        sendWhatsappPdf(cellData, rowData, row, col)
+                      }
+                    >
+                      <span>
+                        <FaWhatsapp size={12} /> Receipt
+                      </span>
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      className="btn-outline-info btn-icon btn-sm"
+                      onClick={() => whatsappPdfReceipt(rowData.id)}
+                    >
+                      <span>
+                        <FaDownload size={12} />
+                      </span>
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      className="btn-danger btn-icon btn-sm"
+                      onClick={() => deleteClick(cellData, rowData, row, col)}
+                    >
+                      <span>
+                        <MdDelete size={16} />
+                      </span>
+                    </Button>
+                  </div>
+                </div>
+              </>
+            );
+          },
+          className: "all",
+        },
+      ]}
       columndefs={colDefs}
       dark={false}
       data={transactions.transection}
       title="Transaction List"
       withCard={false}
       hasEdit={false}
+      hasDelete={false}
       custom={true}
       ref={childRef}
-      deleteClick={deleteClick}
       numColumns={[4, 5]}
     />,
     <CustomTable
-      cols={columns}
+      cols={[
+        ...columns,
+        {
+          title: "Action",
+          data: null,
+        },
+      ]}
       columndefs={[colDefs[0]]}
       dark={false}
       data={transactions.recive}
@@ -267,7 +404,13 @@ const Transaction = () => {
       deleteClick={deleteClick}
     />,
     <CustomTable
-      cols={columns}
+      cols={[
+        ...columns,
+        {
+          title: "Action",
+          data: null,
+        },
+      ]}
       columndefs={[colDefs[0]]}
       dark={false}
       data={transactions.payment}
@@ -431,6 +574,14 @@ const Transaction = () => {
           )}
         </Formik>
       </CustomModal>
+      <WhatsappModal
+        show={wpData.show}
+        handleToggle={toggleWPModal}
+        mobile={wpData.mobile}
+        withMsg={false}
+        api={whatsappPdfReceipt}
+        params={[0]}
+      />
       <ConfirmationDialog
         show={showDelete}
         handleToggle={handleShowConfirmation}

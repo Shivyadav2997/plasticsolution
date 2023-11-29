@@ -80,7 +80,7 @@ const WhatsappModal = ({
           size="md"
           onClick={() => formRef.current.handleSubmit()}
         >
-          Save
+          Send
         </Button>
       }
     >

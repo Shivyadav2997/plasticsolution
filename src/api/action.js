@@ -61,3 +61,6 @@ export const getAccountantAction = "accountant";
 export const findAccountantAction = "findaccountant";
 export const saveAccountantAction = "edit_accountant";
 export const sendWhatsappMsgAction = "accountwpmsg";
+export const transactionPdfAction = "wptransection";
+export const transactionReceiptAction = "wptransectionrecipt";
+export const transactionDownloadAction = "wptransectiondownload";

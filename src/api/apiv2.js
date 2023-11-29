@@ -57,6 +57,9 @@ import {
   createewayAction,
   groupNameAction,
   stateCodeAction,
+  transactionPdfAction,
+  transactionReceiptAction,
+  transactionDownloadAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1507,6 +1510,73 @@ const groupNameGet = async (token) => {
   }
 };
 
+const sendTransactionWp = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${transactionPdfAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const sendTransactionWpReceipt = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${transactionReceiptAction}&token=${token}&${getParams(
+          payload
+        )}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const downloadTransactionPdf = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${transactionDownloadAction}&token=${token}&${getParams(
+          payload
+        )}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1573,4 +1643,7 @@ export {
   ewayCreate,
   stateCodeGet,
   groupNameGet,
+  sendTransactionWp,
+  sendTransactionWpReceipt,
+  downloadTransactionPdf,
 };
