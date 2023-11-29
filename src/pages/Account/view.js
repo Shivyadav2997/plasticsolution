@@ -94,6 +94,7 @@ const ViewAccount = () => {
     setSelParty(e.target.value);
     sessionStorage.setItem("party", party.b_name);
     sessionStorage.setItem("mobile", party.mobile);
+    setWPData({ ...wpData, mobile: party.mobile });
     const id = btoa(Number(party.id));
     history.push(`/admin/v1/viewAccount/${id}`);
   };
