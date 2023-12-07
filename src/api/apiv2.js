@@ -60,6 +60,8 @@ import {
   transactionPdfAction,
   transactionReceiptAction,
   transactionDownloadAction,
+  getInvoiceAction,
+  updateInvoiceAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1577,6 +1579,50 @@ const downloadTransactionPdf = async (token, payload) => {
   }
 };
 
+const getInvoiceDetails = async (token, id) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${getInvoiceAction}&token=${token}&id=${id}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateInvoiceAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1646,4 +1692,6 @@ export {
   sendTransactionWp,
   sendTransactionWpReceipt,
   downloadTransactionPdf,
+  getInvoiceDetails,
+  updateInvoice,
 };
