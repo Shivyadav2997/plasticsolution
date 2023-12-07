@@ -64,3 +64,5 @@ export const sendWhatsappMsgAction = "accountwpmsg";
 export const transactionPdfAction = "wptransection";
 export const transactionReceiptAction = "wptransectionrecipt";
 export const transactionDownloadAction = "wptransectiondownload";
+export const getInvoiceAction = "billdetails";
+export const updateInvoiceAction = "update_invoice";

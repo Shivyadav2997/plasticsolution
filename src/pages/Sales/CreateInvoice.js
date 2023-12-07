@@ -26,10 +26,12 @@ import {
   checkGST,
   transportAdd,
   productAdd,
+  getInvoiceDetails,
+  updateInvoice,
 } from "api/api";
 import { setLoader } from "features/User/UserSlice";
 import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import React from "react";
 import { BiPlus } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
@@ -63,6 +65,7 @@ const CreateInvoice = () => {
   const [showTransporter, setShowTransporter] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
   const [discount, setDiscount] = useState({ percentage: 0, value: 0 });
+  const [invoiceId, setInvoiceId] = useState(0);
   const inputRef = useRef(null);
 
   const [gstError, setGstError] = useState("");
@@ -82,26 +85,9 @@ const CreateInvoice = () => {
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const [error, setError] = useState({ party: "", bType: "", bNo: "" });
-  const [rows, setRows] = useState([
-    {
-      id: rowIndex,
-      row: {
-        item: "",
-        desc: "",
-        pUnit: "",
-        pQty: "",
-        uQty: "",
-        rate: "",
-        bRate: "",
-        gst: "",
-        tax: "",
-        wAmt: "",
-        bAmt: "",
-        id: rowIndex,
-        units: [],
-      },
-    },
-  ]);
+  const [rows, setRows] = useState([]);
+
+  const location = useLocation();
 
   const handleToggleParty = () => {
     setShowParty(!showParty);
@@ -125,7 +111,7 @@ const CreateInvoice = () => {
 
   useEffect(() => {
     setRows(rows);
-  }, products);
+  }, [products]);
 
   const autoFillGSTParty = async (formik, gst) => {
     if (gst.length < 15) {
@@ -262,38 +248,80 @@ const CreateInvoice = () => {
       });
     } else {
       dispatch(setLoader(true));
-      const resp = await createInvoice(
-        user.token,
-        {
-          type: "sale",
-          party: upperData.party,
-          b_type: upperData.bType,
-          date: upperData.bDate,
-          bno: upperData.bNo,
-          tr: upperData.trans,
-          lr: upperData.lrno,
-          veh: upperData.vno,
-          note: upperData.note,
-          delivery: upperData.delivery,
-          tkachu: totalWAmt,
-          tpaku: totalBAmt,
-          gst: gstTax,
-        },
-        JSON.stringify({
-          item: rows.map((x) => x.row.item),
-          item_desc: rows.map((x) => x.row.desc),
-          pkunit: rows.map((x) => x.row.pUnit),
-          pkqty: rows.map((x) => x.row.pQty),
-          uqty: rows.map((x) => x.row.uQty),
-          rate: rows.map((x) => x.row.rate),
-          paku: rows.map((x) => x.row.bRate),
-          pgst: rows.map((x) => x.row.gst),
-          tax: rows.map((x) => x.row.tax),
-          kachu: rows.map((x) => x.row.wAmt),
-          total: rows.map((x) => x.row.bAmt),
-        })
-      );
-      dispatch(setLoader(false));
+      let resp;
+      if (invoiceId > 0) {
+        resp = await updateInvoice(
+          user.token,
+          {
+            type: "sale",
+            party: upperData.party,
+            b_type: upperData.bType,
+            date: upperData.bDate,
+            bno: upperData.bNo,
+            tr: upperData.trans,
+            lr: upperData.lrno,
+            veh: upperData.vno,
+            note: upperData.note,
+            delivery: upperData.delivery,
+            tkachu: totalWAmt,
+            tpaku: totalBAmt,
+            gst: gstTax,
+            roundof: round,
+            discount: discount.value,
+            id: invoiceId,
+          },
+          JSON.stringify({
+            item: rows.map((x) => x.row.item),
+            item_desc: rows.map((x) => x.row.desc),
+            pkunit: rows.map((x) => x.row.pUnit),
+            pkqty: rows.map((x) => x.row.pQty),
+            uqty: rows.map((x) => x.row.uQty),
+            rate: rows.map((x) => x.row.rate),
+            paku: rows.map((x) => x.row.bRate),
+            pgst: rows.map((x) => x.row.gst),
+            tax: rows.map((x) => x.row.tax),
+            kachu: rows.map((x) => x.row.wAmt),
+            total: rows.map((x) => x.row.bAmt),
+          })
+        );
+        dispatch(setLoader(false));
+      } else {
+        resp = await createInvoice(
+          user.token,
+          {
+            type: "sale",
+            party: upperData.party,
+            b_type: upperData.bType,
+            date: upperData.bDate,
+            bno: upperData.bNo,
+            tr: upperData.trans,
+            lr: upperData.lrno,
+            veh: upperData.vno,
+            note: upperData.note,
+            delivery: upperData.delivery,
+            tkachu: totalWAmt,
+            tpaku: totalBAmt,
+            gst: gstTax,
+            roundof: round,
+            discount: discount.value,
+          },
+          JSON.stringify({
+            item: rows.map((x) => x.row.item),
+            item_desc: rows.map((x) => x.row.desc),
+            pkunit: rows.map((x) => x.row.pUnit),
+            pkqty: rows.map((x) => x.row.pQty),
+            uqty: rows.map((x) => x.row.uQty),
+            rate: rows.map((x) => x.row.rate),
+            paku: rows.map((x) => x.row.bRate),
+            pgst: rows.map((x) => x.row.gst),
+            tax: rows.map((x) => x.row.tax),
+            kachu: rows.map((x) => x.row.wAmt),
+            total: rows.map((x) => x.row.bAmt),
+          })
+        );
+        dispatch(setLoader(false));
+      }
+
       if (resp.data.success == 1) {
         Toast.fire({
           icon: "success",
@@ -338,10 +366,8 @@ const CreateInvoice = () => {
     } else {
       rowsInput["gst"] = "0";
     }
-    // console.log("rowsInput1", rowsInput);
-    rowsInput = calCulateTotal(rowsInput, true, true);
-    // console.log("rowsInput2", rowsInput);
 
+    rowsInput = calCulateTotal(rowsInput, true, true);
     const curData = [...rows];
     curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
     setRows(curData);
@@ -404,6 +430,9 @@ const CreateInvoice = () => {
       }
     }
 
+    sub1 = Number(sub1 ?? 0);
+    sub2 = Number(sub2 ?? 0);
+    gst = Number(gst ?? 0);
     setTotalBAmt(sub2);
     setTotalWAmt(sub1);
     if (discount.percentage > 0) {
@@ -534,7 +563,110 @@ const CreateInvoice = () => {
         firstInput.focus();
       }
     }, 500);
+
+    const search = location.search;
+    const urlSearchParams = new URLSearchParams(search);
+    if (urlSearchParams.has("invoice")) {
+      const variable1Value = urlSearchParams.get("invoice");
+      setInvoiceId(atob(variable1Value));
+    } else {
+      setRows([
+        {
+          id: rowIndex,
+          row: {
+            item: "",
+            desc: "",
+            pUnit: "",
+            pQty: "",
+            uQty: "",
+            rate: "",
+            bRate: "",
+            gst: "",
+            tax: "",
+            wAmt: "",
+            bAmt: "",
+            id: rowIndex,
+            units: [],
+          },
+        },
+      ]);
+    }
   }, []);
+
+  const fetchInvoiceData = async (invoiceId) => {
+    dispatch(setLoader(true));
+    const resp = await getInvoiceDetails(user.token, invoiceId);
+    dispatch(setLoader(false));
+    const invoiceData = resp.data;
+    const invoiceRows = resp.data.item;
+    setUpperData({
+      party: invoiceData.details.pid,
+      bType: invoiceData.details.btype,
+      bNo: invoiceData.details.bno,
+      bDate: invoiceData.details.date,
+      trans: invoiceData.details.tr ?? "",
+      lrno: invoiceData.details.lr,
+      vno: invoiceData.details.veh ?? "",
+      note: invoiceData.details.note,
+      delivery: invoiceData.details.delivery,
+    });
+    setTotalBAmt(Number(invoiceData.details.tpaku ?? 0));
+    setTotalWAmt(Number(invoiceData.details.tkachu ?? 0));
+    setTotal(
+      Number(invoiceData.details.tkachu ?? 0) +
+        Number(invoiceData.details.tpaku ?? 0) +
+        Number(invoiceData.details.gst ?? 0) -
+        Number(invoiceData.details.discount ?? 0)
+    );
+    setDiscount({
+      ...discount,
+      value: Number(invoiceData.details.discount ?? 0),
+    });
+    setGstTax(Number(invoiceData.details.gst));
+    const invoiceRowstoShow = [];
+    invoiceRows.forEach((element, index) => {
+      const product = products.find((x) => x.id == element.item_name);
+      let units = [{ id: "-10", name: product?.unit }];
+      switch (product?.unit) {
+        case "KGS":
+          units = [
+            { id: "1", name: "KGS" },
+            { id: "1", name: "BAG" },
+            { id: "20", name: "20KGS BAG" },
+            { id: "25", name: "25KGS BAG" },
+            { id: "50", name: "50KGS BAG" },
+            { id: "-10", name: "NOS" },
+          ];
+          break;
+      }
+      invoiceRowstoShow.push({
+        id: index,
+        row: {
+          item: product?.id,
+          desc: element.item_desc,
+          pUnit: units[0].id,
+          pQty: element.pkqty,
+          uQty: element.uqty,
+          rate: element.rate,
+          bRate: element.paku,
+          gst: element.pgst,
+          tax: element.tax,
+          wAmt: element.kachu,
+          bAmt: element.total,
+          id: index,
+          units: units,
+        },
+      });
+    });
+    setRowIndex(invoiceRowstoShow.length - 1);
+    setRows(invoiceRowstoShow);
+  };
+
+  useEffect(() => {
+    if (invoiceId > 0 && products.length > 0) {
+      fetchInvoiceData(invoiceId);
+    }
+  }, [invoiceId, products]);
 
   useEffect(() => {
     const roundAmount = Math.ceil(total);
@@ -548,7 +680,7 @@ const CreateInvoice = () => {
   }, [total]);
 
   const getRoundAmount = (amount) => {
-    return Math.round(amount * 100) / 100;
+    return Math.round(Number(amount ?? 0) * 100) / 100;
   };
   const getSelectedPartyGSTInfo = async () => {
     const party = parties.find((X) => X.id == upperData.party);
@@ -1052,7 +1184,7 @@ const CreateInvoice = () => {
 
             <DynamicDataTable
               className="table align-items-center table-flush col-12 invoice-table"
-              rows={rows.map((value) => value.row)}
+              rows={rows.map((value) => value.row ?? {})}
               columnWidths={{
                 item: "14%",
                 desc: "9%",
@@ -1219,38 +1351,6 @@ const CreateInvoice = () => {
                 }
                 return value;
               }}
-              // rowRenderer={({
-              //   row, // Instance of data row
-              //   onClick, // Row on click handler
-              //   onMouseUp, // Row on MouseUp handler
-              //   onMouseDown, // Row on MouseDown handler
-              //   buttons, // Array of buttons
-              //   actions, // Array of header actions
-              //   fields, // Visible fields
-              //   renderCheckboxes, // Boolean indicating whether to render checkboxes
-              //   disableCheckbox, // Boolean indicating whether to disable the checkbox per row
-              //   checkboxIsChecked, // Boolean indicating if checkbox is checked
-              //   onCheckboxChange, // Callable that is called when a per row checkbox is changed
-              //   dataItemManipulator, // Callable that handles manipulation of every item in the data row
-              // }) => {
-              //   console.log(row);
-              //   return (
-              //     <tr>
-              //       <td>shiv</td>
-              //     </tr>
-              //   );
-              // }}
-              // editableColumns={[
-              //   {
-              //     name: "bAmt",
-              //     controlled: `false`,
-              //     type: "number",
-              //     value: "1",
-              //     onChange: (event, column, row, index) => {
-              //       console.log("shiv");
-              //     },
-              //   },
-              // ]}
               footer={
                 <>
                   <tr>
@@ -1379,12 +1479,6 @@ const CreateInvoice = () => {
               <Button
                 className="btn-md btn-outline-success"
                 onClick={() => {
-                  // console.log("rows", rows);
-                  // console.log("upperData", upperData);
-                  // console.log("totalWAmt", totalWAmt);
-                  // console.log("totalBAmt", totalBAmt);
-                  // console.log("gstTax", gstTax);
-                  // console.log("total", total);
                   addInvoice();
                 }}
               >
