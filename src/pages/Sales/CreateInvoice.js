@@ -64,7 +64,7 @@ const CreateInvoice = () => {
   const [showParty, setShowParty] = useState(false);
   const [showTransporter, setShowTransporter] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
-  const [discount, setDiscount] = useState({ percentage: 0, value: 0 });
+  const [discount, setDiscount] = useState({ percentage: "", value: "" });
   const [invoiceId, setInvoiceId] = useState(0);
   const inputRef = useRef(null);
 
@@ -447,7 +447,16 @@ const CreateInvoice = () => {
       );
     } else {
       setGstTax(getRoundAmount(gst));
-      setTotal(sub1 + sub2 + gst);
+      let total = sub1 + sub2 + gst;
+      const roundAmount = Math.ceil(total);
+
+      if (roundAmount != total) {
+        setRound(getRoundAmount(roundAmount - total));
+        setTotal(roundAmount);
+      } else {
+        setTotal(total);
+        setRound(0);
+      }
     }
 
     if (onlyreturn) {
@@ -469,6 +478,7 @@ const CreateInvoice = () => {
     bamt = null
   ) => {
     let discountObj = { value: 0, percentage: 0 };
+    let newdiscount = { value: 0, percentage: 0 };
     gst = gst == null ? gstTax : gst;
     wamt = wamt == null ? totalWAmt : wamt;
     bamt = bamt == null ? totalBAmt : bamt;
@@ -478,20 +488,43 @@ const CreateInvoice = () => {
       return;
     }
     if (percentage) {
-      discountObj.percentage = discountValue;
-      discountObj.value = (bamt * discountValue) / 100;
+      discountObj.percentage = discountValue == "" ? 0 : discountValue;
+      discountObj.value = (bamt * discountObj.percentage) / 100;
+      newdiscount.percentage = discountValue;
+      newdiscount.value =
+        newdiscount.percentage == ""
+          ? ""
+          : (bamt * newdiscount.percentage) / 100;
     } else if (value) {
-      discountObj.value = discountValue;
-      discountObj.percentage = getRoundAmount((discountValue * 100) / bamt);
+      discountObj.value = discountValue == "" ? 0 : discountValue;
+      discountObj.percentage = getRoundAmount((discountObj.value * 100) / bamt);
+      newdiscount.value = discountValue;
+      newdiscount.percentage =
+        newdiscount.value == ""
+          ? ""
+          : getRoundAmount((newdiscount.value * 100) / bamt);
     }
 
     let gstAMount = withGSt ? gst : getTotal();
-    if (gstAMount > 0 && discountObj.value > 0) {
-      gstAMount = gstAMount - (gstAMount * discountObj.percentage) / 100;
-      setGstTax(getRoundAmount(gstAMount));
+    if (gstAMount > 0) {
+      if (discountObj.value > 0) {
+        gstAMount = gstAMount - (gstAMount * discountObj.percentage) / 100;
+        setGstTax(getRoundAmount(gstAMount));
+      } else {
+        setGstTax(getRoundAmount(gstAMount));
+      }
     }
-    setDiscount(discountObj);
-    setTotal(bamt + wamt + gstAMount - discountObj.value);
+    setDiscount(newdiscount);
+    let total = bamt + wamt + gstAMount - discountObj.value;
+    const roundAmount = Math.ceil(total);
+
+    if (roundAmount != total) {
+      setRound(getRoundAmount(roundAmount - total));
+      setTotal(roundAmount);
+    } else {
+      setTotal(total);
+      setRound(0);
+    }
   };
 
   const getTotal = () => {
@@ -616,12 +649,14 @@ const CreateInvoice = () => {
       Number(invoiceData.details.tkachu ?? 0) +
         Number(invoiceData.details.tpaku ?? 0) +
         Number(invoiceData.details.gst ?? 0) -
-        Number(invoiceData.details.discount ?? 0)
+        Number(invoiceData.details.discount ?? 0) +
+        Number(invoiceData.details.roundof ?? 0)
     );
     setDiscount({
       ...discount,
       value: Number(invoiceData.details.discount ?? 0),
     });
+    setRound(Number(invoiceData.details.roundof ?? 0));
     setGstTax(Number(invoiceData.details.gst));
     const invoiceRowstoShow = [];
     invoiceRows.forEach((element, index) => {
@@ -667,17 +702,6 @@ const CreateInvoice = () => {
       fetchInvoiceData(invoiceId);
     }
   }, [invoiceId, products]);
-
-  useEffect(() => {
-    const roundAmount = Math.ceil(total);
-    if (roundAmount != total) {
-      setRound(getRoundAmount(roundAmount - total));
-      setTotal(roundAmount);
-    }
-    if (total == 0) {
-      setRound(0);
-    }
-  }, [total]);
 
   const getRoundAmount = (amount) => {
     return Math.round(Number(amount ?? 0) * 100) / 100;
