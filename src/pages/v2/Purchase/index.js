@@ -31,6 +31,7 @@ import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import WhatsappModal from "components/Custom/WhatsappModal";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+import { BiEditAlt } from "react-icons/bi";
 
 const Purchase = () => {
   var Toast = Swal.mixin({
@@ -119,6 +120,11 @@ const Purchase = () => {
   const deleteClick = (cellData, rowData, row, col) => {
     setDeleteId(cellData.id);
     handleShowConfirmation();
+  };
+
+  const editClick = (cellData, rowData, row, col) => {
+    const id = btoa(Number(cellData.id));
+    history.push(`/admin/v1/purchase-invoice?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {
@@ -217,7 +223,17 @@ const Purchase = () => {
                   </span>
                 </Button>
               </div>
-
+              <div>
+                <Button
+                  className="btn-neutral btn-icon btn-sm"
+                  color="default"
+                  onClick={() => editClick(cellData, rowData, row, col)}
+                >
+                  <span>
+                    <BiEditAlt size={16} />
+                  </span>
+                </Button>
+              </div>
               <div>
                 <Button
                   className="btn-danger btn-icon btn-sm"

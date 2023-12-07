@@ -350,7 +350,7 @@ const CreateInvoice = () => {
 
       rowsInput["pUnit"] = rowsInput["units"][0].id;
       if (product != null && !isNaN(product.srate)) {
-        rowsInput["rate"] = product.srate;
+        rowsInput["bRate"] = product.srate;
       }
       rowsInput["gst"] =
         product != null ? (isNaN(product.gst) ? "0" : product.gst) : "0";
@@ -1363,7 +1363,7 @@ const CreateInvoice = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan={7}></td>
+                    <td colSpan={6}></td>
                     <td align="right">Discount</td>
                     <td>
                       <CustomInputWoutFormik
@@ -1388,8 +1388,9 @@ const CreateInvoice = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan={7}></td>
+                    <td colSpan={6}></td>
                     <td align="right">GST Tax</td>
+                    <td></td>
                     <td>
                       <CustomInputWoutFormik
                         className="text-right"
@@ -1400,7 +1401,7 @@ const CreateInvoice = () => {
                   </tr>
                   {round != 0 && (
                     <tr>
-                      <td colSpan={8}></td>
+                      <td colSpan={6}></td>
                       <td align="right">
                         <strong>Round</strong>
                       </td>
@@ -1415,10 +1416,11 @@ const CreateInvoice = () => {
                     </tr>
                   )}
                   <tr>
-                    <td colSpan={7}></td>
+                    <td colSpan={6}></td>
                     <td align="right">
                       <strong>Final Total</strong>
                     </td>
+                    <td></td>
                     <td>
                       <CustomInputWoutFormik
                         className="text-right"
