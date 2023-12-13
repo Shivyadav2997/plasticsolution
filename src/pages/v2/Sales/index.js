@@ -180,6 +180,7 @@ const Sales = () => {
 
   const openEWAYModel = async (rowData) => {
     setEwayId(rowData.id);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggleEway();
   };
 
@@ -192,6 +193,7 @@ const Sales = () => {
     setTransport(false);
     setEwayInvoice(true);
     handleToggle(true);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
@@ -443,7 +445,7 @@ const Sales = () => {
         icon: "success",
         title: resp.message,
       });
-      ewayJson({ id: ewayId });
+      ewayJson({ id: ewayId, mobile: wpData.mobile });
       getData();
       handleToggleEway();
     } else {

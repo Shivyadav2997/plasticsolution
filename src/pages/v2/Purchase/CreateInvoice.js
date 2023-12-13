@@ -464,6 +464,9 @@ const CreateInvoice = () => {
     gst = gst == null ? gstTax : gst;
     bamt = bamt == null ? totalBAmt : bamt;
 
+    if (percentage && discountValue > 100) {
+      discountValue = 100;
+    }
     if (bamt <= 0) {
       setDiscount(discountObj);
       return;
@@ -495,6 +498,8 @@ const CreateInvoice = () => {
         setGstTax(getRoundAmount(gstAMount));
       }
     }
+    bamt = Number(bamt ?? 0);
+    gstAMount = Number(gstAMount ?? 0);
     setDiscount(newdiscount);
     let total = bamt + gstAMount - discountObj.value;
     const roundAmount = Math.ceil(total);
@@ -1310,6 +1315,7 @@ const CreateInvoice = () => {
                       <CustomInputWoutFormik
                         type="number"
                         defaultValue={value}
+                        value={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
                           calCulateTotal(row);
@@ -1323,6 +1329,7 @@ const CreateInvoice = () => {
                       <CustomInputWoutFormik
                         type="number"
                         defaultValue={value}
+                        value={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
                         }}
@@ -1391,6 +1398,18 @@ const CreateInvoice = () => {
                   </tr>
                   <tr>
                     <td colSpan={6}></td>
+                    <td align="right">GST Tax</td>
+                    <td></td>
+                    <td>
+                      <CustomInputWoutFormik
+                        className="text-right"
+                        value={gstTax}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={6}></td>
                     <td align="right">Discount</td>
                     <td>
                       <CustomInputWoutFormik
@@ -1414,18 +1433,7 @@ const CreateInvoice = () => {
                       />
                     </td>
                   </tr>
-                  <tr>
-                    <td colSpan={6}></td>
-                    <td align="right">GST Tax</td>
-                    <td></td>
-                    <td>
-                      <CustomInputWoutFormik
-                        className="text-right"
-                        value={gstTax}
-                        disabled
-                      />
-                    </td>
-                  </tr>
+
                   {round != 0 && (
                     <tr>
                       <td colSpan={6}></td>
