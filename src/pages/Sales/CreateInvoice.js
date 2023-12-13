@@ -448,7 +448,9 @@ const CreateInvoice = () => {
     } else {
       setGstTax(getRoundAmount(gst));
       let total = sub1 + sub2 + gst;
-      const roundAmount = Math.ceil(total);
+      let roundAmount = Math.ceil(total);
+      roundAmount = Number(roundAmount ?? 0);
+      total = Number(total ?? 0);
 
       if (roundAmount != total) {
         setRound(getRoundAmount(roundAmount - total));
@@ -508,6 +510,9 @@ const CreateInvoice = () => {
     }
 
     let gstAMount = withGSt ? gst : getTotal();
+    bamt = Number(bamt ?? 0);
+    wamt = Number(wamt ?? 0);
+    gstAMount = Number(gstAMount ?? 0);
     if (gstAMount > 0) {
       if (discountObj.value > 0) {
         gstAMount = gstAMount - (gstAMount * discountObj.percentage) / 100;
@@ -516,13 +521,12 @@ const CreateInvoice = () => {
         setGstTax(getRoundAmount(gstAMount));
       }
     }
-    bamt = Number(bamt ?? 0);
-    wamt = Number(wamt ?? 0);
-    gstAMount = Number(gstAMount ?? 0);
+
     setDiscount(newdiscount);
     let total = bamt + wamt + gstAMount - discountObj.value;
-    const roundAmount = Math.ceil(total);
-
+    let roundAmount = Math.ceil(total);
+    roundAmount = Number(roundAmount ?? 0);
+    total = Number(total ?? 0);
     if (roundAmount != total) {
       setRound(getRoundAmount(roundAmount - total));
       setTotal(roundAmount);
@@ -659,10 +663,10 @@ const CreateInvoice = () => {
     );
     setDiscount({
       ...discount,
-      value: Number(invoiceData.details.discount ?? 0),
+      value: 25,
     });
     setRound(Number(invoiceData.details.roundof ?? 0));
-    setGstTax(Number(invoiceData.details.gst));
+    setGstTax(Number(invoiceData.details.gst) ?? 0);
     const invoiceRowstoShow = [];
     invoiceRows.forEach((element, index) => {
       const product = products.find((x) => x.id == element.item_name);
