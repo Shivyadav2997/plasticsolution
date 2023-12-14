@@ -11,9 +11,14 @@ import Transport from "pages/Transport/index";
 import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
+import SalesReturn from "pages/SalesReturn";
+import PurchaseReturn from "pages/PurchaseReturn";
 import Purchase from "pages/Purchase";
 import CreateInvoice from "pages/Sales/CreateInvoice.js";
 import PurchaseInvoice from "pages/Purchase/CreateInvoice.js";
+import SalesReturnInvoice from "pages/SalesReturn/CreateInvoice";
+import PurchaseReturnInvoice from "pages/PurchaseReturn/CreateInvoice";
+
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
 import Account from "pages/Account";
@@ -138,12 +143,28 @@ var routes = [
     component: Sales,
   },
   {
+    path: "/v1/return-sales",
+    name: "Sales Return",
+    icon: "text-green",
+    layout: "/admin",
+    iconCmp: TbPackageExport,
+    component: SalesReturn,
+  },
+  {
     path: "/v1/purchase",
     name: "Purchase",
     icon: "text-red",
     layout: "/admin",
     iconCmp: TbPackageImport,
     component: Purchase,
+  },
+  {
+    path: "/v1/return-purchase",
+    name: "Purchase Return",
+    icon: "text-green",
+    layout: "/admin",
+    iconCmp: TbPackageImport,
+    component: PurchaseReturn,
   },
   {
     path: "/v1/sales-invoice",
@@ -156,6 +177,20 @@ var routes = [
     path: "/v1/purchase-invoice",
     name: "Create Purchase Invoice",
     component: PurchaseInvoice,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v1/return-sales-invoice",
+    name: "Create Return Sales Invoice",
+    component: SalesReturnInvoice,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v1/return-purchase-invoice",
+    name: "Create Return Purchase Invoice",
+    component: PurchaseReturnInvoice,
     layout: "/admin",
     wOutLink: true,
   },

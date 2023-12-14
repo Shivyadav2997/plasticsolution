@@ -69,6 +69,12 @@ import {
   transactionDownloadAction,
   getInvoiceAction,
   updateInvoiceAction,
+  returnSaleListAction,
+  returnPurchaseistAction,
+  createPurchaseReturnAction,
+  createSalesReturnAction,
+  updatePurchaseReturnAction,
+  updateSalesReturnAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1758,6 +1764,170 @@ const updateInvoice = async (token, payload, json) => {
   }
 };
 
+const returnSaleListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${returnSaleListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const returnPurchaseListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${returnPurchaseistAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createReturnSalesInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createSalesReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createReturnPurchaseInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createPurchaseReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateReturnPurchaseInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updatePurchaseReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateReturnSalesInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateSalesReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1836,4 +2006,10 @@ export {
   downloadTransactionPdf,
   getInvoiceDetails,
   updateInvoice,
+  returnSaleListGet,
+  returnPurchaseListGet,
+  createReturnPurchaseInvoice,
+  createReturnSalesInvoice,
+  updateReturnPurchaseInvoice,
+  updateReturnSalesInvoice,
 };
