@@ -448,7 +448,7 @@ const CreateInvoice = () => {
     } else {
       setGstTax(getRoundAmount(gst));
       let total = sub1 + sub2 + gst;
-      let roundAmount = Math.ceil(total);
+      let roundAmount = Math.round(total);
       roundAmount = Number(roundAmount ?? 0);
       total = Number(total ?? 0);
 
@@ -524,7 +524,7 @@ const CreateInvoice = () => {
 
     setDiscount(newdiscount);
     let total = bamt + wamt + gstAMount - discountObj.value;
-    let roundAmount = Math.ceil(total);
+    let roundAmount = Math.round(total);
     roundAmount = Number(roundAmount ?? 0);
     total = Number(total ?? 0);
     if (roundAmount != total) {
@@ -689,14 +689,14 @@ const CreateInvoice = () => {
           item: product?.id,
           desc: element.item_desc,
           pUnit: units[0].id,
-          pQty: element.pkqty,
-          uQty: element.uqty,
-          rate: element.rate,
-          bRate: element.paku,
-          gst: element.pgst,
-          tax: element.tax,
-          wAmt: element.kachu,
-          bAmt: element.total,
+          pQty: Number(element.pkqty ?? 0),
+          uQty: Number(element.uqty ?? 0),
+          rate: Number(element.rate ?? 0),
+          bRate: Number(element.paku ?? 0),
+          gst: Number(element.pgst ?? 0),
+          tax: Number(element.tax ?? 0),
+          wAmt: Number(element.kachu ?? 0),
+          bAmt: Number(element.total ?? 0),
           id: index,
           units: units,
         },
