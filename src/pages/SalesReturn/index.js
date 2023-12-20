@@ -62,9 +62,7 @@ const Sales = () => {
 
   const [parties, setParties] = useState([]);
   const [show, setShow] = useState(false);
-  const [showCreateEway, setShowCreateEway] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [ewayId, setEwayId] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const history = useHistory();
   const childRef = useRef(null);
@@ -77,11 +75,7 @@ const Sales = () => {
   const [monthSales, setmonthSales] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
-  const [transport, setTransport] = useState(false);
-  const [office, setOffice] = useState(false);
-  const [duplicate, setDuplicate] = useState(false);
   const [without, setWithout] = useState(false);
-  const [ewayInvoice, setEwayInvoice] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
   const [wpData, setWPData] = useState({
@@ -104,13 +98,6 @@ const Sales = () => {
 
   const handleToggle = (showModal) => {
     setShow(showModal);
-  };
-
-  const handleToggleEway = () => {
-    if (showCreateEway) {
-      setEwayId("");
-    }
-    setShowCreateEway(!showCreateEway);
   };
 
   const handleShowConfirmation = () => {
@@ -151,57 +138,21 @@ const Sales = () => {
 
   const editClick = (cellData, rowData, row, col) => {
     const id = btoa(Number(cellData.id));
-    history.push(`/admin/v1/sales-invoice?invoice=${id}`);
+    history.push(`/admin/v1/return-sales-invoice?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {
     const id = btoa(Number(rowData.id));
     setInvId(id);
     setOriginal(true);
-    setDuplicate(false);
-    setOffice(false);
-    setTransport(false);
-    setEwayInvoice(false);
     setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle(true);
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
+      rs: 1,
       a: 1,
-      b: 0,
-      c: 0,
-      d: 0,
       w: 0,
-    });
-    setInvoiceHtml(resp.data);
-    dispatch(setLoader(false));
-  };
-
-  const openEWAYModel = async (rowData) => {
-    setEwayId(rowData.id);
-    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
-    handleToggleEway();
-  };
-
-  const ewayJson = async (rowData) => {
-    const id = btoa(Number(rowData.id));
-    setInvId(id);
-    setOriginal(false);
-    setDuplicate(false);
-    setOffice(false);
-    setTransport(false);
-    setEwayInvoice(true);
-    handleToggle(true);
-    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
-    dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
-      id: id,
-      a: 0,
-      b: 0,
-      c: 0,
-      d: 0,
-      w: 0,
-      eway: 1,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -211,7 +162,6 @@ const Sales = () => {
     {
       targets: 1,
       createdCell: (td, cellData, rowData, row, col) => {
-        console.log("partyTest", rowData);
         const root = ReactDOM.createRoot(td);
         root.render(
           <a
@@ -291,25 +241,6 @@ const Sales = () => {
                 </Button>
               </div>
               <div>
-                {rowData.ewaynumber == null ? (
-                  <Button
-                    className="btn-outline-danger btn-icon btn-sm"
-                    color="default"
-                    onClick={() => openEWAYModel(rowData)}
-                  >
-                    Create EWAY
-                  </Button>
-                ) : (
-                  <Button
-                    className="btn-outline-success btn-icon btn-sm"
-                    color="default"
-                    onClick={() => ewayJson(rowData)}
-                  >
-                    View EWAY
-                  </Button>
-                )}
-              </div>
-              {/* <div>
                 <Button
                   className="btn-neutral btn-icon btn-sm"
                   color="default"
@@ -319,7 +250,7 @@ const Sales = () => {
                     <BiEditAlt size={16} />
                   </span>
                 </Button>
-              </div> */}
+              </div>
               <div>
                 <Button
                   className="btn-danger btn-icon btn-sm"
@@ -441,26 +372,6 @@ const Sales = () => {
   useEffect(() => {
     getTransactionParties();
   }, []);
-  const createEway = async (payload) => {
-    dispatch(setLoader(true));
-    let resp = await ewayCreate(user.token, { id: ewayId, ...payload });
-    dispatch(setLoader(false));
-
-    if (resp.data.sucess == 1) {
-      Toast.fire({
-        icon: "success",
-        title: resp.message,
-      });
-      ewayJson({ id: ewayId, mobile: wpData.mobile });
-      getData();
-      handleToggleEway();
-    } else {
-      Toast.fire({
-        icon: "error",
-        title: resp.message,
-      });
-    }
-  };
 
   const tabPan = [
     <CustomTable
@@ -520,12 +431,9 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: invId,
+      rs: 1,
       a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
       w: without ? 1 : 0,
-      eway: ewayInvoice ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -535,13 +443,10 @@ const Sales = () => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
+      rs: 1,
       a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
       w: without ? 1 : 0,
       wp: whatsapp ? 1 : 0,
-      eway: ewayInvoice ? 1 : 0,
       mo: mob,
     });
     dispatch(setLoader(false));
@@ -565,7 +470,7 @@ const Sales = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [without, original, duplicate, transport, office, ewayInvoice]);
+  }, [without, original]);
 
   const toggleWPModal = () => {
     setWPData({ ...wpData, show: !wpData.show });
@@ -573,127 +478,6 @@ const Sales = () => {
 
   return (
     <>
-      <CustomModal
-        show={showCreateEway}
-        title={`Create EWAY`}
-        handleToggle={handleToggleEway}
-        footer={
-          <Button
-            type="submit"
-            className="mr-1"
-            color="primary"
-            block
-            size="md"
-            onClick={() => formRef.current.handleSubmit()}
-          >
-            Create
-          </Button>
-        }
-      >
-        <Formik
-          initialValues={{
-            supplytype: "O",
-            subtype: "1",
-            dtype: "INV",
-            ttype: "1",
-          }}
-          validationSchema={validate}
-          onSubmit={(values) => {
-            createEway(values);
-          }}
-          innerRef={formRef}
-          validateOnChange={false}
-          validateOnBlur={false}
-        >
-          {(formik) => (
-            <div>
-              <Form>
-                <CustomInput
-                  name="supplytype"
-                  type="select"
-                  label="Supply Type"
-                  options={[
-                    { label: "Outward", value: "O" },
-                    { label: "Inward", value: "I" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-
-                <CustomInput
-                  name="subtype"
-                  type="select"
-                  label="Sub Type"
-                  options={[
-                    { label: "Supply", value: "1" },
-                    { label: "Import", value: "2" },
-                    { label: "Export", value: "3" },
-                    { label: "Job Work", value: "4" },
-                    { label: "For Own Use", value: "5" },
-                    { label: "Job work Returns", value: "6" },
-                    { label: "Sales Return", value: "7" },
-                    { label: "Others", value: "8" },
-                    { label: "SKD/CKD/Lots", value: "9" },
-                    { label: "Line Sales", value: "10" },
-                    { label: "Recipient Not Known", value: "11" },
-                    { label: "Exhibition or Fairs", value: "12" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-                <CustomInput
-                  name="dtype"
-                  type="select"
-                  label="Document Type"
-                  options={[
-                    { label: "Tax Invoice", value: "INV" },
-                    { label: "Bill of Supply", value: "BIL" },
-                    { label: "Delivery Challan", value: "CHL" },
-                    { label: "Bill of Entry", value: "BOE" },
-                    { label: "Others", value: "OTH" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-                <CustomInput
-                  name="ttype"
-                  type="select"
-                  label="Transaction Type"
-                  options={[
-                    { label: "Regular", value: "1" },
-                    { label: "Bill To - Ship To", value: "2" },
-                    { label: "Bill From - Dispatch From", value: "3" },
-                    { label: "Combination of 2 and 3", value: "4" },
-                  ].map((opt) => {
-                    return <option value={opt.value}>{opt.label}</option>;
-                  })}
-                />
-                <CustomInput
-                  placeholder="Distance"
-                  name="distance"
-                  type="number"
-                  label="Approximate Distance (in KM)"
-                />
-                <hr
-                  className="mb-0"
-                  style={{ borderTop: "2px dotted", width: "50%" }}
-                />
-                <h2 className="mb-0 text-center">PART B</h2>
-                <hr
-                  className="mt-0"
-                  style={{ borderTop: "2px dotted", width: "50%" }}
-                />
-                <CustomInput
-                  placeholder=""
-                  name="vnumber"
-                  type="text"
-                  label="Vehicle No"
-                />
-              </Form>
-            </div>
-          )}
-        </Formik>
-      </CustomModal>
       <ConfirmationDialog
         show={showDelete}
         handleToggle={handleShowConfirmation}
@@ -723,9 +507,6 @@ const Sales = () => {
                       onChange={(e) => {
                         if (e.currentTarget.checked) {
                           setOriginal(false);
-                          setTransport(false);
-                          setOffice(false);
-                          setDuplicate(false);
                         } else {
                           setOriginal(true);
                         }
@@ -747,103 +528,13 @@ const Sales = () => {
                           setWithout(false);
                         }
                         setOriginal(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !transport &&
-                          !duplicate
-                        ) {
+                        if (!e.currentTarget.checked) {
                           setOriginal(true);
                         }
                       }}
                     />
                     <label className="ml-2" htmlFor="original">
                       Original
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="transport"
-                      checked={transport}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setTransport(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !original &&
-                          !duplicate
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="transport">
-                      Transport
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="office"
-                      checked={office}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setOffice(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !original &&
-                          !transport &&
-                          !duplicate
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="office">
-                      Office
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="duplicate"
-                      checked={duplicate}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setDuplicate(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !transport &&
-                          !original
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor=" duplicate">
-                      Duplicate
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="ewayInvoice"
-                      checked={ewayInvoice}
-                      onChange={(e) => {
-                        setEwayInvoice(e.currentTarget.checked);
-                      }}
-                    />
-                    <label className="ml-2" htmlFor=" duplicate">
-                      EWAY
                     </label>
                   </Col>
                 </Row>

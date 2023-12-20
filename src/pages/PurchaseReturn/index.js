@@ -124,7 +124,7 @@ const Purchase = () => {
 
   const editClick = (cellData, rowData, row, col) => {
     const id = btoa(Number(cellData.id));
-    history.push(`/admin/v1/purchase-invoice?invoice=${id}`);
+    history.push(`/admin/v1/return-purchase-invoice?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {
@@ -136,7 +136,7 @@ const Purchase = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
-      p: 1,
+      rp: 1,
       a: 1,
       w: 0,
     });
@@ -148,7 +148,6 @@ const Purchase = () => {
     {
       targets: 1,
       createdCell: (td, cellData, rowData, row, col) => {
-        console.log("partyTest", rowData);
         const root = ReactDOM.createRoot(td);
         root.render(
           <a
@@ -227,7 +226,7 @@ const Purchase = () => {
                   </span>
                 </Button>
               </div>
-              {/* <div>
+              <div>
                 <Button
                   className="btn-neutral btn-icon btn-sm"
                   color="default"
@@ -237,7 +236,7 @@ const Purchase = () => {
                     <BiEditAlt size={16} />
                   </span>
                 </Button>
-              </div> */}
+              </div>
               <div>
                 <Button
                   className="btn-danger btn-icon btn-sm"
@@ -428,7 +427,7 @@ const Purchase = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: invId,
-      p: 1,
+      rp: 1,
       a: original && !without ? 1 : 0,
       w: without ? 1 : 0,
     });
@@ -440,7 +439,7 @@ const Purchase = () => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
-      p: 1,
+      rp: 1,
       a: original && !without ? 1 : 0,
       w: without ? 1 : 0,
       wp: whatsapp ? 1 : 0,

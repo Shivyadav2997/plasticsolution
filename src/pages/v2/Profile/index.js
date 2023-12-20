@@ -178,7 +178,6 @@ const Profile = () => {
           }}
           validationSchema={validatePass}
           onSubmit={(values) => {
-            console.log("passValue", values);
             updatePass({ oldpass: values.pass, newpass: values.cpass });
           }}
           validateOnBlur={false}

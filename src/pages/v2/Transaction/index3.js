@@ -113,7 +113,6 @@ const Transaction = () => {
         //   data2["recive"] = [...data2["recive"], ...data2["recive"]];
         // }
         setParties(data2);
-        // console.log(data2);
       } else {
         setParties([]);
       }

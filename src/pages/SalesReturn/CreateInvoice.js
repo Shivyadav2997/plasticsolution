@@ -337,7 +337,7 @@ const CreateInvoice = () => {
           title: resp.data.msg,
         });
         setTimeout(() => {
-          history.push("/admin/v1/sales");
+          history.push("/admin/v1/return-sales");
         }, 1500);
       } else {
         Toast.fire({
@@ -604,7 +604,7 @@ const CreateInvoice = () => {
     getProductUnits();
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
-    billNoGenerate(upperData.bDate);
+    // billNoGenerate(upperData.bDate);
     const intervalId = setInterval(() => {
       const firstInput = document.querySelector(
         ".createInvoiceClass input:not([disabled]), .createInvoiceClass select:not([disabled])"
@@ -1557,7 +1557,7 @@ const CreateInvoice = () => {
               </Button>
               <Button
                 className="btn-md btn-outline-danger"
-                onClick={() => history.push("/admin/v1/sales")}
+                onClick={() => history.push("/admin/v1/return-sales")}
               >
                 Cancel
               </Button>

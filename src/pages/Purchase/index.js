@@ -148,7 +148,6 @@ const Purchase = () => {
     {
       targets: 1,
       createdCell: (td, cellData, rowData, row, col) => {
-        console.log("partyTest", rowData);
         const root = ReactDOM.createRoot(td);
         root.render(
           <a
