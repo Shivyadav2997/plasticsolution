@@ -673,10 +673,17 @@ const CreateInvoice = () => {
         Number(invoiceData.details.discount ?? 0) +
         Number(invoiceData.details.roundof ?? 0)
     );
-    setDiscount({
-      ...discount,
-      value: Number(invoiceData.details.discount ?? 0),
-    });
+    const discountValue = invoiceData.details.discount ?? 0;
+    if (discountValue > 0) {
+      setDiscount({
+        percentage: getRoundAmount(
+          (discountValue * 100) / Number(invoiceData.details.tpaku ?? 0)
+        ),
+        value: discountValue,
+      });
+    } else {
+      setDiscount({ percentage: 0, value: 0 });
+    }
     setRound(Number(invoiceData.details.roundof ?? 0));
     setGstTax(Number(invoiceData.details.gst));
     const invoiceRowstoShow = [];
