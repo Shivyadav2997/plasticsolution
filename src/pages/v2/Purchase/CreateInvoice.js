@@ -310,7 +310,12 @@ const CreateInvoice = () => {
     curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
     setRows(curData);
   };
-  const calCulateTotal = (rowsInput, calcQty = false, onlyreturn = false) => {
+  const calCulateTotal = (
+    rowsInput,
+    calcQty = false,
+    onlyreturn = false,
+    withTax = false
+  ) => {
     if (calcQty) {
       switch (rowsInput["pUnit"]) {
         case "1":
@@ -330,10 +335,22 @@ const CreateInvoice = () => {
       rowsInput["bAmt"] = 0;
     }
 
-    if (rowsInput["gst"] && rowsInput["bAmt"]) {
-      rowsInput["tax"] = (rowsInput["bAmt"] * rowsInput["gst"]) / 100;
+    if (withTax) {
+      if (rowsInput["tax"] && rowsInput["bAmt"]) {
+        rowsInput["gst"] = getRoundAmount(
+          (100 * rowsInput["tax"]) / rowsInput["bAmt"]
+        );
+      } else {
+        rowsInput["gst"] = 0;
+      }
     } else {
-      rowsInput["tax"] = 0;
+      if (rowsInput["gst"] && rowsInput["bAmt"]) {
+        rowsInput["tax"] = getRoundAmount(
+          (rowsInput["bAmt"] * rowsInput["gst"]) / 100
+        );
+      } else {
+        rowsInput["tax"] = 0;
+      }
     }
 
     let sub1 = 0,
@@ -1081,7 +1098,6 @@ const CreateInvoice = () => {
                           calCulateTotal(row);
                         }}
                         className="text-right"
-                        disabled
                       />
                     );
                   case "tax":
@@ -1092,9 +1108,9 @@ const CreateInvoice = () => {
                         value={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
+                          calCulateTotal(row, false, false, true);
                         }}
                         className="text-right"
-                        disabled
                       />
                     );
                   case "bAmt":
@@ -1158,18 +1174,6 @@ const CreateInvoice = () => {
                   </tr>
                   <tr>
                     <td colSpan={6}></td>
-                    <td align="right">GST Tax</td>
-                    <td></td>
-                    <td>
-                      <CustomInputWoutFormik
-                        className="text-right"
-                        value={gstTax}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan={6}></td>
                     <td align="right">Discount</td>
                     <td>
                       <CustomInputWoutFormik
@@ -1190,6 +1194,18 @@ const CreateInvoice = () => {
                           calculateDiscount(event.target.value, false, true)
                         }
                         disabled={totalBAmt <= 0}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={6}></td>
+                    <td align="right">GST Tax</td>
+                    <td></td>
+                    <td>
+                      <CustomInputWoutFormik
+                        className="text-right"
+                        value={gstTax}
+                        disabled
                       />
                     </td>
                   </tr>

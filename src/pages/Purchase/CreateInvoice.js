@@ -293,7 +293,12 @@ const CreateInvoice = () => {
     curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
     setRows(curData);
   };
-  const calCulateTotal = (rowsInput, calcQty = false, onlyreturn = false) => {
+  const calCulateTotal = (
+    rowsInput,
+    calcQty = false,
+    onlyreturn = false,
+    withTax = false
+  ) => {
     if (calcQty) {
       switch (rowsInput["pUnit"]) {
         case "1":
@@ -318,10 +323,22 @@ const CreateInvoice = () => {
     } else {
       rowsInput["wAmt"] = 0;
     }
-    if (rowsInput["gst"] && rowsInput["bAmt"]) {
-      rowsInput["tax"] = (rowsInput["bAmt"] * rowsInput["gst"]) / 100;
+    if (withTax) {
+      if (rowsInput["tax"] && rowsInput["bAmt"]) {
+        rowsInput["gst"] = getRoundAmount(
+          (100 * rowsInput["tax"]) / rowsInput["bAmt"]
+        );
+      } else {
+        rowsInput["gst"] = 0;
+      }
     } else {
-      rowsInput["tax"] = 0;
+      if (rowsInput["gst"] && rowsInput["bAmt"]) {
+        rowsInput["tax"] = getRoundAmount(
+          (rowsInput["bAmt"] * rowsInput["gst"]) / 100
+        );
+      } else {
+        rowsInput["tax"] = 0;
+      }
     }
 
     let sub1 = 0,
@@ -1084,7 +1101,6 @@ const CreateInvoice = () => {
                         }}
                         value={value}
                         className="text-right"
-                        disabled
                       />
                     );
                   case "tax":
@@ -1094,10 +1110,10 @@ const CreateInvoice = () => {
                         defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
+                          calCulateTotal(row, false, false, true);
                         }}
                         value={value}
                         className="text-right"
-                        disabled
                       />
                     );
                   case "wAmt":
