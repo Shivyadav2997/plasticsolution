@@ -161,7 +161,7 @@ const CreateInvoice = () => {
       setError({ ...error, bType: "Please Select Bill Type" });
     } else if (upperData.bNo == "") {
       setError({ ...error, bNo: "Please Input BillNo" });
-    } else if (rows.length == 0 || rows[0].item != "") {
+    } else if (rows.length == 0 || rows[0].row.item == "") {
       Toast.fire({
         icon: "error",
         title: "Invalid Invoice Data",
@@ -1014,7 +1014,6 @@ const CreateInvoice = () => {
                     return (
                       <CustomInputWoutFormik
                         type="text"
-                        value={value}
                         defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
