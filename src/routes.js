@@ -12,12 +12,16 @@ import Transaction from "pages/Transaction";
 import Expense from "pages/Expenses";
 import Sales from "pages/Sales";
 import SalesReturn from "pages/SalesReturn";
+import SalesChallan from "pages/SalesChallan";
+import PurchaseChallan from "pages/PurchaseChallan";
 import PurchaseReturn from "pages/PurchaseReturn";
 import Purchase from "pages/Purchase";
 import CreateInvoice from "pages/Sales/CreateInvoice.js";
 import PurchaseInvoice from "pages/Purchase/CreateInvoice.js";
 import SalesReturnInvoice from "pages/SalesReturn/CreateInvoice";
 import PurchaseReturnInvoice from "pages/PurchaseReturn/CreateInvoice";
+import CreateSalesChallan from "pages/SalesChallan/CreateInvoice";
+import CreatePurchaseChallan from "pages/PurchaseChallan/CreateInvoice";
 
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
@@ -135,37 +139,76 @@ var routes = [
     iconCmp: AiFillBook,
   },
   {
-    path: "/v1/sales",
+    path: "/v1/",
     name: "Sales",
     icon: "text-yellow",
     layout: "/admin",
     iconCmp: TbPackageExport,
-    component: Sales,
+    hasChild: true,
+    state: "purchase",
+    childRoutes: [
+      {
+        path: "/v1/sales",
+        name: "Sales List",
+        icon: "text-orange",
+        component: Sales,
+        layout: "/admin",
+        iconCmp: TbPackageExport,
+      },
+      {
+        path: "/v1/return-sales",
+        name: "Sales Return",
+        icon: "text-green",
+        layout: "/admin",
+        iconCmp: TbPackageExport,
+        component: SalesReturn,
+      },
+      {
+        path: "/v1/sales-challan",
+        name: "Sales Challan",
+        icon: "text-blue",
+        layout: "/admin",
+        iconCmp: TbPackageExport,
+        component: SalesChallan,
+      },
+    ],
   },
   {
-    path: "/v1/return-sales",
-    name: "Sales Return",
-    icon: "text-green",
-    layout: "/admin",
-    iconCmp: TbPackageExport,
-    component: SalesReturn,
-  },
-  {
-    path: "/v1/purchase",
+    path: "/v1/",
     name: "Purchase",
     icon: "text-red",
     layout: "/admin",
-    iconCmp: TbPackageImport,
-    component: Purchase,
+    iconCmp: TbPackageExport,
+    hasChild: true,
+    state: "sales",
+    childRoutes: [
+      {
+        path: "/v1/purchase",
+        name: "Purchase List",
+        icon: "text-yellow",
+        layout: "/admin",
+        iconCmp: TbPackageImport,
+        component: Purchase,
+      },
+      {
+        path: "/v1/return-purchase",
+        name: "Purchase Return",
+        icon: "text-green",
+        layout: "/admin",
+        iconCmp: TbPackageImport,
+        component: PurchaseReturn,
+      },
+      {
+        path: "/v1/purchase-challan",
+        name: "Purchase Challan",
+        icon: "text-blue",
+        layout: "/admin",
+        iconCmp: TbPackageExport,
+        component: PurchaseChallan,
+      },
+    ],
   },
-  {
-    path: "/v1/return-purchase",
-    name: "Purchase Return",
-    icon: "text-green",
-    layout: "/admin",
-    iconCmp: TbPackageImport,
-    component: PurchaseReturn,
-  },
+
   {
     path: "/v1/sales-invoice",
     name: "Create Sales Invoice",
@@ -191,6 +234,20 @@ var routes = [
     path: "/v1/return-purchase-invoice",
     name: "Create Return Purchase Invoice",
     component: PurchaseReturnInvoice,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v1/sales-challan-create",
+    name: "Create Sales Challan",
+    component: CreateSalesChallan,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v1/purchase-challan-create",
+    name: "Create Purchase Challan",
+    component: CreatePurchaseChallan,
     layout: "/admin",
     wOutLink: true,
   },

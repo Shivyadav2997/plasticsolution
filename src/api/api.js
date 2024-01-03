@@ -75,6 +75,13 @@ import {
   createSalesReturnAction,
   updatePurchaseReturnAction,
   updateSalesReturnAction,
+  createChallanAction,
+  updateChallanAction,
+  getChallanNoAction,
+  challanDetailsAction,
+  saleChallanListAction,
+  purchaseChallanListAction,
+  challanToInvoiceAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -1121,10 +1128,13 @@ const getBillNo = async (token, payload) => {
   }
 };
 
-const createInvoice = async (token, payload, json) => {
+const createInvoice = async (token, payload, json, challanId = null) => {
   try {
     const formData = new FormData();
     formData.append("rows", json);
+    if (challanId != null) {
+      formData.append("challan_id", challanId);
+    }
     const resp = await axios.post(
       baseUrl +
         `?action=${createInvoiceAction}&token=${token}&${getParams(payload)}`,
@@ -1928,6 +1938,177 @@ const updateReturnSalesInvoice = async (token, payload, json) => {
   }
 };
 
+const createChallan = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createChallanAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateChallan = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateChallanAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getChallanDetails = async (token, id) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${challanDetailsAction}&token=${token}&id=${id}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getChallanNo = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${getChallanNoAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const purchaseChallanListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${purchaseChallanListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const saleChallanListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${saleChallanListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createChallanFromInvoice = async (token, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", json);
+    const resp = await axios.post(
+      baseUrl + `?action=${challanToInvoiceAction}&token=${token}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
 export {
   getMonthName,
   getData,
@@ -2012,4 +2193,11 @@ export {
   createReturnSalesInvoice,
   updateReturnPurchaseInvoice,
   updateReturnSalesInvoice,
+  saleChallanListGet,
+  createChallan,
+  updateChallan,
+  getChallanDetails,
+  getChallanNo,
+  purchaseChallanListGet,
+  createChallanFromInvoice,
 };

@@ -16,6 +16,8 @@ import {
 } from "reactstrap";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
+import "datatables.net-select-dt/js/select.dataTables";
+import "datatables.net-select-dt/css/select.dataTables.css";
 import "datatables.net-buttons/js/dataTables.buttons.js";
 import "datatables.net-buttons/js/buttons.colVis.js";
 import "datatables.net-buttons/js/buttons.flash.js";
@@ -52,8 +54,10 @@ const CustomTable = forwardRef(
       withCard = true,
       custom = false,
       showNoCol = true,
+      showCbox = false,
       pageLength = 10,
       numColumns = [],
+      checkBoxClick = null,
     },
     ref
   ) => {
@@ -61,14 +65,34 @@ const CustomTable = forwardRef(
     const datatableRef = useRef(null);
     const [curTable, setCurTable] = useState(null);
     var colDefs = [];
+    let numCOlIndex = 0;
+    if (showCbox) {
+      numCOlIndex = 1;
+    }
     if (showNoCol) {
       colDefs = [
         {
-          targets: 0,
+          targets: numCOlIndex,
           render: function (data, type, row, meta) {
             return meta.row + meta.settings._iDisplayStart + 1;
           },
           className: "min-tablet-p",
+        },
+      ];
+    }
+    if (showCbox) {
+      colDefs = [
+        ...colDefs,
+        {
+          orderable: false,
+          className: "select-checkbox",
+          targets: 0,
+          checkboxes: {
+            selectRow: true,
+          },
+          render: function (data, type, row, meta) {
+            return null;
+          },
         },
       ];
     }
@@ -355,8 +379,47 @@ const CustomTable = forwardRef(
         },
         serverSide: custom,
         ajax: custCallback,
+        select: {
+          // items: "cell",
+          style: "multi",
+          selector: "td:first-child",
+          info: false,
+        },
       });
       setCurTable(table2);
+
+      table2.on("select", (e, dt, type, indexes) => {
+        const rowData = table2.rows(indexes[0]).data()[0];
+        checkBoxClick(true, rowData);
+        table2
+          .rows()
+          .nodes()
+          .to$()
+          .each(function () {
+            const rowBName = table2.row(this).data().b_name;
+            const isVisible = rowData.b_name === rowBName;
+            if (!isVisible) {
+              const checkboxCell = $(this).find("td:first-child");
+              checkboxCell.css("visibility", isVisible ? "visible" : "hidden");
+            }
+          });
+      });
+
+      table2.on("deselect", (e, dt, type, indexes) => {
+        const rowData = table2.rows(indexes[0]).data()[0];
+        const selectedRows = dt.rows({ selected: true }).count();
+        checkBoxClick(false, rowData);
+        if (selectedRows < 1) {
+          table2
+            .rows()
+            .nodes()
+            .to$()
+            .each(function () {
+              const checkboxCell = $(this).find("td:first-child");
+              checkboxCell.css("visibility", "visible");
+            });
+        }
+      });
       $(datatableRef.current).find("thead").addClass("thead-light");
       return () => {
         if (table2 != null) {
@@ -365,6 +428,7 @@ const CustomTable = forwardRef(
         }
       };
     }, [data]);
+
     return (
       <>
         {withCard ? (

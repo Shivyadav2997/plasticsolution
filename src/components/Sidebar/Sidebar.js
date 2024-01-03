@@ -38,7 +38,7 @@ const Sidebar = (props) => {
   const { user, collapseSidebar, isSidebarOpen } = useSelector(
     (store) => store.user
   );
-  let allStates = { sales: false, purchase: false };
+  let allStates = { sales: false, purchase: false, product: false };
 
   const [submenuOpen, setSubMenuOpen] = useState(allStates);
   // verifies if routeName is the one active (in browser input)
