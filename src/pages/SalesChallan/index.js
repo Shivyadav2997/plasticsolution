@@ -146,7 +146,7 @@ const SalesChallan = () => {
     setInvId(id);
     setOriginal(true);
     setDuplicate(false);
-    sethalf(false);
+    setHalf(false);
     setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle(true);
     dispatch(setLoader(true));

@@ -146,7 +146,7 @@ const PurchaseChallan = () => {
     setInvId(id);
     setOriginal(true);
     setDuplicate(false);
-    sethalf(false);
+    setHalf(false);
     setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle(true);
     dispatch(setLoader(true));
@@ -473,7 +473,7 @@ const PurchaseChallan = () => {
 
   const downloadOrWhatsappInvoice = async (whatsapp, mob) => {
     dispatch(setLoader(true));
-    const resp = await invoiceDownload(user.token, {
+    const resp = await challanDownload(user.token, {
       id: invId,
       a: original ? 1 : 0,
       h: half ? 1 : 0,
