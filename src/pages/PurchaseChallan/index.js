@@ -18,8 +18,8 @@ import CustomTab from "components/Custom/CustomTab";
 import { CustomInput } from "components/Custom/CustomInput";
 import {
   purchaseChallanListGet,
-  invoiceGet,
-  invoiceDownload,
+  challanDownload,
+  challanGet,
   deleteRecord,
   transactionPartyGet,
 } from "api/api";
@@ -73,10 +73,8 @@ const PurchaseChallan = () => {
   const [monthPurchases, setmonthPurchases] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
-  const [transport, setTransport] = useState(false);
-  const [office, setOffice] = useState(false);
   const [duplicate, setDuplicate] = useState(false);
-  const [without, setWithout] = useState(false);
+  const [half, setHalf] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
@@ -113,7 +111,7 @@ const PurchaseChallan = () => {
     if (deleteId != null) {
       dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
-        type: "invoice",
+        type: "challan",
         id: deleteId,
       });
       dispatch(setLoader(false));
@@ -148,16 +146,14 @@ const PurchaseChallan = () => {
     setInvId(id);
     setOriginal(true);
     setDuplicate(false);
-    setOffice(false);
-    setTransport(false);
+    sethalf(false);
     setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle(true);
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await challanGet(user.token, {
       id: id,
       a: 1,
-      b: 0,
-      c: 0,
+      h: 0,
       d: 0,
       w: 0,
     });
@@ -242,7 +238,7 @@ const PurchaseChallan = () => {
           <>
             {" "}
             <div className="d-flex gap-10">
-              {/* <div>
+              <div>
                 <Button
                   className="btn-outline-primary btn-icon btn-sm"
                   color="default"
@@ -252,7 +248,7 @@ const PurchaseChallan = () => {
                     <FaEye size={12} />
                   </span>
                 </Button>
-              </div> */}
+              </div>
               {/* <div>
                 {rowData.ewaynumber == null ? (
                   <Button
@@ -284,7 +280,7 @@ const PurchaseChallan = () => {
                   </span>
                 </Button>
               </div>
-              {/* <div>
+              <div>
                 <Button
                   className="btn-danger btn-icon btn-sm"
                   onClick={() => deleteClick(cellData, rowData, row, col)}
@@ -293,7 +289,7 @@ const PurchaseChallan = () => {
                     <MdDelete size={16} />
                   </span>
                 </Button>
-              </div> */}
+              </div>
             </div>
           </>
         );
@@ -464,13 +460,11 @@ const PurchaseChallan = () => {
 
   const invoiceWithChecks = async () => {
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await challanGet(user.token, {
       id: invId,
-      a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
+      h: half ? 1 : 0,
+      d: duplicate ? 1 : 0,
       // eway: ewayInvoice ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
@@ -481,13 +475,10 @@ const PurchaseChallan = () => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
-      a: original && !without ? 1 : 0,
-      b: transport && !without ? 1 : 0,
-      c: office && !without ? 1 : 0,
-      d: duplicate && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
+      h: half ? 1 : 0,
+      d: duplicate ? 1 : 0,
       wp: whatsapp ? 1 : 0,
-      // eway: ewayInvoice ? 1 : 0,
       mo: mob,
     });
     dispatch(setLoader(false));
@@ -511,7 +502,7 @@ const PurchaseChallan = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [without, original, duplicate, transport, office]);
+  }, [half, original, duplicate]);
 
   const toggleWPModal = () => {
     setWPData({ ...wpData, show: !wpData.show });
@@ -556,23 +547,21 @@ const PurchaseChallan = () => {
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
-                      id="without"
-                      checked={without}
+                      id="half"
+                      checked={half}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setOriginal(false);
-                          setTransport(false);
-                          setOffice(false);
-                          setDuplicate(false);
-                        } else {
-                          setOriginal(true);
+                        setHalf(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !duplicate &&
+                          !original
+                        ) {
+                          setHalf(true);
                         }
-
-                        setWithout(e.currentTarget.checked);
                       }}
                     />
                     <label className="ml-2" htmlFor="without">
-                      Without
+                      Half
                     </label>
                   </Col>
                   <Col xs={6} sm={3} md={2}>
@@ -581,16 +570,8 @@ const PurchaseChallan = () => {
                       id="original"
                       checked={original}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
                         setOriginal(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !transport &&
-                          !duplicate
-                        ) {
+                        if (!e.currentTarget.checked && !duplicate && !half) {
                           setOriginal(true);
                         }
                       }}
@@ -602,67 +583,11 @@ const PurchaseChallan = () => {
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
-                      id="transport"
-                      checked={transport}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setTransport(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !original &&
-                          !duplicate
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="transport">
-                      Transport
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="office"
-                      checked={office}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setOffice(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !original &&
-                          !transport &&
-                          !duplicate
-                        ) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="office">
-                      Office
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
                       id="duplicate"
                       checked={duplicate}
                       onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
                         setDuplicate(e.currentTarget.checked);
-                        if (
-                          !e.currentTarget.checked &&
-                          !office &&
-                          !transport &&
-                          !original
-                        ) {
+                        if (!e.currentTarget.checked && !original && !half) {
                           setOriginal(true);
                         }
                       }}
@@ -671,19 +596,6 @@ const PurchaseChallan = () => {
                       Duplicate
                     </label>
                   </Col>
-                  {/* <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="ewayInvoice"
-                      checked={ewayInvoice}
-                      onChange={(e) => {
-                        setEwayInvoice(e.currentTarget.checked);
-                      }}
-                    />
-                    <label className="ml-2" htmlFor=" duplicate">
-                      EWAY
-                    </label>
-                  </Col> */}
                 </Row>
               </Col>
               <Col xs={12} lg={3}>

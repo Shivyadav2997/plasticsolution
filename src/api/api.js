@@ -88,6 +88,8 @@ const baseUrltest = "https://jsonplaceholder.typicode.com/";
 const baseUrl = process.env.REACT_APP_API_URL;
 const baseInvoiceUrl = process.env.REACT_APP_INVOICE_URL;
 const baseInvoiceDownloadUrl = process.env.REACT_APP_INVOICE_DOWNLOAD_URL;
+const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL;
+const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -1236,6 +1238,46 @@ const invoiceDownload = async (token, payload) => {
   }
 };
 
+const challanGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseChallanUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const challanDownload = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseChallanDownloadUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const daybookDownload = async (token, payload) => {
   try {
     const resp = await axios.get(
@@ -2200,4 +2242,6 @@ export {
   getChallanNo,
   purchaseChallanListGet,
   createChallanFromInvoice,
+  challanGet,
+  challanDownload,
 };
