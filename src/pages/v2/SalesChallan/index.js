@@ -1,4 +1,13 @@
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  FormGroup,
+} from "reactstrap";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
@@ -6,34 +15,37 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
+import { CustomInput } from "components/Custom/CustomInput";
 import {
-  purchaseListGet,
-  invoiceGet,
-  invoiceDownload,
+  saleChallanListGet,
+  challanGet,
+  challanDownload,
   deleteRecord,
   transactionPartyGet,
 } from "api/apiv2";
-import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
 import ReactDOM from "react-dom/client";
-import { getMonthName } from "api/apiv2";
+import { getMonthName } from "api/api";
 import { useHistory } from "react-router-dom";
-import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
+import { FaDownload, FaEye, FaPlus, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import HTMLReactParser from "html-react-parser";
 import CustomModal from "components/Custom/CustomModal";
+import { setIn } from "formik";
 import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import WhatsappModal from "components/Custom/WhatsappModal";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { BiEditAlt } from "react-icons/bi";
 
-const Purchase = () => {
+const SalesChallan = () => {
   var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -41,7 +53,7 @@ const Purchase = () => {
     heightAuto: false,
     timer: 1500,
   });
-  const [purchases, setPurchases] = useState({
+  const [sales, setSales] = useState({
     all: [],
     monthly: [],
   });
@@ -57,18 +69,20 @@ const Purchase = () => {
   const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
-  const [monthPurchases, setMonthPurchases] = useState([]);
+  const [selParty, setSelParty] = useState({ id: null, name: "" });
+  const [monthSales, setmonthSales] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
+  const [duplicate, setDuplicate] = useState(false);
+  const [half, setHalf] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
-
+  const [selectedIds, setSelectedIds] = useState([]);
   const [wpData, setWPData] = useState({
     show: false,
     mobile: "",
     t: 0,
   });
-  const [selParty, setSelParty] = useState({ id: null, name: "" });
   const formRef = useRef(null);
   const printIframe = (id) => {
     const iframe = document.frames
@@ -82,8 +96,8 @@ const Purchase = () => {
     return false;
   };
 
-  const handleToggle = () => {
-    setShow(!show);
+  const handleToggle = (showModal) => {
+    setShow(showModal);
   };
 
   const handleShowConfirmation = () => {
@@ -97,7 +111,7 @@ const Purchase = () => {
     if (deleteId != null) {
       dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
-        type: "invoice",
+        type: "challan",
         id: deleteId,
       });
       dispatch(setLoader(false));
@@ -124,21 +138,23 @@ const Purchase = () => {
 
   const editClick = (cellData, rowData, row, col) => {
     const id = btoa(Number(cellData.id));
-    history.push(`/admin/v2/purchase-invoice?invoice=${id}`);
+    history.push(`/admin/v2/sales-challan-create?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {
     const id = btoa(Number(rowData.id));
     setInvId(id);
-    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     setOriginal(true);
-    handleToggle();
+    setDuplicate(false);
+    setHalf(false);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
+    handleToggle(true);
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await challanGet(user.token, {
       id: id,
-      p: 1,
       a: 1,
-      w: 0,
+      h: 0,
+      d: 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -146,7 +162,7 @@ const Purchase = () => {
 
   var colDefs = [
     {
-      targets: 1,
+      targets: 2,
       createdCell: (td, cellData, rowData, row, col) => {
         const root = ReactDOM.createRoot(td);
         root.render(
@@ -171,6 +187,11 @@ const Purchase = () => {
   ];
 
   const columns = [
+    {
+      title: "",
+      data: "id",
+      defaultContent: "",
+    },
     {
       title: "No",
       data: null,
@@ -222,6 +243,7 @@ const Purchase = () => {
                   </span>
                 </Button>
               </div>
+
               <div>
                 <Button
                   className="btn-neutral btn-icon btn-sm"
@@ -302,9 +324,9 @@ const Purchase = () => {
     setLoading(true);
     var data = {};
     if (selMonth > 0) {
-      data = await purchaseListGet(user.token, "", "", selMonth);
+      data = await saleChallanListGet(user.token, "", "", selMonth);
     } else {
-      data = await purchaseListGet(
+      data = await saleChallanListGet(
         user.token,
         filterDate.st,
         filterDate.et,
@@ -316,19 +338,19 @@ const Purchase = () => {
     if (selMonth > 0) {
       if (data.data) {
         var data2 = data.data;
-        setMonthPurchases(data2.purchase || []);
+        setmonthSales(data2.sale || []);
       } else {
-        setMonthPurchases([]);
+        setmonthSales([]);
       }
     } else {
       if (data.data) {
         var data2 = data.data;
-        setPurchases({
-          all: data2.purchase || [],
-          monthly: data2.monthly_purchase || [],
+        setSales({
+          all: data2.sale || [],
+          monthly: data2.monthly_sale || [],
         });
       } else {
-        setPurchases({ all: [], monthly: [] });
+        setSales({ all: [], monthly: [] });
       }
     }
     setLoading(false);
@@ -351,27 +373,19 @@ const Purchase = () => {
     getTransactionParties();
   }, []);
 
-  //   const addExpense = async (payload) => {
-  //     handleToggle();
-  //     setLoading(true);
-  //     let resp = await expenseAdd(user.token, payload);
-  //     toast(resp.message);
-  //     if (resp.data.sucess == 1) {
-  //       getExpenses();
-  //     }
-  //   };
-
   const tabPan = [
     <CustomTable
       cols={columns}
       columndefs={colDefs}
       dark={false}
-      data={purchases.all}
-      title="Purchase List"
+      data={sales.all}
+      title="Sales List"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
       custom={true}
+      showCbox={true}
+      checkBoxClick={(checked, cellData) => checkBoxClick(checked, cellData)}
       ref={childRef}
       //   deleteClick={deleteClick}
       numColumns={[3, 4, 5, 6]}
@@ -380,7 +394,7 @@ const Purchase = () => {
       cols={columnsMonthly}
       columndefs={colDefsMonthly}
       dark={false}
-      data={purchases.monthly}
+      data={sales.monthly}
       title="Monthly List"
       withCard={false}
       hasEdit={false}
@@ -409,18 +423,19 @@ const Purchase = () => {
   };
 
   const validate = Yup.object({
-    amount: Yup.number().required("Required"),
-    type: Yup.string().required("Required"),
-    mode: Yup.string().required("Required"),
-    date: Yup.date().required("Required"),
+    supplytype: Yup.string().required("Required"),
+    subtype: Yup.string().required("Required"),
+    dtype: Yup.string().required("Required"),
+    ttype: Yup.string().required("Required"),
   });
 
   const invoiceWithChecks = async () => {
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await challanGet(user.token, {
       id: invId,
-      p: 1,
       a: original ? 1 : 0,
+      h: half ? 1 : 0,
+      d: duplicate ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -428,10 +443,11 @@ const Purchase = () => {
 
   const downloadOrWhatsappInvoice = async (whatsapp, mob) => {
     dispatch(setLoader(true));
-    const resp = await invoiceDownload(user.token, {
+    const resp = await challanDownload(user.token, {
       id: invId,
-      p: 1,
       a: original ? 1 : 0,
+      h: half ? 1 : 0,
+      d: duplicate ? 1 : 0,
       wp: whatsapp ? 1 : 0,
       mo: mob,
     });
@@ -456,10 +472,23 @@ const Purchase = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [original]);
+  }, [half, original, duplicate]);
 
   const toggleWPModal = () => {
     setWPData({ ...wpData, show: !wpData.show });
+  };
+
+  const checkBoxClick = (checked, cellData) => {
+    if (checked) {
+      setSelectedIds((prevSelectedIds) => [
+        ...prevSelectedIds,
+        { id: cellData.id, data: cellData },
+      ]);
+    } else {
+      setSelectedIds((prevSelectedIds) =>
+        prevSelectedIds.filter((x) => x.id !== cellData.id)
+      );
+    }
   };
 
   return (
@@ -476,7 +505,7 @@ const Purchase = () => {
       <CustomModal
         show={show}
         title="View/Print Invoice"
-        handleToggle={handleToggle}
+        handleToggle={() => (show ? handleToggle(false) : handleToggle(true))}
         centered={false}
         iframe={true}
         fullscreen={true}
@@ -488,14 +517,53 @@ const Purchase = () => {
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
+                      id="half"
+                      checked={half}
+                      onChange={(e) => {
+                        setHalf(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !duplicate &&
+                          !original
+                        ) {
+                          setHalf(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor="half">
+                      Half
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
                       id="original"
                       checked={original}
                       onChange={(e) => {
                         setOriginal(e.currentTarget.checked);
+                        if (!e.currentTarget.checked && !duplicate && !half) {
+                          setOriginal(true);
+                        }
                       }}
                     />
                     <label className="ml-2" htmlFor="original">
                       Original
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="duplicate"
+                      checked={duplicate}
+                      onChange={(e) => {
+                        setDuplicate(e.currentTarget.checked);
+                        if (!e.currentTarget.checked && !original && !half) {
+                          setOriginal(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor=" duplicate">
+                      Duplicate
                     </label>
                   </Col>
                 </Row>
@@ -541,13 +609,13 @@ const Purchase = () => {
               <Col className="">
                 <Row className="ml-0">
                   <h1>
-                    {selMonth}-{getMonthName(selMonth)} Purchases
+                    {selMonth}-{getMonthName(selMonth)} Sales
                   </h1>
                   <Button
                     className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
                     onClick={() => setSelMonth(0)}
                   >
-                    All Purchases
+                    All Sales
                   </Button>
                 </Row>
               </Col>
@@ -555,9 +623,11 @@ const Purchase = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() =>
+                      history.push("/admin/v2/sales-challan-create")
+                    }
                   >
-                    Create Purchase Bill
+                    Create Sales Challan
                   </Button>
                 </Row>
               </Col>
@@ -571,7 +641,11 @@ const Purchase = () => {
                     <CustomTable
                       cols={columns}
                       dark={false}
-                      data={monthPurchases}
+                      data={monthSales}
+                      showCbox={true}
+                      checkBoxClick={(checked, cellData) =>
+                        checkBoxClick(checked, cellData)
+                      }
                     />
                   </div>
                 </Row>
@@ -607,7 +681,7 @@ const Purchase = () => {
                 <Row className="ml-0">
                   <CustomDatePicker
                     onCallback={dateSelect}
-                    text="Purchases By Date"
+                    text="Sales By Date"
                   />
                   <Button
                     className="btn-md btn-outline-primary mb-1"
@@ -616,12 +690,12 @@ const Purchase = () => {
                       setSelParty({ id: null, name: "" });
                     }}
                   >
-                    All Purchase
+                    All Sales
                   </Button>
 
                   <h1>
                     <span style={{ fontSize: "18px" }}>
-                      {selParty.id != null && `${selParty.name} Purchases`}
+                      {selParty.id != null && `${selParty.name} Sales`}
                       {filterDate.st != "" &&
                         ` (${filterDate.st} to ${filterDate.et})`}
                     </span>{" "}
@@ -632,9 +706,11 @@ const Purchase = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() =>
+                      history.push("/admin/v2/sales-challan-create")
+                    }
                   >
-                    Create Purchase Bill
+                    Create Sales Challan
                   </Button>
                 </Row>
               </Col>
@@ -646,7 +722,7 @@ const Purchase = () => {
                 ) : (
                   <>
                     <CustomTab
-                      tabnames={["All Purchases", "Monthly Purchase"]}
+                      tabnames={["All Sales", "Monthly Sale"]}
                       tabpanes={tabPan}
                       onChangeEvents={onChangeEvents}
                     />
@@ -655,6 +731,20 @@ const Purchase = () => {
               </Col>
             </Row>
           </>
+        )}
+        {selectedIds.length > 0 && (
+          <Button
+            className="btn-md btn-outline-primary mt-5"
+            onClick={() => {
+              sessionStorage.setItem(
+                "challanIds",
+                selectedIds.map((x) => x.id.toString())
+              );
+              history.push("/admin/v2/sales-invoice");
+            }}
+          >
+            Create Invoice
+          </Button>
         )}
       </Container>
       <WhatsappModal
@@ -669,4 +759,4 @@ const Purchase = () => {
   );
 };
 
-export default Purchase;
+export default SalesChallan;

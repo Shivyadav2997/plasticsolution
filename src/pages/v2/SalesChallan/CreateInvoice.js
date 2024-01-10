@@ -19,14 +19,13 @@ import {
   partyListGet,
   productListGet,
   productUnitGet,
-  getBillNo,
-  createInvoice,
+  getChallanNo,
+  createChallan,
   transportListGet,
   checkGST,
   transportAdd,
-  getInvoiceDetails,
-  updateInvoice,
-  createChallanFromInvoice,
+  getChallanDetails,
+  updateChallan,
 } from "api/apiv2";
 import { setLoader } from "features/User/UserSlice";
 import Swal from "sweetalert2";
@@ -41,7 +40,7 @@ import * as Yup from "yup";
 import AddPartyModal from "pages/Party/AddParty";
 import AddProductModal from "pages/Product/AddProduct";
 
-const CreateInvoice = () => {
+const CreateChallan = () => {
   var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -64,9 +63,7 @@ const CreateInvoice = () => {
   const [showParty, setShowParty] = useState(false);
   const [showTransporter, setShowTransporter] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
-  const [discount, setDiscount] = useState({ percentage: "", value: "" });
   const [invoiceId, setInvoiceId] = useState(0);
-  const [challanIds, setChallanIds] = useState([]);
   const inputRef = useRef(null);
 
   const [gstError, setGstError] = useState("");
@@ -159,9 +156,9 @@ const CreateInvoice = () => {
     if (upperData.party == "") {
       setError({ ...error, party: "Please Select Party" });
     } else if (upperData.bType == "") {
-      setError({ ...error, bType: "Please Select Bill Type" });
+      setError({ ...error, bType: "Please Select Challan Type" });
     } else if (upperData.bNo == "") {
-      setError({ ...error, bNo: "Please Input BillNo" });
+      setError({ ...error, bNo: "Please Input ChallanNo" });
     } else if (rows.length == 0 || rows[0].row.item == "") {
       Toast.fire({
         icon: "error",
@@ -171,7 +168,7 @@ const CreateInvoice = () => {
       dispatch(setLoader(true));
       let resp;
       if (invoiceId > 0) {
-        resp = await updateInvoice(
+        resp = await updateChallan(
           user.token,
           {
             type: "sale",
@@ -187,7 +184,6 @@ const CreateInvoice = () => {
             tpaku: totalBAmt,
             gst: gstTax,
             roundof: round,
-            discount: discount.value,
             id: invoiceId,
           },
           JSON.stringify({
@@ -204,7 +200,7 @@ const CreateInvoice = () => {
         );
         dispatch(setLoader(false));
       } else {
-        resp = await createInvoice(
+        resp = await createChallan(
           user.token,
           {
             type: "sale",
@@ -220,7 +216,6 @@ const CreateInvoice = () => {
             tpaku: totalBAmt,
             gst: gstTax,
             roundof: round,
-            discount: discount.value,
           },
           JSON.stringify({
             item: rows.map((x) => x.row.item),
@@ -232,8 +227,7 @@ const CreateInvoice = () => {
             pgst: rows.map((x) => x.row.gst),
             tax: rows.map((x) => x.row.tax),
             total: rows.map((x) => x.row.bAmt),
-          }),
-          challanIds.length > 0 ? JSON.stringify(challanIds) : null
+          })
         );
         dispatch(setLoader(false));
       }
@@ -244,7 +238,7 @@ const CreateInvoice = () => {
           title: resp.data.msg,
         });
         setTimeout(() => {
-          history.push("/admin/v2/sales");
+          history.push("/admin/v2/sales-challan");
         }, 1500);
       } else {
         Toast.fire({
@@ -312,7 +306,6 @@ const CreateInvoice = () => {
     } else {
       rowsInput["bAmt"] = 0;
     }
-
     if (withTax) {
       if (rowsInput["tax"] && rowsInput["bAmt"]) {
         rowsInput["gst"] = getRoundAmount(
@@ -353,83 +346,8 @@ const CreateInvoice = () => {
     sub2 = Number(sub2 ?? 0);
     gst = Number(gst ?? 0);
     setTotalBAmt(sub2);
-    if (discount.percentage > 0) {
-      calculateDiscount(discount.percentage, true, false, true, gst, sub2);
-    } else {
-      setGstTax(getRoundAmount(gst));
-      let total = sub2 + gst;
-      let roundAmount = Math.round(total);
-      roundAmount = Number(roundAmount ?? 0);
-      total = Number(total ?? 0);
-
-      if (roundAmount != total) {
-        setRound(getRoundAmount(roundAmount - total));
-        setTotal(roundAmount);
-      } else {
-        setTotal(total);
-        setRound(0);
-      }
-    }
-    if (onlyreturn) {
-      return rowsInput;
-    } else {
-      const curData = [...rows];
-      curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
-      setRows(curData);
-    }
-  };
-
-  const calculateDiscount = async (
-    discountValue = 0,
-    percentage = false,
-    value = false,
-    withGSt = false,
-    gst = null,
-    bamt = null
-  ) => {
-    let discountObj = { value: 0, percentage: 0 };
-    let newdiscount = { value: 0, percentage: 0 };
-    gst = gst == null ? gstTax : gst;
-    bamt = bamt == null ? totalBAmt : bamt;
-
-    if (percentage && discountValue > 100) {
-      discountValue = 100;
-    }
-    if (bamt <= 0) {
-      setDiscount(discountObj);
-      return;
-    }
-    if (percentage) {
-      discountObj.percentage = discountValue == "" ? 0 : discountValue;
-      discountObj.value = (bamt * discountObj.percentage) / 100;
-      newdiscount.percentage = discountValue;
-      newdiscount.value =
-        newdiscount.percentage == ""
-          ? ""
-          : (bamt * newdiscount.percentage) / 100;
-    } else if (value) {
-      discountObj.value = discountValue == "" ? 0 : discountValue;
-      discountObj.percentage = getRoundAmount((discountObj.value * 100) / bamt);
-      newdiscount.value = discountValue;
-      newdiscount.percentage =
-        newdiscount.value == ""
-          ? ""
-          : getRoundAmount((newdiscount.value * 100) / bamt);
-    }
-
-    let gstAMount = withGSt ? gst : getTotal();
-    bamt = Number(bamt ?? 0);
-    gstAMount = Number(gstAMount ?? 0);
-    if (gstAMount > 0) {
-      if (discountObj.value > 0) {
-        gstAMount = gstAMount - (gstAMount * discountObj.percentage) / 100;
-        setGstTax(getRoundAmount(gstAMount));
-      } else {
-        setGstTax(getRoundAmount(gstAMount));
-      }
-    }
-    setDiscount(newdiscount);
-    let total = bamt + gstAMount - discountObj.value;
+    setGstTax(getRoundAmount(gst));
+    let total = sub2 + gst;
     let roundAmount = Math.round(total);
     roundAmount = Number(roundAmount ?? 0);
     total = Number(total ?? 0);
@@ -440,6 +358,14 @@ const CreateInvoice = () => {
     } else {
       setTotal(total);
       setRound(0);
+    }
+
+    if (onlyreturn) {
+      return rowsInput;
+    } else {
+      const curData = [...rows];
+      curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
+      setRows(curData);
     }
   };
 
@@ -488,7 +414,10 @@ const CreateInvoice = () => {
 
   const billNoGenerate = async (curDate) => {
     dispatch(setLoader(true));
-    const data = await getBillNo(user.token, { date: curDate, type: "Sale" });
+    const data = await getChallanNo(user.token, {
+      date: curDate,
+      type: "Sale",
+    });
     if (data.data.no) {
       setUpperData({ ...upperData, bNo: data.data.no });
     }
@@ -503,11 +432,6 @@ const CreateInvoice = () => {
     dispatch(keepSidebar(false));
     dispatch(toggleSidebar(false));
     billNoGenerate(upperData.bDate);
-    const selChallanId = sessionStorage.getItem("challanIds");
-    if (selChallanId) {
-      setChallanIds(selChallanId.split(","));
-      sessionStorage.removeItem("challanIds");
-    }
     const intervalId = setInterval(() => {
       const firstInput = document.querySelector(
         ".createInvoiceClass input:not([disabled]), .createInvoiceClass select:not([disabled])"
@@ -547,26 +471,31 @@ const CreateInvoice = () => {
 
   const fetchInvoiceData = async (invoiceId) => {
     dispatch(setLoader(true));
-    const resp = await getInvoiceDetails(user.token, invoiceId);
+    const resp = await getChallanDetails(user.token, invoiceId);
     dispatch(setLoader(false));
-    setDataFromApi(resp);
-  };
-
-  const setDataFromApi = (resp) => {
     const invoiceData = resp.data;
     const invoiceRows = resp.data.item;
     setUpperData({
-      party: invoiceData.details.pid,
-      bType: invoiceData.details.btype,
-      bNo: invoiceData.details.bno,
-      bDate: invoiceData.details.date,
-      trans: invoiceData.details.tr ?? "",
-      lrno: invoiceData.details.lr,
-      vno: invoiceData.details.veh ?? "",
-      note: invoiceData.details.note,
-      delivery: invoiceData.details.delivery,
+      party: invoiceData.details?.pid,
+      bType: invoiceData.details?.btype,
+      bNo: invoiceData.details?.bno,
+      bDate: invoiceData.details?.date,
+      trans: invoiceData.details?.tr ?? "",
+      lrno: invoiceData.details?.lr,
+      vno: invoiceData.details?.veh ?? "",
+      note: invoiceData.details?.note,
+      delivery: invoiceData.details?.delivery,
     });
+    setTotalBAmt(Number(invoiceData.details?.tpaku ?? 0));
+    setTotal(
+      Number(invoiceData.details?.tkachu ?? 0) +
+        Number(invoiceData.details?.tpaku ?? 0) +
+        Number(invoiceData.details?.gst ?? 0) +
+        Number(invoiceData.details?.roundof ?? 0)
+    );
 
+    setRound(Number(invoiceData.details?.roundof ?? 0));
+    setGstTax(Number(invoiceData.details?.gst) ?? 0);
     const invoiceRowstoShow = [];
     invoiceRows.forEach((element, index) => {
       const product = products.find((x) => x.id == element.item_name);
@@ -591,11 +520,9 @@ const CreateInvoice = () => {
           pUnit: units[0].id,
           pQty: Number(element.pkqty ?? 0),
           uQty: Number(element.uqty ?? 0),
-          // rate: Number(element.rate ?? 0),
           bRate: Number(element.paku ?? 0),
           gst: Number(element.pgst ?? 0),
           tax: Number(element.tax ?? 0),
-          // wAmt: Number(element.kachu ?? 0),
           bAmt: Number(element.total ?? 0),
           id: index,
           units: units,
@@ -604,91 +531,6 @@ const CreateInvoice = () => {
     });
     setRowIndex(invoiceRowstoShow.length - 1);
     setRows(invoiceRowstoShow);
-
-    if (Number(invoiceData.details.tpaku ?? 0) > 0) {
-      setTotalBAmt(Number(invoiceData.details.tpaku ?? 0));
-      setTotal(
-        Number(invoiceData.details.tkachu ?? 0) +
-          Number(invoiceData.details.tpaku ?? 0) +
-          Number(invoiceData.details.gst ?? 0) -
-          Number(invoiceData.details.discount ?? 0) +
-          Number(invoiceData.details.roundof ?? 0)
-      );
-      const discountValue = invoiceData.details.discount ?? 0;
-      if (discountValue > 0) {
-        setDiscount({
-          percentage: getRoundAmount(
-            (discountValue * 100) / Number(invoiceData.details.tpaku ?? 0)
-          ),
-          value: discountValue,
-        });
-      } else {
-        setDiscount({ percentage: 0, value: 0 });
-      }
-      setRound(Number(invoiceData.details.roundof ?? 0));
-      setGstTax(Number(invoiceData.details.gst));
-    } else {
-      setTotalFromApiRow(invoiceData, invoiceRowstoShow);
-    }
-  };
-
-  const setTotalFromApiRow = (invoiceData, invoiceRowstoShow) => {
-    let sub2 = 0,
-      gst = 0;
-    for (let index = 0; index < invoiceRowstoShow.length; index++) {
-      if (invoiceRowstoShow[index]["row"]["bAmt"]) {
-        sub2 += invoiceRowstoShow[index]["row"]["bAmt"];
-      }
-      if (invoiceRowstoShow[index]["row"]["tax"]) {
-        gst += invoiceRowstoShow[index]["row"]["tax"];
-      }
-    }
-    sub2 = Number(sub2 ?? 0);
-    gst = Number(gst ?? 0);
-    setTotalBAmt(sub2);
-
-    const discountValue = invoiceData.details.discount ?? 0;
-    let discountTempObj = { percentage: 0, value: 0 };
-    if (discountValue > 0) {
-      discountTempObj = {
-        percentage: getRoundAmount(
-          (discountValue * 100) / Number(invoiceData.details.tpaku ?? 0)
-        ),
-        value: discountValue,
-      };
-    }
-
-    if (gst > 0) {
-      if (discountTempObj.value > 0) {
-        gst = gst - (gst * discountTempObj.percentage) / 100;
-        setGstTax(getRoundAmount(gst));
-      } else {
-        setGstTax(getRoundAmount(gst));
-      }
-    }
-
-    setDiscount(discountTempObj);
-    let total = sub2 + gst - discountTempObj.value;
-    let roundAmount = Math.round(total);
-    roundAmount = Number(roundAmount ?? 0);
-    total = Number(total ?? 0);
-    if (roundAmount != total) {
-      setRound(getRoundAmount(roundAmount - total));
-      setTotal(roundAmount);
-    } else {
-      setTotal(total);
-      setRound(0);
-    }
-  };
-
-  const fetchChallanInvoice = async (challanId) => {
-    dispatch(setLoader(true));
-    const resp = await createChallanFromInvoice(
-      user.token,
-      JSON.stringify(challanId)
-    );
-    dispatch(setLoader(false));
-    setDataFromApi(resp);
   };
 
   useEffect(() => {
@@ -697,11 +539,6 @@ const CreateInvoice = () => {
     }
   }, [invoiceId, products]);
 
-  useEffect(() => {
-    if (challanIds.length > 0 && products.length > 0) {
-      fetchChallanInvoice(challanIds);
-    }
-  }, [challanIds, products]);
   const getRoundAmount = (amount) => {
     return Math.round(Number(amount ?? 0) * 100) / 100;
   };
@@ -885,10 +722,10 @@ const CreateInvoice = () => {
               </Col>
               <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Bill Type"
+                  label="Challan Type"
                   type="select"
                   options={[
-                    <option value="">Select Bill Type *</option>,
+                    <option value="">Select Challan Type *</option>,
                     ...["Debit", "Cash", "Bill_Tax"].map((opt) => {
                       return <option value={opt}>{opt}</option>;
                     }),
@@ -918,7 +755,7 @@ const CreateInvoice = () => {
               </Col>
               <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Bill No *"
+                  label="Challan No *"
                   errorMsg={error.bNo}
                   value={upperData.bNo}
                   onChange={(e) => {
@@ -939,10 +776,7 @@ const CreateInvoice = () => {
                   ]}
                   value={upperData.trans}
                   onChange={(e) => {
-                    setUpperData({
-                      ...upperData,
-                      trans: e.target.value,
-                    });
+                    setUpperData({ ...upperData, trans: e.target.value });
                   }}
                   addon={
                     <Button
@@ -1030,7 +864,6 @@ const CreateInvoice = () => {
                 bRate: "9%",
                 gst: "6%",
                 tax: "7%",
-                // wAmt: "9%",
                 bAmt: "9%",
               }}
               fieldsToExclude={["id", "units"]}
@@ -1103,8 +936,8 @@ const CreateInvoice = () => {
                     return (
                       <CustomInputWoutFormik
                         type="number"
-                        defaultValue={value}
                         value={value}
+                        defaultValue={value}
                         onChange={(event) => {
                           row[field] = event.target.value;
                           calCulateTotal(row);
@@ -1112,7 +945,6 @@ const CreateInvoice = () => {
                         className="text-right"
                       />
                     );
-
                   case "bRate":
                     return (
                       <CustomInputWoutFormik
@@ -1137,6 +969,7 @@ const CreateInvoice = () => {
                           calCulateTotal(row);
                         }}
                         className="text-right"
+                        // disabled
                       />
                     );
                   case "tax":
@@ -1150,9 +983,9 @@ const CreateInvoice = () => {
                           calCulateTotal(row, false, false, true);
                         }}
                         className="text-right"
+                        // disabled
                       />
                     );
-
                   case "bAmt":
                     return (
                       <CustomInputWoutFormik
@@ -1204,36 +1037,12 @@ const CreateInvoice = () => {
                   <tr>
                     <td colSpan={7}></td>
                     <td align="right">Sub Total</td>
+
                     <td>
                       <CustomInputWoutFormik
                         className="text-right"
                         value={totalBAmt}
                         disabled
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan={6}></td>
-                    <td align="right">Discount</td>
-                    <td>
-                      <CustomInputWoutFormik
-                        className="text-right"
-                        value={discount.percentage}
-                        maxLength={3}
-                        onChange={(event) =>
-                          calculateDiscount(event.target.value, true)
-                        }
-                        disabled={totalBAmt <= 0}
-                      />
-                    </td>
-                    <td>
-                      <CustomInputWoutFormik
-                        className="text-right"
-                        value={discount.value}
-                        onChange={(event) =>
-                          calculateDiscount(event.target.value, false, true)
-                        }
-                        disabled={totalBAmt <= 0}
                       />
                     </td>
                   </tr>
@@ -1295,7 +1104,7 @@ const CreateInvoice = () => {
               </Button>
               <Button
                 className="btn-md btn-outline-danger"
-                onClick={() => history.push("/admin/v2/sales")}
+                onClick={() => history.push("/admin/v2/sales-challan")}
               >
                 Cancel
               </Button>
@@ -1307,4 +1116,4 @@ const CreateInvoice = () => {
   );
 };
 
-export default CreateInvoice;
+export default CreateChallan;

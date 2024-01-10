@@ -7,7 +7,7 @@ import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
 import {
-  purchaseListGet,
+  returnPurchaseListGet,
   invoiceGet,
   invoiceDownload,
   deleteRecord,
@@ -19,7 +19,7 @@ import Loader from "components/Custom/Loader";
 import * as Yup from "yup";
 
 import ReactDOM from "react-dom/client";
-import { getMonthName } from "api/apiv2";
+import { getMonthName } from "api/api";
 import { useHistory } from "react-router-dom";
 import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -62,7 +62,6 @@ const Purchase = () => {
   const [original, setOriginal] = useState(true);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
-
   const [wpData, setWPData] = useState({
     show: false,
     mobile: "",
@@ -124,19 +123,19 @@ const Purchase = () => {
 
   const editClick = (cellData, rowData, row, col) => {
     const id = btoa(Number(cellData.id));
-    history.push(`/admin/v2/purchase-invoice?invoice=${id}`);
+    history.push(`/admin/v2/return-purchase-invoice?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {
     const id = btoa(Number(rowData.id));
     setInvId(id);
-    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     setOriginal(true);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     handleToggle();
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: id,
-      p: 1,
+      rp: 1,
       a: 1,
       w: 0,
     });
@@ -302,9 +301,9 @@ const Purchase = () => {
     setLoading(true);
     var data = {};
     if (selMonth > 0) {
-      data = await purchaseListGet(user.token, "", "", selMonth);
+      data = await returnPurchaseListGet(user.token, "", "", selMonth);
     } else {
-      data = await purchaseListGet(
+      data = await returnPurchaseListGet(
         user.token,
         filterDate.st,
         filterDate.et,
@@ -419,7 +418,7 @@ const Purchase = () => {
     dispatch(setLoader(true));
     const resp = await invoiceGet(user.token, {
       id: invId,
-      p: 1,
+      rp: 1,
       a: original ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
@@ -430,7 +429,7 @@ const Purchase = () => {
     dispatch(setLoader(true));
     const resp = await invoiceDownload(user.token, {
       id: invId,
-      p: 1,
+      rp: 1,
       a: original ? 1 : 0,
       wp: whatsapp ? 1 : 0,
       mo: mob,
@@ -484,21 +483,7 @@ const Purchase = () => {
           <>
             <Row className="w-100">
               <Col xs={12} lg={9}>
-                <Row className="w-100">
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="original"
-                      checked={original}
-                      onChange={(e) => {
-                        setOriginal(e.currentTarget.checked);
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="original">
-                      Original
-                    </label>
-                  </Col>
-                </Row>
+                <Row className="w-100"></Row>
               </Col>
               <Col xs={12} lg={3}>
                 <div className="d-flex">
@@ -555,9 +540,11 @@ const Purchase = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() =>
+                      history.push("/admin/v2/return-purchase-invoice")
+                    }
                   >
-                    Create Purchase Bill
+                    Create Purchase Return Bill
                   </Button>
                 </Row>
               </Col>
@@ -632,9 +619,11 @@ const Purchase = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() =>
+                      history.push("/admin/v2/return-purchase-invoice")
+                    }
                   >
-                    Create Purchase Bill
+                    Create Purchase Return Bill
                   </Button>
                 </Row>
               </Col>

@@ -734,20 +734,6 @@ const PurchaseChallan = () => {
               </Col>
               <Col>
                 <Row className="justify-content-md-end mr-0 ml-0">
-                  {selectedIds.length > 0 && (
-                    <Button
-                      className="btn-md btn-outline-primary"
-                      onClick={() => {
-                        sessionStorage.setItem(
-                          "challanIds",
-                          selectedIds.map((x) => x.id.toString())
-                        );
-                        history.push("/admin/v1/purchase-invoice");
-                      }}
-                    >
-                      Create Invoice
-                    </Button>
-                  )}
                   <Button
                     className="btn-md btn-outline-primary"
                     onClick={() =>

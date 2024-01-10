@@ -152,7 +152,7 @@ const Sales = () => {
 
   const editClick = (cellData, rowData, row, col) => {
     const id = btoa(Number(cellData.id));
-    history.push(`/admin/v1/sales-invoice?invoice=${id}`);
+    history.push(`/admin/v2/sales-invoice?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {

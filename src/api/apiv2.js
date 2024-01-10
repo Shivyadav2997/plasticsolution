@@ -62,12 +62,28 @@ import {
   transactionDownloadAction,
   getInvoiceAction,
   updateInvoiceAction,
+  returnSaleListAction,
+  returnPurchaseistAction,
+  createPurchaseReturnAction,
+  createSalesReturnAction,
+  updatePurchaseReturnAction,
+  updateSalesReturnAction,
+  createChallanAction,
+  updateChallanAction,
+  getChallanNoAction,
+  challanDetailsAction,
+  saleChallanListAction,
+  purchaseChallanListAction,
+  challanToInvoiceAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
 const baseUrl = process.env.REACT_APP_API_URL_V2;
 const baseInvoiceUrl = process.env.REACT_APP_INVOICE_URL_V2;
 const baseInvoiceDownloadUrl = process.env.REACT_APP_INVOICE_DOWNLOAD_URL_V2;
+const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL_V2;
+const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL_V2;
+
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -1623,6 +1639,382 @@ const updateInvoice = async (token, payload, json) => {
   }
 };
 
+const returnSaleListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${returnSaleListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const returnPurchaseListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${returnPurchaseistAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createReturnSalesInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createSalesReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createReturnPurchaseInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createPurchaseReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateReturnPurchaseInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updatePurchaseReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateReturnSalesInvoice = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateSalesReturnAction}&token=${token}&${getParams(
+          payload
+        )}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createChallan = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createChallanAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateChallan = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateChallanAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getChallanDetails = async (token, id) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${challanDetailsAction}&token=${token}&id=${id}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getChallanNo = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${getChallanNoAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const purchaseChallanListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${purchaseChallanListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const saleChallanListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${saleChallanListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createChallanFromInvoice = async (token, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", json);
+    const resp = await axios.post(
+      baseUrl + `?action=${challanToInvoiceAction}&token=${token}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const challanGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseChallanUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const challanDownload = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseChallanDownloadUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -1694,4 +2086,19 @@ export {
   downloadTransactionPdf,
   getInvoiceDetails,
   updateInvoice,
+  returnSaleListGet,
+  returnPurchaseListGet,
+  createReturnPurchaseInvoice,
+  createReturnSalesInvoice,
+  updateReturnPurchaseInvoice,
+  updateReturnSalesInvoice,
+  saleChallanListGet,
+  createChallan,
+  updateChallan,
+  getChallanDetails,
+  getChallanNo,
+  purchaseChallanListGet,
+  createChallanFromInvoice,
+  challanGet,
+  challanDownload,
 };

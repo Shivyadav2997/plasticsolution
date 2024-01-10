@@ -1,4 +1,13 @@
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  FormGroup,
+} from "reactstrap";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
@@ -6,34 +15,37 @@ import CustomDatePicker from "components/Custom/CustomDatePicker";
 import * as React from "react";
 import { useState, useRef } from "react";
 import CustomTab from "components/Custom/CustomTab";
+import { CustomInput } from "components/Custom/CustomInput";
 import {
-  purchaseListGet,
-  invoiceGet,
-  invoiceDownload,
+  purchaseChallanListGet,
+  challanDownload,
+  challanGet,
   deleteRecord,
   transactionPartyGet,
 } from "api/apiv2";
-import $ from "jquery";
 import { format } from "date-fns";
 import Loader from "components/Custom/Loader";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
 import ReactDOM from "react-dom/client";
-import { getMonthName } from "api/apiv2";
+import { getMonthName } from "api/api";
 import { useHistory } from "react-router-dom";
-import { FaDownload, FaEye, FaPrint, FaWhatsapp } from "react-icons/fa";
+import { FaDownload, FaEye, FaPlus, FaPrint, FaWhatsapp } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import HTMLReactParser from "html-react-parser";
 import CustomModal from "components/Custom/CustomModal";
+import { setIn } from "formik";
 import Swal from "sweetalert2";
 import ConfirmationDialog from "components/Custom/ConfirmationDialog";
 import WhatsappModal from "components/Custom/WhatsappModal";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
 import { BiEditAlt } from "react-icons/bi";
 
-const Purchase = () => {
+const PurchaseChallan = () => {
   var Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -57,18 +69,20 @@ const Purchase = () => {
   const { user, fyear } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(true);
   const [selMonth, setSelMonth] = useState(0);
-  const [monthPurchases, setMonthPurchases] = useState([]);
+  const [selParty, setSelParty] = useState({ id: null, name: "" });
+  const [monthPurchases, setmonthPurchases] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
+  const [duplicate, setDuplicate] = useState(false);
+  const [half, setHalf] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
-
+  const [selectedIds, setSelectedIds] = useState([]);
   const [wpData, setWPData] = useState({
     show: false,
     mobile: "",
     t: 0,
   });
-  const [selParty, setSelParty] = useState({ id: null, name: "" });
   const formRef = useRef(null);
   const printIframe = (id) => {
     const iframe = document.frames
@@ -82,8 +96,8 @@ const Purchase = () => {
     return false;
   };
 
-  const handleToggle = () => {
-    setShow(!show);
+  const handleToggle = (showModal) => {
+    setShow(showModal);
   };
 
   const handleShowConfirmation = () => {
@@ -97,7 +111,7 @@ const Purchase = () => {
     if (deleteId != null) {
       dispatch(setLoader(true));
       const resp = await deleteRecord(user.token, {
-        type: "invoice",
+        type: "challan",
         id: deleteId,
       });
       dispatch(setLoader(false));
@@ -124,20 +138,23 @@ const Purchase = () => {
 
   const editClick = (cellData, rowData, row, col) => {
     const id = btoa(Number(cellData.id));
-    history.push(`/admin/v2/purchase-invoice?invoice=${id}`);
+    history.push(`/admin/v2/purchase-challan-create?invoice=${id}`);
   };
 
   const viewInvoice = async (rowData) => {
     const id = btoa(Number(rowData.id));
     setInvId(id);
-    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
     setOriginal(true);
-    handleToggle();
+    setDuplicate(false);
+    setHalf(false);
+    setWPData({ ...wpData, mobile: rowData.mobile ?? "" });
+    handleToggle(true);
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await challanGet(user.token, {
       id: id,
-      p: 1,
       a: 1,
+      h: 0,
+      d: 0,
       w: 0,
     });
     setInvoiceHtml(resp.data);
@@ -146,7 +163,7 @@ const Purchase = () => {
 
   var colDefs = [
     {
-      targets: 1,
+      targets: 2,
       createdCell: (td, cellData, rowData, row, col) => {
         const root = ReactDOM.createRoot(td);
         root.render(
@@ -171,6 +188,12 @@ const Purchase = () => {
   ];
 
   const columns = [
+    {
+      title: "",
+      data: "id",
+      defaultContent: "",
+    },
+
     {
       title: "No",
       data: null,
@@ -222,6 +245,26 @@ const Purchase = () => {
                   </span>
                 </Button>
               </div>
+              {/* <div>
+                {rowData.ewaynumber == null ? (
+                  <Button
+                    className="btn-outline-danger btn-icon btn-sm"
+                    color="default"
+                    // onClick={() => openEWAYModel(rowData)}
+                    onClick={()=>}
+                  >
+                    Create EWAY
+                  </Button>
+                ) : (
+                  <Button
+                    className="btn-outline-success btn-icon btn-sm"
+                    color="default"
+                    // onClick={() => ewayJson(rowData)}
+                  >
+                    View EWAY
+                  </Button>
+                )}
+              </div> */}
               <div>
                 <Button
                   className="btn-neutral btn-icon btn-sm"
@@ -302,9 +345,9 @@ const Purchase = () => {
     setLoading(true);
     var data = {};
     if (selMonth > 0) {
-      data = await purchaseListGet(user.token, "", "", selMonth);
+      data = await purchaseChallanListGet(user.token, "", "", selMonth);
     } else {
-      data = await purchaseListGet(
+      data = await purchaseChallanListGet(
         user.token,
         filterDate.st,
         filterDate.et,
@@ -316,9 +359,9 @@ const Purchase = () => {
     if (selMonth > 0) {
       if (data.data) {
         var data2 = data.data;
-        setMonthPurchases(data2.purchase || []);
+        setmonthPurchases(data2.purchase || []);
       } else {
-        setMonthPurchases([]);
+        setmonthPurchases([]);
       }
     } else {
       if (data.data) {
@@ -351,27 +394,19 @@ const Purchase = () => {
     getTransactionParties();
   }, []);
 
-  //   const addExpense = async (payload) => {
-  //     handleToggle();
-  //     setLoading(true);
-  //     let resp = await expenseAdd(user.token, payload);
-  //     toast(resp.message);
-  //     if (resp.data.sucess == 1) {
-  //       getExpenses();
-  //     }
-  //   };
-
   const tabPan = [
     <CustomTable
       cols={columns}
       columndefs={colDefs}
       dark={false}
       data={purchases.all}
-      title="Purchase List"
+      title="Purchase Challan List"
       withCard={false}
       hasEdit={false}
       hasDelete={false}
       custom={true}
+      showCbox={true}
+      checkBoxClick={(checked, cellData) => checkBoxClick(checked, cellData)}
       ref={childRef}
       //   deleteClick={deleteClick}
       numColumns={[3, 4, 5, 6]}
@@ -409,18 +444,20 @@ const Purchase = () => {
   };
 
   const validate = Yup.object({
-    amount: Yup.number().required("Required"),
-    type: Yup.string().required("Required"),
-    mode: Yup.string().required("Required"),
-    date: Yup.date().required("Required"),
+    supplytype: Yup.string().required("Required"),
+    subtype: Yup.string().required("Required"),
+    dtype: Yup.string().required("Required"),
+    ttype: Yup.string().required("Required"),
   });
 
   const invoiceWithChecks = async () => {
     dispatch(setLoader(true));
-    const resp = await invoiceGet(user.token, {
+    const resp = await challanGet(user.token, {
       id: invId,
-      p: 1,
       a: original ? 1 : 0,
+      h: half ? 1 : 0,
+      d: duplicate ? 1 : 0,
+      // eway: ewayInvoice ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -428,10 +465,11 @@ const Purchase = () => {
 
   const downloadOrWhatsappInvoice = async (whatsapp, mob) => {
     dispatch(setLoader(true));
-    const resp = await invoiceDownload(user.token, {
+    const resp = await challanDownload(user.token, {
       id: invId,
-      p: 1,
       a: original ? 1 : 0,
+      h: half ? 1 : 0,
+      d: duplicate ? 1 : 0,
       wp: whatsapp ? 1 : 0,
       mo: mob,
     });
@@ -456,10 +494,23 @@ const Purchase = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [original]);
+  }, [half, original, duplicate]);
 
   const toggleWPModal = () => {
     setWPData({ ...wpData, show: !wpData.show });
+  };
+
+  const checkBoxClick = (checked, cellData) => {
+    if (checked) {
+      setSelectedIds((prevSelectedIds) => [
+        ...prevSelectedIds,
+        { id: cellData.id, data: cellData },
+      ]);
+    } else {
+      setSelectedIds((prevSelectedIds) =>
+        prevSelectedIds.filter((x) => x.id !== cellData.id)
+      );
+    }
   };
 
   return (
@@ -476,7 +527,7 @@ const Purchase = () => {
       <CustomModal
         show={show}
         title="View/Print Invoice"
-        handleToggle={handleToggle}
+        handleToggle={() => (show ? handleToggle(false) : handleToggle(true))}
         centered={false}
         iframe={true}
         fullscreen={true}
@@ -488,14 +539,53 @@ const Purchase = () => {
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
+                      id="half"
+                      checked={half}
+                      onChange={(e) => {
+                        setHalf(e.currentTarget.checked);
+                        if (
+                          !e.currentTarget.checked &&
+                          !duplicate &&
+                          !original
+                        ) {
+                          setHalf(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor="half">
+                      Half
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
                       id="original"
                       checked={original}
                       onChange={(e) => {
                         setOriginal(e.currentTarget.checked);
+                        if (!e.currentTarget.checked && !duplicate && !half) {
+                          setOriginal(true);
+                        }
                       }}
                     />
                     <label className="ml-2" htmlFor="original">
                       Original
+                    </label>
+                  </Col>
+                  <Col xs={6} sm={3} md={2}>
+                    <input
+                      type="checkbox"
+                      id="duplicate"
+                      checked={duplicate}
+                      onChange={(e) => {
+                        setDuplicate(e.currentTarget.checked);
+                        if (!e.currentTarget.checked && !original && !half) {
+                          setOriginal(true);
+                        }
+                      }}
+                    />
+                    <label className="ml-2" htmlFor=" duplicate">
+                      Duplicate
                     </label>
                   </Col>
                 </Row>
@@ -555,9 +645,11 @@ const Purchase = () => {
                 <Row className="justify-content-end mr-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() =>
+                      history.push("/admin/v2/purhcase-challan-create")
+                    }
                   >
-                    Create Purchase Bill
+                    Create Purhcase Challan
                   </Button>
                 </Row>
               </Col>
@@ -572,6 +664,10 @@ const Purchase = () => {
                       cols={columns}
                       dark={false}
                       data={monthPurchases}
+                      showCbox={true}
+                      checkBoxClick={(checked, cellData) =>
+                        checkBoxClick(checked, cellData)
+                      }
                     />
                   </div>
                 </Row>
@@ -616,7 +712,7 @@ const Purchase = () => {
                       setSelParty({ id: null, name: "" });
                     }}
                   >
-                    All Purchase
+                    All Purchases
                   </Button>
 
                   <h1>
@@ -632,9 +728,11 @@ const Purchase = () => {
                 <Row className="justify-content-md-end mr-0 ml-0">
                   <Button
                     className="btn-md btn-outline-primary"
-                    onClick={() => history.push("/admin/v2/purchase-invoice")}
+                    onClick={() =>
+                      history.push("/admin/v2/purchase-challan-create")
+                    }
                   >
-                    Create Purchase Bill
+                    Create Purchase Challan
                   </Button>
                 </Row>
               </Col>
@@ -656,6 +754,20 @@ const Purchase = () => {
             </Row>
           </>
         )}
+        {selectedIds.length > 0 && (
+          <Button
+            className="btn-md btn-outline-primary mt-5"
+            onClick={() => {
+              sessionStorage.setItem(
+                "challanIds",
+                selectedIds.map((x) => x.id.toString())
+              );
+              history.push("/admin/v2/purchase-invoice");
+            }}
+          >
+            Create Invoice
+          </Button>
+        )}
       </Container>
       <WhatsappModal
         show={wpData.show}
@@ -669,4 +781,4 @@ const Purchase = () => {
   );
 };
 
-export default Purchase;
+export default PurchaseChallan;
