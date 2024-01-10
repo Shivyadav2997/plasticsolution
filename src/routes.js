@@ -22,6 +22,8 @@ import SalesReturnInvoice from "pages/SalesReturn/CreateInvoice";
 import PurchaseReturnInvoice from "pages/PurchaseReturn/CreateInvoice";
 import CreateSalesChallan from "pages/SalesChallan/CreateInvoice";
 import CreatePurchaseChallan from "pages/PurchaseChallan/CreateInvoice";
+import Quotation from "pages/Quotation/";
+import CreateQuotation from "pages/Quotation/CreateInvoice";
 
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
@@ -218,7 +220,14 @@ var routes = [
       },
     ],
   },
-
+  {
+    path: "/v1/quotation",
+    name: "Quotation",
+    icon: "text-blue",
+    component: Quotation,
+    layout: "/admin",
+    iconCmp: AiFillBook,
+  },
   {
     path: "/v1/sales-invoice",
     name: "Create Sales Invoice",
@@ -441,7 +450,7 @@ var routes = [
     layout: "/admin",
     iconCmp: TbPackageExport,
     hasChild: true,
-    state: "purchase",
+    state: "sales",
     childRoutes: [
       {
         path: "/v2/sales",
@@ -476,7 +485,7 @@ var routes = [
     layout: "/admin",
     iconCmp: TbPackageExport,
     hasChild: true,
-    state: "sales",
+    state: "purchase",
     childRoutes: [
       {
         path: "/v2/purchase",

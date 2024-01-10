@@ -609,13 +609,13 @@ const SalesChallan = () => {
               <Col className="">
                 <Row className="ml-0">
                   <h1>
-                    {selMonth}-{getMonthName(selMonth)} Sales
+                    {selMonth}-{getMonthName(selMonth)} Challan
                   </h1>
                   <Button
                     className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
                     onClick={() => setSelMonth(0)}
                   >
-                    All Sales
+                    All Challan
                   </Button>
                 </Row>
               </Col>
@@ -690,12 +690,12 @@ const SalesChallan = () => {
                       setSelParty({ id: null, name: "" });
                     }}
                   >
-                    All Sales
+                    All Challan
                   </Button>
 
                   <h1>
                     <span style={{ fontSize: "18px" }}>
-                      {selParty.id != null && `${selParty.name} Sales`}
+                      {selParty.id != null && `${selParty.name} Challan`}
                       {filterDate.st != "" &&
                         ` (${filterDate.st} to ${filterDate.et})`}
                     </span>{" "}
@@ -722,7 +722,7 @@ const SalesChallan = () => {
                 ) : (
                   <>
                     <CustomTab
-                      tabnames={["All Sales", "Monthly Sale"]}
+                      tabnames={["All Challan", "Monthly Challan"]}
                       tabpanes={tabPan}
                       onChangeEvents={onChangeEvents}
                     />

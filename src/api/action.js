@@ -79,3 +79,5 @@ export const challanDetailsAction = "challandetails";
 export const updateChallanAction = "update_challan";
 export const getChallanNoAction = "fetchchalanno";
 export const challanToInvoiceAction = "challantoinvoice";
+export const quotationListAction = "quotation_list";
+export const quotationToInvoiceAction = "quotationtoinvoice";

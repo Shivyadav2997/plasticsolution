@@ -617,13 +617,13 @@ const SalesChallan = () => {
               <Col className="">
                 <Row className="ml-0">
                   <h1>
-                    {selMonth}-{getMonthName(selMonth)} Sales
+                    {selMonth}-{getMonthName(selMonth)} Challan
                   </h1>
                   <Button
                     className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
                     onClick={() => setSelMonth(0)}
                   >
-                    All Sales
+                    All Challan
                   </Button>
                 </Row>
               </Col>
@@ -689,7 +689,7 @@ const SalesChallan = () => {
                 <Row className="ml-0">
                   <CustomDatePicker
                     onCallback={dateSelect}
-                    text="Sales By Date"
+                    text="Challan By Date"
                   />
                   <Button
                     className="btn-md btn-outline-primary mb-1"
@@ -698,7 +698,7 @@ const SalesChallan = () => {
                       setSelParty({ id: null, name: "" });
                     }}
                   >
-                    All Sales
+                    All Challan
                   </Button>
 
                   <h1>
@@ -730,7 +730,7 @@ const SalesChallan = () => {
                 ) : (
                   <>
                     <CustomTab
-                      tabnames={["All Sales", "Monthly Sale"]}
+                      tabnames={["All Challan", "Monthly Challan"]}
                       tabpanes={tabPan}
                       onChangeEvents={onChangeEvents}
                     />

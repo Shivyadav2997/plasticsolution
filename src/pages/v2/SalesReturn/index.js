@@ -75,7 +75,6 @@ const Sales = () => {
   const [monthSales, setmonthSales] = useState([]);
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [original, setOriginal] = useState(true);
-  const [without, setWithout] = useState(false);
   const dispatch = useDispatch();
   const [invId, setInvId] = useState("");
   const [wpData, setWPData] = useState({
@@ -199,10 +198,6 @@ const Sales = () => {
       data: "bno",
     },
     {
-      title: "WithoutAmt",
-      data: "withoutAmt",
-    },
-    {
       title: "BillAmt",
       data: "billamt",
     },
@@ -278,10 +273,6 @@ const Sales = () => {
     {
       title: "No",
       data: "no",
-    },
-    {
-      title: "WithoutAmt",
-      data: "withoutAmt",
     },
     {
       title: "BillAmt",
@@ -432,8 +423,7 @@ const Sales = () => {
     const resp = await invoiceGet(user.token, {
       id: invId,
       rs: 1,
-      a: original && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
     dispatch(setLoader(false));
@@ -444,8 +434,7 @@ const Sales = () => {
     const resp = await invoiceDownload(user.token, {
       id: invId,
       rs: 1,
-      a: original && !without ? 1 : 0,
-      w: without ? 1 : 0,
+      a: original ? 1 : 0,
       wp: whatsapp ? 1 : 0,
       mo: mob,
     });
@@ -470,7 +459,7 @@ const Sales = () => {
     if (show) {
       invoiceWithChecks();
     }
-  }, [without, original]);
+  }, [original]);
 
   const toggleWPModal = () => {
     setWPData({ ...wpData, show: !wpData.show });
@@ -498,46 +487,7 @@ const Sales = () => {
           <>
             <Row className="w-100">
               <Col xs={12} lg={9}>
-                <Row className="w-100">
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="without"
-                      checked={without}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setOriginal(false);
-                        } else {
-                          setOriginal(true);
-                        }
-
-                        setWithout(e.currentTarget.checked);
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="without">
-                      Without
-                    </label>
-                  </Col>
-                  <Col xs={6} sm={3} md={2}>
-                    <input
-                      type="checkbox"
-                      id="original"
-                      checked={original}
-                      onChange={(e) => {
-                        if (e.currentTarget.checked) {
-                          setWithout(false);
-                        }
-                        setOriginal(e.currentTarget.checked);
-                        if (!e.currentTarget.checked) {
-                          setOriginal(true);
-                        }
-                      }}
-                    />
-                    <label className="ml-2" htmlFor="original">
-                      Original
-                    </label>
-                  </Col>
-                </Row>
+                <Row className="w-100"></Row>
               </Col>
               <Col xs={12} lg={3}>
                 <div className="d-flex">
@@ -580,13 +530,13 @@ const Sales = () => {
               <Col className="">
                 <Row className="ml-0">
                   <h1>
-                    {selMonth}-{getMonthName(selMonth)} Sales
+                    {selMonth}-{getMonthName(selMonth)} Return
                   </h1>
                   <Button
                     className="btn-sm btn-outline-primary ml-2 mt-2 mb-2"
                     onClick={() => setSelMonth(0)}
                   >
-                    All Sales
+                    All Return
                   </Button>
                 </Row>
               </Col>
@@ -648,7 +598,7 @@ const Sales = () => {
                 <Row className="ml-0">
                   <CustomDatePicker
                     onCallback={dateSelect}
-                    text="Sales By Date"
+                    text="Return By Date"
                   />
                   <Button
                     className="btn-md btn-outline-primary mb-1"
@@ -657,12 +607,12 @@ const Sales = () => {
                       setSelParty({ id: null, name: "" });
                     }}
                   >
-                    All Sales
+                    All Return
                   </Button>
 
                   <h1>
                     <span style={{ fontSize: "18px" }}>
-                      {selParty.id != null && `${selParty.name} Sales`}
+                      {selParty.id != null && `${selParty.name} Return`}
                       {filterDate.st != "" &&
                         ` (${filterDate.st} to ${filterDate.et})`}
                     </span>{" "}
@@ -689,7 +639,7 @@ const Sales = () => {
                 ) : (
                   <>
                     <CustomTab
-                      tabnames={["All Sales", "Monthly Sale"]}
+                      tabnames={["All Return", "Monthly Return"]}
                       tabpanes={tabPan}
                       onChangeEvents={onChangeEvents}
                     />

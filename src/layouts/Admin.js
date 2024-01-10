@@ -60,9 +60,8 @@ const Admin = (props) => {
       if (routes[i].hasChild) {
         for (let j = 0; j < routes[i].childRoutes.length; j++) {
           if (
-            path.indexOf(
-              routes[i].childRoutes[j].layout + routes[i].childRoutes[j].path
-            ) !== -1
+            path ==
+            routes[i].childRoutes[j].layout + routes[i].childRoutes[j].path
           ) {
             return routes[i].childRoutes[j].name;
           }

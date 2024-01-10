@@ -82,6 +82,8 @@ import {
   saleChallanListAction,
   purchaseChallanListAction,
   challanToInvoiceAction,
+  quotationListAction,
+  quotationToInvoiceAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -2151,6 +2153,60 @@ const createChallanFromInvoice = async (token, json) => {
     };
   }
 };
+
+const quotationListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${quotationListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createQuotationToInvoice = async (token, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", json);
+    const resp = await axios.post(
+      baseUrl + `?action=${quotationToInvoiceAction}&token=${token}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -2244,4 +2300,6 @@ export {
   createChallanFromInvoice,
   challanGet,
   challanDownload,
+  createQuotationToInvoice,
+  quotationListGet,
 };
