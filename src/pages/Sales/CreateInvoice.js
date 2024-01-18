@@ -40,6 +40,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import AddPartyModal from "pages/Party/AddParty";
 import AddProductModal from "pages/Product/AddProduct";
+import { createQuotationToInvoice } from "api/api";
 
 const CreateInvoice = () => {
   var Toast = Swal.mixin({
@@ -68,6 +69,7 @@ const CreateInvoice = () => {
   const [discount, setDiscount] = useState({ percentage: "", value: "" });
   const [invoiceId, setInvoiceId] = useState(0);
   const [challanIds, setChallanIds] = useState([]);
+  const [quotationIds, setQuotationIds] = useState([]);
   const inputRef = useRef(null);
 
   const [gstError, setGstError] = useState("");
@@ -240,7 +242,11 @@ const CreateInvoice = () => {
             kachu: rows.map((x) => x.row.wAmt),
             total: rows.map((x) => x.row.bAmt),
           }),
-          challanIds.length > 0 ? JSON.stringify(challanIds) : null
+          challanIds.length > 0
+            ? JSON.stringify(challanIds)
+            : quotationIds.length > 0
+            ? JSON.stringify(quotationIds)
+            : null
         );
         dispatch(setLoader(false));
       }
@@ -536,9 +542,14 @@ const CreateInvoice = () => {
     dispatch(toggleSidebar(false));
     billNoGenerate(upperData.bDate);
     const selChallanId = sessionStorage.getItem("challanIds");
+    const selquotationid = sessionStorage.getItem("quotationIds");
     if (selChallanId) {
       setChallanIds(selChallanId.split(","));
       sessionStorage.removeItem("challanIds");
+    }
+    if (selquotationid) {
+      setQuotationIds([selquotationid]);
+      sessionStorage.removeItem("quotationIds");
     }
     const intervalId = setInterval(() => {
       const firstInput = document.querySelector(
@@ -579,25 +590,29 @@ const CreateInvoice = () => {
     }
   }, []);
 
-  const setDataFromApi = (resp) => {
+  const setDataFromApi = (resp, setwholedata = true) => {
     const invoiceData = resp.data;
     const invoiceRows = resp.data.item;
-    setUpperData({
-      party: invoiceData.details.pid,
-      bType: invoiceData.details.btype,
-      bNo: invoiceData.details.bno,
-      bDate: invoiceData.details.date,
-      trans: invoiceData.details.tr ?? "",
-      lrno: invoiceData.details.lr,
-      vno: invoiceData.details.veh ?? "",
-      note: invoiceData.details.note,
-      delivery: invoiceData.details.delivery,
-    });
+    if (setwholedata) {
+      setUpperData({
+        ...upperData,
+        party: invoiceData.details.pid,
+        bType: invoiceData.details.btype,
+        bNo: invoiceData.details.bno,
+        bDate: invoiceData.details.date,
+        trans: invoiceData.details.tr ?? "",
+        lrno: invoiceData.details.lr,
+        vno: invoiceData.details.veh ?? "",
+        note: invoiceData.details.note,
+        delivery: invoiceData.details.delivery,
+      });
+    } else {
+      setUpperData({ ...upperData, party: invoiceData.details.pid });
+    }
 
     const invoiceRowstoShow = [];
     invoiceRows.forEach((element, index) => {
       const product = products.find((x) => x.id == element.item_name);
-      console.log("bheem", product, products);
       let units = [{ id: "-10", name: product?.unit }];
       switch (product?.unit) {
         case "KGS":
@@ -731,7 +746,17 @@ const CreateInvoice = () => {
       JSON.stringify(challanId)
     );
     dispatch(setLoader(false));
-    setDataFromApi(resp);
+    setDataFromApi(resp, false);
+  };
+
+  const fetchQuotationInvoice = async (challanId) => {
+    dispatch(setLoader(true));
+    const resp = await createQuotationToInvoice(
+      user.token,
+      JSON.stringify(challanId)
+    );
+    dispatch(setLoader(false));
+    setDataFromApi(resp, false);
   };
 
   useEffect(() => {
@@ -745,6 +770,12 @@ const CreateInvoice = () => {
       fetchChallanInvoice(challanIds);
     }
   }, [challanIds, products]);
+
+  useEffect(() => {
+    if (quotationIds.length > 0 && products.length > 0) {
+      fetchQuotationInvoice(quotationIds);
+    }
+  }, [quotationIds, products]);
 
   const getRoundAmount = (amount) => {
     return Math.round(Number(amount ?? 0) * 100) / 100;
@@ -929,10 +960,10 @@ const CreateInvoice = () => {
               </Col>
               <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Bill Type"
+                  label="Bill Type *"
                   type="select"
                   options={[
-                    <option value="">Select Bill Type *</option>,
+                    <option value="">Select Bill Type</option>,
                     ...["Debit", "Cash", "Bill_Tax"].map((opt) => {
                       return <option value={opt}>{opt}</option>;
                     }),

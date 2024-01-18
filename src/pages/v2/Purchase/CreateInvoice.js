@@ -554,21 +554,25 @@ const CreateInvoice = () => {
     setDataFromApi(resp);
   };
 
-  const setDataFromApi = (resp) => {
+  const setDataFromApi = (resp, setwholedata = true) => {
     const invoiceData = resp.data;
     const invoiceRows = resp.data.item;
-    setUpperData({
-      party: invoiceData.details.pid,
-      bType: invoiceData.details.btype,
-      bNo: invoiceData.details.bno,
-      bDate: invoiceData.details.date,
-      trans: invoiceData.details.tr ?? "",
-      lrno: invoiceData.details.lr,
-      vno: invoiceData.details.veh ?? "",
-      note: invoiceData.details.note,
-      delivery: invoiceData.details.delivery,
-    });
-
+    if (setwholedata) {
+      setUpperData({
+        ...upperData,
+        party: invoiceData.details.pid,
+        bType: invoiceData.details.btype,
+        bNo: invoiceData.details.bno,
+        bDate: invoiceData.details.date,
+        trans: invoiceData.details.tr ?? "",
+        lrno: invoiceData.details.lr,
+        vno: invoiceData.details.veh ?? "",
+        note: invoiceData.details.note,
+        delivery: invoiceData.details.delivery,
+      });
+    } else {
+      setUpperData({ ...upperData, party: invoiceData.details.pid });
+    }
     const invoiceRowstoShow = [];
     invoiceRows.forEach((element, index) => {
       const product = products.find((x) => x.id == element.item_name);
@@ -689,7 +693,7 @@ const CreateInvoice = () => {
       JSON.stringify(challanId)
     );
     dispatch(setLoader(false));
-    setDataFromApi(resp);
+    setDataFromApi(resp, false);
   };
 
   useEffect(() => {

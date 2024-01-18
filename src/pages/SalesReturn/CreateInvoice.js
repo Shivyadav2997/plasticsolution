@@ -588,6 +588,7 @@ const CreateInvoice = () => {
     const invoiceData = resp.data;
     const invoiceRows = resp.data.item;
     setUpperData({
+      ...upperData,
       party: invoiceData.details.pid,
       bType: invoiceData.details.btype,
       bNo: invoiceData.details.bno,
