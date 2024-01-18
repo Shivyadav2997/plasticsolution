@@ -84,6 +84,10 @@ import {
   challanToInvoiceAction,
   quotationListAction,
   quotationToInvoiceAction,
+  getQuatationNoAction,
+  createQuotationAction,
+  updateQuotationAction,
+  quotationDetailsAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -92,6 +96,8 @@ const baseInvoiceUrl = process.env.REACT_APP_INVOICE_URL;
 const baseInvoiceDownloadUrl = process.env.REACT_APP_INVOICE_DOWNLOAD_URL;
 const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL;
 const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL;
+const baseQuotationUrl = process.env.REACT_APP_QUOTATION_URL;
+const baseQuotationDownloadUrl = process.env.REACT_APP_QUOTATION_DOWNLOAD_URL;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -1133,6 +1139,7 @@ const getBillNo = async (token, payload) => {
 };
 
 const createInvoice = async (token, payload, json, challanId = null) => {
+  console.log("payload", payload);
   try {
     const formData = new FormData();
     formData.append("rows", json);
@@ -2207,6 +2214,135 @@ const createQuotationToInvoice = async (token, json) => {
   }
 };
 
+const getQuatationNo = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${getQuatationNoAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createQuotation = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createQuotationAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateQuotation = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateQuotationAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getQuotationDetails = async (token, id) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${quotationDetailsAction}&token=${token}&id=${id}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const quotationGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseQuotationUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const quotationDownload = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseQuotationDownloadUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -2302,4 +2438,10 @@ export {
   challanDownload,
   createQuotationToInvoice,
   quotationListGet,
+  getQuatationNo,
+  createQuotation,
+  updateQuotation,
+  getQuotationDetails,
+  quotationGet,
+  quotationDownload,
 };

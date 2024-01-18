@@ -271,6 +271,13 @@ var routes = [
     wOutLink: true,
   },
   {
+    path: "/v1/quotation-create",
+    name: "Create Quotation",
+    component: CreateQuotation,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
     path: "/v1/",
     name: "Product",
     icon: "text-red",
