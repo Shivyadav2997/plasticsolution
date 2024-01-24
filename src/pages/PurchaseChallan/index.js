@@ -152,6 +152,7 @@ const PurchaseChallan = () => {
     dispatch(setLoader(true));
     const resp = await challanGet(user.token, {
       id: id,
+      p: 1,
       a: 1,
       h: 0,
       d: 0,
@@ -465,6 +466,7 @@ const PurchaseChallan = () => {
       a: original ? 1 : 0,
       h: half ? 1 : 0,
       d: duplicate ? 1 : 0,
+      p: 1,
       // eway: ewayInvoice ? 1 : 0,
     });
     setInvoiceHtml(resp.data);
@@ -475,6 +477,7 @@ const PurchaseChallan = () => {
     dispatch(setLoader(true));
     const resp = await challanDownload(user.token, {
       id: invId,
+      p: 1,
       a: original ? 1 : 0,
       h: half ? 1 : 0,
       d: duplicate ? 1 : 0,

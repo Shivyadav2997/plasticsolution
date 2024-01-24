@@ -13,6 +13,7 @@ import {
   Table,
   CardTitle,
   Collapse,
+  ButtonGroup,
 } from "reactstrap";
 import {
   FaWhatsapp,
@@ -21,11 +22,19 @@ import {
   FaShoppingCart,
   FaDownload,
   FaMoneyBill,
+  FaFileInvoiceDollar,
+  FaBackward,
 } from "react-icons/fa";
-import { TbPackageExport, TbPackageImport } from "react-icons/tb";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { BsArrowDownRight, BsArrowReturnLeft } from "react-icons/bs";
+import { TbArrowBack, TbPackageExport, TbPackageImport } from "react-icons/tb";
+import {
+  AiOutlinePlus,
+  AiOutlineMinus,
+  AiFillBook,
+  AiOutlineDropbox,
+} from "react-icons/ai";
 import { BiRupee } from "react-icons/bi";
-import { dashboardDataGet, dashboardSendReport } from "api/apiv2";
+import { dashboardDataGet, dashboardSendReport } from "api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
@@ -229,55 +238,197 @@ const Index = (props) => {
           <Col sm={12}>
             <ListGroup horizontal className="float-sm-right">
               <ListGroupItem
-                className="border-0"
+                className="border-0 pb-0"
                 style={{ background: "none" }}
               >
-                <Button
-                  className="btn-md btn-outline-primary mb-1 ml-0"
-                  onClick={() => history.push("/admin/v2/sales-invoice")}
-                >
-                  <FaShoppingCart size={18} color="primary" /> Sale Invoice
+                <Button className=" text-primary mb-1 ml-0">
+                  Sale
+                  <br />
+                  <Container className="mt-1">
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-primary mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/sales-invoice")
+                          }
+                        >
+                          <FaFileInvoiceDollar /> Invoice
+                        </Button>
+                      </Col>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-primary mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/return-sales-invoice")
+                          }
+                        >
+                          <FaBackward /> Return
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-primary mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/sales-challan-create")
+                          }
+                        >
+                          <FaMoneyBill /> Challan
+                        </Button>
+                      </Col>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-primary mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/quotation-create")
+                          }
+                        >
+                          <FaWallet />
+                          Quotation
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Container>
                 </Button>
-                <Button
-                  className="btn-md btn-outline-info mb-1 ml-0"
-                  onClick={() => history.push("/admin/v2/purchase-invoice")}
-                >
-                  <FaShoppingCart size={18} color="info" /> Purchase Invoice
+                <Button className="btn-md text-info mb-1 ml-0">
+                  Purchase
+                  <br />
+                  <Container className="mt-1">
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-info mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/purchase-invoice")
+                          }
+                        >
+                          <FaFileInvoiceDollar /> Invoice
+                        </Button>
+                      </Col>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-info mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/return-purchase-invoice")
+                          }
+                        >
+                          <FaBackward /> Return
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-info mb-1 ml-0 d-flex align-items-center"
+                          onClick={() =>
+                            history.push("/admin/v2/purchase-challan-create")
+                          }
+                        >
+                          <FaMoneyBill /> Challan
+                        </Button>
+                      </Col>
+                      <Col xs="6">
+                        {/* <Button
+                          className="btn-sm btn-outline-info mb-1 ml-0 d-flex align-items-center"
+                          // onClick={() =>
+                          //   history.push("/admin/v2/quotation-create")
+                          // }
+                        >
+                          PO
+                        </Button> */}
+                      </Col>
+                    </Row>
+                  </Container>
                 </Button>
-                <Button
-                  className="btn-md btn-outline-default mb-1 ml-0"
-                  onClick={() => {
-                    sessionStorage.setItem("openAdd", true);
-                    history.push("/admin/v2/expenses");
-                  }}
-                >
-                  <FaMoneyBill size={18} color="default" /> Expense
+                <Button className="btn-md text-warning mb-1 ml-0">
+                  Transaction
+                  <br />
+                  <Container className="mt-1">
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-success mb-1 ml-0 d-flex align-items-center"
+                          onClick={() => {
+                            sessionStorage.setItem("openAdd", 1);
+                            history.push("/admin/v2/transaction");
+                          }}
+                        >
+                          <BsArrowDownLeft />
+                          Receive
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-danger mb-1 ml-0 d-flex align-items-center"
+                          onClick={() => {
+                            sessionStorage.setItem("openAdd", 2);
+                            history.push("/admin/v2/transaction");
+                          }}
+                        >
+                          <BsArrowDownRight />
+                          Payment
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Container>
                 </Button>
-                <Button
-                  className="btn-md btn-outline-success mb-1 ml-0"
-                  onClick={() => {
-                    sessionStorage.setItem("openAdd", 1);
-                    history.push("/admin/v2/transaction");
-                  }}
-                >
-                  <BsArrowDownLeft size={18} color="success" />
-                  Receive
-                </Button>
-                <Button
-                  className="btn-md btn-outline-danger mb-1 ml-0"
-                  onClick={() => {
-                    sessionStorage.setItem("openAdd", 2);
-                    history.push("/admin/v2/transaction");
-                  }}
-                >
-                  <BsArrowUpRight size={18} />
-                  Payment
-                </Button>
-                <Button
-                  className="btn-md btn-outline-success mb-1 ml-0"
-                  onClick={() => history.push("/admin/v2/day-book")}
-                >
-                  <FaWallet size={18} color="success" /> DayBook
+                <Button className="btn-md text-default mb-1 ml-0 ">
+                  Other
+                  <br />
+                  <Container className="mt-1">
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-default mb-1 ml-0 d-flex align-items-center"
+                          onClick={() => {
+                            sessionStorage.setItem("openAdd", true);
+                            history.push("/admin/v2/expenses");
+                          }}
+                        >
+                          <i className="ni ni-money-coins text-default"></i>
+                          Expense
+                        </Button>
+                      </Col>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-default mb-1 ml-0 d-flex align-items-center"
+                          onClick={() => {
+                            sessionStorage.setItem("openAdd", true);
+                            history.push("/admin/v2/party");
+                          }}
+                        >
+                          <i className="ni ni-single-02 text-default"></i> Party
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-default mb-1 ml-0 d-flex align-items-center"
+                          onClick={() => history.push("/admin/v2/day-book")}
+                        >
+                          <AiFillBook />
+                          Daybook
+                        </Button>
+                      </Col>
+                      <Col xs="6">
+                        <Button
+                          className="btn-sm btn-outline-default mb-1 ml-0 d-flex align-items-center"
+                          onClick={() => {
+                            sessionStorage.setItem("openAdd", true);
+                            history.push("/admin/v2/product-list");
+                          }}
+                        >
+                          <AiOutlineDropbox />
+                          Product
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Container>
                 </Button>
               </ListGroupItem>
             </ListGroup>

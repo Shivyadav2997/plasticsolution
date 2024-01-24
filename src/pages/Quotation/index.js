@@ -533,8 +533,8 @@ const Quotation = () => {
         footer={
           <>
             <Row className="w-100">
-              {/* <Col xs={12} lg={9}>
-                <Row className="w-100">
+              <Col xs={12} lg={9}>
+                {/* <Row className="w-100">
                   <Col xs={6} sm={3} md={2}>
                     <input
                       type="checkbox"
@@ -587,8 +587,8 @@ const Quotation = () => {
                       Duplicate
                     </label>
                   </Col>
-                </Row>
-              </Col> */}
+                </Row> */}
+              </Col>
               <Col xs={12} lg={3}>
                 <div className="d-flex">
                   <Button

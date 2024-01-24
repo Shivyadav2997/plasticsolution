@@ -153,6 +153,7 @@ const PurchaseChallan = () => {
     const resp = await challanGet(user.token, {
       id: id,
       a: 1,
+      p: 1,
       h: 0,
       d: 0,
       w: 0,
@@ -455,6 +456,7 @@ const PurchaseChallan = () => {
     const resp = await challanGet(user.token, {
       id: invId,
       a: original ? 1 : 0,
+      p: 1,
       h: half ? 1 : 0,
       d: duplicate ? 1 : 0,
       // eway: ewayInvoice ? 1 : 0,
@@ -468,6 +470,7 @@ const PurchaseChallan = () => {
     const resp = await challanDownload(user.token, {
       id: invId,
       a: original ? 1 : 0,
+      p: 1,
       h: half ? 1 : 0,
       d: duplicate ? 1 : 0,
       wp: whatsapp ? 1 : 0,
