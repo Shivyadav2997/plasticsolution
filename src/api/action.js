@@ -85,3 +85,4 @@ export const createQuotationAction = "create_quotation";
 export const quotationToInvoiceAction = "quotationtoinvoice";
 export const quotationDetailsAction = "quotationdetails";
 export const updateQuotationAction = "update_quotation";
+export const reportAction = "report";

@@ -88,6 +88,7 @@ import {
   createQuotationAction,
   updateQuotationAction,
   quotationDetailsAction,
+  reportAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -98,6 +99,8 @@ const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL;
 const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL;
 const baseQuotationUrl = process.env.REACT_APP_QUOTATION_URL;
 const baseQuotationDownloadUrl = process.env.REACT_APP_QUOTATION_DOWNLOAD_URL;
+const baseReportUrl = process.env.REACT_APP_CREATE_REPORT_URL;
+const baseReportDownloadUrl = process.env.REACT_APP_REPORT_DOWNLOAD_URL;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -2343,6 +2346,66 @@ const quotationDownload = async (token, payload) => {
   }
 };
 
+const reportsGet = async (token) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${reportAction}&token=${token}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createReport = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseReportUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const downloadReport = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseReportDownloadUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -2444,4 +2507,7 @@ export {
   getQuotationDetails,
   quotationGet,
   quotationDownload,
+  reportsGet,
+  createReport,
+  downloadReport,
 };

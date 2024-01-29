@@ -122,11 +122,7 @@ const Index = (props) => {
       }
     } else if (resp.data.pdfurl) {
       const url = resp.data.pdfurl;
-      let alink = document.createElement("a");
-      alink.href = url;
-      alink.target = "_blank";
-      alink.download = url.substring(url.lastIndexOf("/") + 1);
-      alink.click();
+      window.open(url, "_blank");
     }
   };
 

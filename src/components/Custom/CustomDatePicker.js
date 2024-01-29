@@ -9,7 +9,11 @@ const CustomDatePicker = ({
   onCallback,
   text,
   className,
+  size,
 }) => {
+  if (!size) {
+    size = "btn-md";
+  }
   return (
     <DateRangePicker
       initialSettings={{
@@ -45,7 +49,7 @@ const CustomDatePicker = ({
       {/* {children} */}
 
       <button
-        className={`btn btn-outline-primary btn-md mb-1 ${className || ""}`}
+        className={`btn btn-outline-primary  ${size} mb-1 ${className || ""}`}
       >
         <div>
           <i className="ni ni-calendar-grid-58" />

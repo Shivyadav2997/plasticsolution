@@ -5,7 +5,12 @@ import { GrTransaction } from "react-icons/gr";
 import { AiFillBook, AiOutlineDropbox, AiOutlineBank } from "react-icons/ai";
 import { TbPackageExport, TbPackageImport } from "react-icons/tb";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
-import { FaBalanceScale, FaFileInvoiceDollar, FaTruck } from "react-icons/fa";
+import {
+  FaBalanceScale,
+  FaFileInvoice,
+  FaFileInvoiceDollar,
+  FaTruck,
+} from "react-icons/fa";
 import Party from "pages/Party/index";
 import Transport from "pages/Transport/index";
 import Transaction from "pages/Transaction";
@@ -24,6 +29,7 @@ import CreateSalesChallan from "pages/SalesChallan/CreateInvoice";
 import CreatePurchaseChallan from "pages/PurchaseChallan/CreateInvoice";
 import Quotation from "pages/Quotation/";
 import CreateQuotation from "pages/Quotation/CreateInvoice";
+import Report from "pages/Report";
 
 import DayBook from "pages/Daybook";
 import Contact from "pages/ContactUs";
@@ -319,6 +325,14 @@ var routes = [
     component: GST,
     layout: "/admin",
     iconCmp: FaFileInvoiceDollar,
+  },
+  {
+    path: "/v1/report",
+    name: "Report",
+    icon: "text-info",
+    component: Report,
+    layout: "/admin",
+    iconCmp: FaFileInvoice,
   },
   {
     path: "/v1/setting",
