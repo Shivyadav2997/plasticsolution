@@ -102,6 +102,7 @@ const baseQuotationUrl = process.env.REACT_APP_QUOTATION_URL;
 const baseQuotationDownloadUrl = process.env.REACT_APP_QUOTATION_DOWNLOAD_URL;
 const baseReportUrl = process.env.REACT_APP_CREATE_REPORT_URL;
 const baseReportDownloadUrl = process.env.REACT_APP_REPORT_DOWNLOAD_URL;
+const baseMonthlyInvoiceUrl = process.env.REACT_APP_MONTHLY_INVOICE_URL;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -2432,6 +2433,26 @@ const downloadReport = async (token, payload) => {
   }
 };
 
+const monthlyInvoice = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseMonthlyInvoiceUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -2537,4 +2558,5 @@ export {
   createReport,
   downloadReport,
   adddiscount,
+  monthlyInvoice,
 };

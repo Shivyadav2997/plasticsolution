@@ -85,9 +85,7 @@ const baseInvoiceUrl = process.env.REACT_APP_INVOICE_URL_V2;
 const baseInvoiceDownloadUrl = process.env.REACT_APP_INVOICE_DOWNLOAD_URL_V2;
 const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL_V2;
 const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL_V2;
-
-const baseReportUrl = process.env.REACT_APP_CREATE_REPORT_URL_V2;
-const baseReportDownloadUrl = process.env.REACT_APP_REPORT_DOWNLOAD_URL_V2;
+const baseMonthlyInvoiceUrl = process.env.REACT_APP_MONTHLY_INVOICE_URL_V2;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -2047,6 +2045,26 @@ const challanDownload = async (token, payload) => {
   }
 };
 
+const monthlyInvoice = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseMonthlyInvoiceUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 export {
   getMonthName,
   getData,
@@ -2134,4 +2152,5 @@ export {
   challanGet,
   challanDownload,
   adddiscount,
+  monthlyInvoice,
 };

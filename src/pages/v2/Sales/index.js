@@ -24,6 +24,7 @@ import {
   salejson,
   ewayCreate,
   transactionPartyGet,
+  monthlyInvoice,
 } from "api/apiv2";
 import $ from "jquery";
 import { format } from "date-fns";
@@ -89,6 +90,11 @@ const Sales = () => {
     show: false,
     mobile: "",
     t: 0,
+  });
+  const [monthlywpData, setMonthlyWPData] = useState({
+    show: false,
+    mobile: "",
+    month: 0,
   });
   const formRef = useRef(null);
   const printIframe = (id) => {
@@ -359,6 +365,49 @@ const Sales = () => {
       data: "total",
       className: "all",
     },
+    {
+      title: "Action",
+      data: null,
+      createdCell: (td, cellData, rowData, row, col) => {
+        const root = ReactDOM.createRoot(td);
+        root.render(
+          <>
+            {" "}
+            <div className="d-flex gap-10">
+              <div>
+                <Button
+                  className="btn-outline-success btn-icon btn-sm"
+                  onClick={() =>
+                    setMonthlyWPData({
+                      show: true,
+                      mobile: rowData.mobile,
+                      month: row + 1,
+                    })
+                  }
+                >
+                  <span>
+                    <FaWhatsapp size={12} />
+                  </span>
+                </Button>
+              </div>
+              <div>
+                <Button
+                  className="btn-outline-info btn-icon btn-sm"
+                  onClick={() =>
+                    downloadOrWhatsappMonthlyInvoice(false, row + 1, "")
+                  }
+                >
+                  <span>
+                    <FaDownload size={12} />
+                  </span>
+                </Button>
+              </div>
+            </div>
+          </>
+        );
+      },
+      className: "all",
+    },
   ];
 
   var colDefsMonthly = [
@@ -548,6 +597,27 @@ const Sales = () => {
     }
   };
 
+  const downloadOrWhatsappMonthlyInvoice = async (whatsapp, m, mob) => {
+    dispatch(setLoader(true));
+    const resp = await monthlyInvoice(user.token, {
+      type: "s",
+      m: m,
+      wp: whatsapp ? 1 : 0,
+      mo: mob,
+    });
+    dispatch(setLoader(false));
+    if (whatsapp) {
+      toggleMonthlyWPModal();
+      Toast.fire({
+        icon: resp.data.success == 1 ? "success" : "error",
+        title: resp.data.msg || "Something went wrong",
+      });
+    } else {
+      const url = resp.data.pdfurl;
+      window.open(url, "_blank");
+    }
+  };
+
   useEffect(() => {
     if (show) {
       invoiceWithChecks();
@@ -556,6 +626,10 @@ const Sales = () => {
 
   const toggleWPModal = () => {
     setWPData({ ...wpData, show: !wpData.show });
+  };
+
+  const toggleMonthlyWPModal = () => {
+    setMonthlyWPData({ ...monthlywpData, show: !monthlywpData.show });
   };
 
   return (
@@ -965,6 +1039,15 @@ const Sales = () => {
         withMsg={false}
         api={downloadOrWhatsappInvoice}
         params={[true]}
+      />
+
+      <WhatsappModal
+        show={monthlywpData.show}
+        handleToggle={toggleMonthlyWPModal}
+        mobile={monthlywpData.mobile}
+        withMsg={false}
+        api={downloadOrWhatsappMonthlyInvoice}
+        params={[true, monthlywpData.month]}
       />
     </>
   );
