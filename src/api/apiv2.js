@@ -75,8 +75,13 @@ import {
   saleChallanListAction,
   purchaseChallanListAction,
   challanToInvoiceAction,
-  reportAction,
   discountAction,
+  quotationListAction,
+  quotationToInvoiceAction,
+  getQuatationNoAction,
+  createQuotationAction,
+  updateQuotationAction,
+  quotationDetailsAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -86,7 +91,9 @@ const baseInvoiceDownloadUrl = process.env.REACT_APP_INVOICE_DOWNLOAD_URL_V2;
 const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL_V2;
 const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL_V2;
 const baseMonthlyInvoiceUrl = process.env.REACT_APP_MONTHLY_INVOICE_URL_V2;
-const key = "accountdigi9868";
+const baseQuotationUrl = process.env.REACT_APP_QUOTATION_URL_V2;
+const baseQuotationDownloadUrl =
+  process.env.REACT_APP_QUOTATION_DOWNLOAD_URL_V2;
 
 const getMonthName = (monthNumber) => {
   const date = new Date();
@@ -758,10 +765,10 @@ const bankNameGet = async (token) => {
   }
 };
 
-const balanceListGet = async (token) => {
+const balanceListGet = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${balanceAction}&token=${token}`
+      baseUrl + `?action=${balanceAction}&token=${token}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -778,10 +785,10 @@ const balanceListGet = async (token) => {
   }
 };
 
-const balanceEntryListGet = async (token) => {
+const balanceEntryListGet = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${balanceEntryAction}&token=${token}`
+      baseUrl + `?action=${balanceEntryAction}&token=${token}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -2045,6 +2052,188 @@ const challanDownload = async (token, payload) => {
   }
 };
 
+const quotationListGet = async (
+  token,
+  st = "",
+  en = "",
+  m = "",
+  pid = null
+) => {
+  try {
+    let apiurlsend =
+      baseUrl +
+      `?action=${quotationListAction}&token=${token}&st=${st}&en=${en}&m=${m}`;
+    if (pid != null) {
+      apiurlsend += `&p=${pid}`;
+    }
+    const resp = await axios.get(apiurlsend);
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: "Api call success",
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createQuotationToInvoice = async (token, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", json);
+    const resp = await axios.post(
+      baseUrl + `?action=${quotationToInvoiceAction}&token=${token}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getQuatationNo = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseUrl +
+        `?action=${getQuatationNoAction}&token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const createQuotation = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${createQuotationAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const updateQuotation = async (token, payload, json) => {
+  try {
+    const formData = new FormData();
+    formData.append("rows", json);
+    const resp = await axios.post(
+      baseUrl +
+        `?action=${updateQuotationAction}&token=${token}&${getParams(payload)}`,
+      formData
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const getQuotationDetails = async (token, id) => {
+  try {
+    const resp = await axios.get(
+      baseUrl + `?action=${quotationDetailsAction}&token=${token}&id=${id}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const quotationGet = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseQuotationUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
+const quotationDownload = async (token, payload) => {
+  try {
+    const resp = await axios.get(
+      baseQuotationDownloadUrl + `?token=${token}&${getParams(payload)}`
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const monthlyInvoice = async (token, payload) => {
   try {
     const resp = await axios.get(
@@ -2153,4 +2342,12 @@ export {
   challanDownload,
   adddiscount,
   monthlyInvoice,
+  createQuotationToInvoice,
+  quotationListGet,
+  getQuatationNo,
+  createQuotation,
+  updateQuotation,
+  getQuotationDetails,
+  quotationGet,
+  quotationDownload,
 };

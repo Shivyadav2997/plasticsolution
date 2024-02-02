@@ -76,6 +76,9 @@ import ProductionV2 from "pages/v2/Production";
 import GSTV2 from "pages/v2/GST";
 import TransportV2 from "pages/v2/Transport/index";
 
+import QuotationV2 from "pages/v2/Quotation/";
+import CreateQuotationV2 from "pages/v2/Quotation/CreateInvoice";
+
 import { GiFactory } from "react-icons/gi";
 var routes = [
   {
@@ -535,6 +538,14 @@ var routes = [
     ],
   },
   {
+    path: "/v2/quotation",
+    name: "Quotation",
+    icon: "text-blue",
+    component: QuotationV2,
+    layout: "/admin",
+    iconCmp: AiFillBook,
+  },
+  {
     path: "/v2/sales-invoice",
     name: "Create Sales Invoice",
     component: CreateInvoiceV2,
@@ -573,6 +584,13 @@ var routes = [
     path: "/v2/purchase-challan-create",
     name: "Create Purchase Challan",
     component: CreatePurchaseChallanV2,
+    layout: "/admin",
+    wOutLink: true,
+  },
+  {
+    path: "/v2/quotation-create",
+    name: "Create Quotation",
+    component: CreateQuotationV2,
     layout: "/admin",
     wOutLink: true,
   },

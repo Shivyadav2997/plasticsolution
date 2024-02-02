@@ -25,6 +25,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
 import { format } from "date-fns";
+import CustomDatePicker from "components/Custom/CustomDatePicker";
 
 const ProductStock = () => {
   var Toast = Swal.mixin({
@@ -45,7 +46,7 @@ const ProductStock = () => {
   const [loading, setLoading] = useState(true);
   const [showAllStock, setShowAllStock] = useState(true);
   const [addType, setAddType] = useState(1);
-
+  const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const inputRef = useRef(null);
 
   const dispatch = useDispatch();
@@ -210,14 +211,22 @@ const ProductStock = () => {
 
   const getProductStock = async () => {
     setLoading(true);
-    const data = await productStockGet(user.token);
+    const data = await productStockGet(
+      user.token,
+      filterDate.st,
+      filterDate.et
+    );
     setProductStockList(data.data);
     setLoading(false);
   };
 
   const getIndividualStock = async () => {
     setLoading(true);
-    const data = await productStockEntryGet(user.token);
+    const data = await productStockEntryGet(
+      user.token,
+      filterDate.st,
+      filterDate.et
+    );
     setproductStock(data.data);
     setLoading(false);
   };
@@ -259,7 +268,14 @@ const ProductStock = () => {
     } else {
       getIndividualStock();
     }
-  }, [showAllStock, fyear]);
+  }, [showAllStock, fyear, filterDate]);
+
+  const dateSelect = (start, end) => {
+    setFilterDate({
+      st: format(start.toDate(), "yyyy-MM-dd"),
+      et: format(end.toDate(), "yyyy-MM-dd"),
+    });
+  };
 
   useEffect(() => {
     if (sessionStorage.getItem("openAdd")) {
@@ -378,6 +394,24 @@ const ProductStock = () => {
                   >
                     Stock Entry
                   </Button>
+                  <CustomDatePicker
+                    onCallback={dateSelect}
+                    text="Product Stocks By Date"
+                  />
+                  {filterDate.st != "" && (
+                    <Button
+                      className="btn-md btn-outline-primary mb-1"
+                      onClick={() => setFilterDate({ st: "", et: "" })}
+                    >
+                      All Product Stocks
+                    </Button>
+                  )}
+                  <h1>
+                    <span style={{ fontSize: "18px" }}>
+                      {filterDate.st != "" &&
+                        ` (${filterDate.st} to ${filterDate.et})`}
+                    </span>{" "}
+                  </h1>
                 </Row>
               </Col>
               <Col>
@@ -421,6 +455,24 @@ const ProductStock = () => {
                   >
                     Product Stock
                   </Button>
+                  <CustomDatePicker
+                    onCallback={dateSelect}
+                    text="Stock Entry By Date"
+                  />
+                  {filterDate.st != "" && (
+                    <Button
+                      className="btn-md btn-outline-primary mb-1"
+                      onClick={() => setFilterDate({ st: "", et: "" })}
+                    >
+                      All Stock Entry
+                    </Button>
+                  )}
+                  <h1>
+                    <span style={{ fontSize: "18px" }}>
+                      {filterDate.st != "" &&
+                        ` (${filterDate.st} to ${filterDate.et})`}
+                    </span>{" "}
+                  </h1>
                 </Row>
               </Col>
             </Row>

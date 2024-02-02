@@ -713,10 +713,10 @@ const productEdit = async (token, payload) => {
   }
 };
 
-const productStockGet = async (token) => {
+const productStockGet = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${productStockAction}&token=${token}`
+      baseUrl + `?action=${productStockAction}&token=${token}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -734,10 +734,11 @@ const productStockGet = async (token) => {
   }
 };
 
-const productStockEntryGet = async (token) => {
+const productStockEntryGet = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${productStockEntryAction}&token=${token}`
+      baseUrl +
+        `?action=${productStockEntryAction}&token=${token}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -816,10 +817,10 @@ const bankNameGet = async (token) => {
   }
 };
 
-const balanceListGet = async (token) => {
+const balanceListGet = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${balanceAction}&token=${token}`
+      baseUrl + `?action=${balanceAction}&token=${token}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;
@@ -836,10 +837,10 @@ const balanceListGet = async (token) => {
   }
 };
 
-const balanceEntryListGet = async (token) => {
+const balanceEntryListGet = async (token, st = "", en = "") => {
   try {
     const resp = await axios.get(
-      baseUrl + `?action=${balanceEntryAction}&token=${token}`
+      baseUrl + `?action=${balanceEntryAction}&token=${token}&st=${st}&en=${en}`
     );
     if (resp.data.login == 0) {
       window.location.href = `${window.location.origin}/auth/login`;

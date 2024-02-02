@@ -52,6 +52,7 @@ const Balance = () => {
   const dispatch = useDispatch();
   const formRef = useRef(null);
   const [show, setShow] = useState(false);
+  const [filterDate, setFilterDate] = useState({ st: "", et: "" });
 
   const downloadPDF = async (rowData) => {
     const id = btoa(Number(rowData.id));
@@ -156,7 +157,7 @@ const Balance = () => {
 
   const getBalances = async () => {
     setLoading(true);
-    var data = await balanceListGet(user.token);
+    var data = await balanceListGet(user.token, filterDate.st, filterDate.et);
     if (data.data) {
       var data2 = data.data;
       setbalances(data2);
@@ -168,7 +169,11 @@ const Balance = () => {
 
   const getBalanceEntries = async () => {
     setLoading(true);
-    var data = await balanceEntryListGet(user.token);
+    var data = await balanceEntryListGet(
+      user.token,
+      filterDate.st,
+      filterDate.et
+    );
     if (data.data) {
       var data2 = data.data;
       setbalanceEntries(data2);
@@ -267,7 +272,14 @@ const Balance = () => {
     } else {
       getBalances();
     }
-  }, [showBalEntry, fyear]);
+  }, [showBalEntry, fyear, filterDate]);
+
+  const dateSelect = (start, end) => {
+    setFilterDate({
+      st: format(start.toDate(), "yyyy-MM-dd"),
+      et: format(end.toDate(), "yyyy-MM-dd"),
+    });
+  };
 
   useEffect(() => {
     const open = sessionStorage.getItem("openAdd");
@@ -383,6 +395,24 @@ const Balance = () => {
                   >
                     Balance Entry
                   </Button>
+                  <CustomDatePicker
+                    onCallback={dateSelect}
+                    text="Balances By Date"
+                  />
+                  {filterDate.st != "" && (
+                    <Button
+                      className="btn-md btn-outline-primary mb-1"
+                      onClick={() => setFilterDate({ st: "", et: "" })}
+                    >
+                      All Balances
+                    </Button>
+                  )}
+                  <h1>
+                    <span style={{ fontSize: "18px" }}>
+                      {filterDate.st != "" &&
+                        ` (${filterDate.st} to ${filterDate.et})`}
+                    </span>{" "}
+                  </h1>
                 </Row>
               </Col>
               <Col>
@@ -445,6 +475,24 @@ const Balance = () => {
                   >
                     Balance List
                   </Button>
+                  <CustomDatePicker
+                    onCallback={dateSelect}
+                    text="Balance Entry By Date"
+                  />
+                  {filterDate.st != "" && (
+                    <Button
+                      className="btn-md btn-outline-primary mb-1"
+                      onClick={() => setFilterDate({ st: "", et: "" })}
+                    >
+                      All Balance Entry
+                    </Button>
+                  )}
+                  <h1>
+                    <span style={{ fontSize: "18px" }}>
+                      {filterDate.st != "" &&
+                        ` (${filterDate.st} to ${filterDate.et})`}
+                    </span>{" "}
+                  </h1>
                 </Row>
               </Col>
             </Row>
