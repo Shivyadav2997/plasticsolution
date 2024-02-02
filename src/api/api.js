@@ -89,6 +89,7 @@ import {
   updateQuotationAction,
   quotationDetailsAction,
   reportAction,
+  discountAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -958,6 +959,32 @@ const addCreditDebit = async (token, payload) => {
   }
 };
 
+const adddiscount = async (token, payload) => {
+  try {
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, discountAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const addUseProductStock = async (token, payload) => {
   try {
     const resp = await axios.get(
@@ -1142,7 +1169,6 @@ const getBillNo = async (token, payload) => {
 };
 
 const createInvoice = async (token, payload, json, challanId = null) => {
-  console.log("payload", payload);
   try {
     const formData = new FormData();
     formData.append("rows", json);
@@ -2510,4 +2536,5 @@ export {
   reportsGet,
   createReport,
   downloadReport,
+  adddiscount,
 };

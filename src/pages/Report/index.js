@@ -47,7 +47,7 @@ const Report = () => {
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [parties, setParties] = useState([]);
-  const [selParty, setselParty] = useState(null);
+  const [selParty, setselParty] = useState("");
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
@@ -96,6 +96,8 @@ const Report = () => {
       id: selectedReport.id,
     });
     dispatch(setLoader(false));
+    setFilterDate({ st: "", et: "" });
+    setselParty("");
     setInvoiceHtml(resp.data);
   };
 
@@ -137,19 +139,20 @@ const Report = () => {
 
   return (
     <Container className="pt-6" fluid style={{ minHeight: "80vh" }}>
-      <Row
-        className="text-center mb-2 justify-content-center align-items-center d-none d-lg-flex"
-        noGutters={true}
-      >
-        <Col
-          xs="auto"
-          className="mx-auto align-items-center justify-content-center d-flex"
-        >
+      <Row className="text-center mb-2 d-none d-lg-flex" noGutters={true}>
+        <Col xs="auto" className="d-flex">
           <CustomInputWoutFormik
             name="gpname"
             type="select"
             label=""
-            onChange={(e) => setSelectedReport(reportOption[e.target.value])}
+            value={selectedReport.id}
+            onChange={(e) =>
+              setSelectedReport(
+                Object.values(reportOption).find(
+                  (record) => record.id == e.target.value
+                )
+              )
+            }
             options={[
               <option value="">Select Report type</option>,
               ...reportOption.main.map((opt) => {
@@ -166,15 +169,6 @@ const Report = () => {
               }),
             ]}
           />
-          &nbsp;
-          {selectedReport.date == "1" && (
-            <CustomDatePicker
-              size="btn-sm"
-              onCallback={dateSelect}
-              text="Report range"
-            />
-          )}
-          {filterDate.st != "" && ` (${filterDate.st} to ${filterDate.et})`}
           &nbsp;
           {selectedReport.party == "1" && (
             <CustomInputWoutFormik
@@ -193,7 +187,19 @@ const Report = () => {
             />
           )}
           &nbsp;
-          <Button className="btn-sm btn-success" onClick={generateReport}>
+          {selectedReport.date == "1" && (
+            <CustomDatePicker
+              size="btn-sm"
+              onCallback={dateSelect}
+              text="Date"
+            />
+          )}
+          {filterDate.st != "" && ` (${filterDate.st} to ${filterDate.et})`}
+          &nbsp;
+          <Button
+            className="btn-sm btn-outline-primary"
+            onClick={generateReport}
+          >
             Generate Report
           </Button>
         </Col>
@@ -207,7 +213,14 @@ const Report = () => {
             name="gpname"
             type="select"
             label=""
-            onChange={(e) => setSelectedReport(reportOption[e.target.value])}
+            value={selectedReport.id}
+            onChange={(e) =>
+              setSelectedReport(
+                Object.values(reportOption).find(
+                  (record) => record.id == e.target.value
+                )
+              )
+            }
             options={[
               <option value="">Select Report type</option>,
               ...reportOption.main.map((opt) => {
@@ -225,17 +238,7 @@ const Report = () => {
             ]}
           />
         </Col>
-        {selectedReport.date == "1" && (
-          <Col xs="12" sm="6" md={3}>
-            <CustomDatePicker
-              size="btn-sm"
-              onCallback={dateSelect}
-              text="Report range"
-            />
 
-            {filterDate.st != "" && ` (${filterDate.st} to ${filterDate.et})`}
-          </Col>
-        )}
         {selectedReport.party == "1" && (
           <Col xs="12" sm="6" md={3}>
             <CustomInputWoutFormik
@@ -254,8 +257,22 @@ const Report = () => {
             />
           </Col>
         )}
+        {selectedReport.date == "1" && (
+          <Col xs="12" sm="6" md={3}>
+            <CustomDatePicker
+              size="btn-sm"
+              onCallback={dateSelect}
+              text="Report range"
+            />
+
+            {filterDate.st != "" && ` (${filterDate.st} to ${filterDate.et})`}
+          </Col>
+        )}
         <Col xs="12" sm="6" md={3}>
-          <Button className="btn-sm btn-success" onClick={generateReport}>
+          <Button
+            className="btn-sm btn-outline-primary"
+            onClick={generateReport}
+          >
             Generate Report
           </Button>
         </Col>

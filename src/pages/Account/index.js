@@ -14,6 +14,7 @@ import {
   addCreditDebit,
   deleteRecord,
   accountpdf,
+  adddiscount,
 } from "api/api";
 import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom/client";
@@ -323,12 +324,16 @@ Total ${totalDebit} = ${total
     dispatch(setLoader(true));
     if (addType == 1) {
       resp = await addCreditDebit(user.token, {
-        type: "credit",
         ...payload,
+        type: "credit",
       });
-    } else {
+    } else if (addType == 2) {
       resp = await addCreditDebit(user.token, {
+        ...payload,
         type: "debit",
+      });
+    } else if (addType == 3) {
+      resp = await adddiscount(user.token, {
         ...payload,
       });
     }
@@ -338,7 +343,9 @@ Total ${totalDebit} = ${total
         resp.data.success == 1
           ? addType == 1
             ? "Credit Added Successfully"
-            : "Debit Added Successfully"
+            : addType == 2
+            ? "Debit Added Successfully"
+            : "Discount Added Successfully"
           : "Something wen't wrong",
     });
     dispatch(setLoader(false));
@@ -395,7 +402,7 @@ Total ${totalDebit} = ${total
     <>
       <CustomModal
         show={show}
-        title={addType == 1 ? "Credt" : "Debit"}
+        title={addType == 1 ? "Credit" : addType == 2 ? "Debit" : "Discount"}
         handleToggle={handleToggle}
         footer={
           <Button
@@ -419,6 +426,7 @@ Total ${totalDebit} = ${total
             billtype: "",
             date: format(new Date(), "yyyy-MM-dd"),
             description: "",
+            type: "",
           }}
           validationSchema={validate}
           onSubmit={(values) => {
@@ -473,11 +481,37 @@ Total ${totalDebit} = ${total
                   </Col>
                 </Row>
 
+                {addType == 3 && (
+                  <CustomInput
+                    name="type"
+                    type="select"
+                    label="Credit/Debit"
+                    options={[
+                      { label: "Select Type", value: "" },
+                      { label: "Credit", value: "credit" },
+                      { label: "Debit", value: "debit" },
+                    ].map((opt) => {
+                      return <option value={opt.value}>{opt.label}</option>;
+                    })}
+                  />
+                )}
                 <CustomInput
-                  placeholder={addType == 1 ? "Credit Amount" : "Debit Amount"}
+                  placeholder={
+                    addType == 1
+                      ? "Credit Amount"
+                      : addType == 2
+                      ? "Debit Amount"
+                      : "Amount"
+                  }
                   name="amount"
                   type="number"
-                  label={addType == 1 ? "Credit Amount" : "Debit Amount"}
+                  label={
+                    addType == 1
+                      ? "Credit Amount"
+                      : addType == 2
+                      ? "Debit Amount"
+                      : "Amount"
+                  }
                 />
 
                 <CustomInput
@@ -578,6 +612,15 @@ Total ${totalDebit} = ${total
                     }}
                   >
                     Add Debit
+                  </Button>
+                  <Button
+                    className="btn-md btn-outline-success"
+                    onClick={() => {
+                      setAddType(3);
+                      handleToggle();
+                    }}
+                  >
+                    Add Discount
                   </Button>
                 </Row>
               </Col>

@@ -620,6 +620,14 @@ var routes = [
     iconCmp: FaFileInvoiceDollar,
   },
   {
+    path: "/v2/report",
+    name: "Report",
+    icon: "text-info",
+    component: Report,
+    layout: "/admin",
+    iconCmp: FaFileInvoice,
+  },
+  {
     path: "/v2/setting",
     name: "Setting",
     icon: "ni ni-settings text-yellow",

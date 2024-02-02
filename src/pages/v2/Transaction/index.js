@@ -475,6 +475,7 @@ const Transaction = () => {
             mode: "",
             date: format(new Date(), "yyyy-MM-dd"),
             desc: "",
+            discount: "",
           }}
           validationSchema={validate}
           onSubmit={(values) => {
@@ -521,6 +522,13 @@ const Transaction = () => {
                   name="amount"
                   type="number"
                   label={addType == 1 ? "Credit Amount" : "Debit Amount"}
+                />
+
+                <CustomInput
+                  placeholder={"Discount"}
+                  name="discount"
+                  type="number"
+                  label={"Discount"}
                 />
 
                 <CustomInput

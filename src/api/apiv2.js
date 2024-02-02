@@ -75,6 +75,8 @@ import {
   saleChallanListAction,
   purchaseChallanListAction,
   challanToInvoiceAction,
+  reportAction,
+  discountAction,
 } from "./action.js";
 
 const baseUrltest = "https://jsonplaceholder.typicode.com/";
@@ -84,6 +86,8 @@ const baseInvoiceDownloadUrl = process.env.REACT_APP_INVOICE_DOWNLOAD_URL_V2;
 const baseChallanUrl = process.env.REACT_APP_CHALLAN_URL_V2;
 const baseChallanDownloadUrl = process.env.REACT_APP_CHALLAN_DOWNLOAD_URL_V2;
 
+const baseReportUrl = process.env.REACT_APP_CREATE_REPORT_URL_V2;
+const baseReportDownloadUrl = process.env.REACT_APP_REPORT_DOWNLOAD_URL_V2;
 const key = "accountdigi9868";
 
 const getMonthName = (monthNumber) => {
@@ -900,6 +904,32 @@ const addCreditDebit = async (token, payload) => {
   }
 };
 
+const adddiscount = async (token, payload) => {
+  try {
+    const resp = await axios.post(
+      baseUrl + `?token=${token}`,
+      getFormData(payload, discountAction),
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    if (resp.data.login == 0) {
+      window.location.href = `${window.location.origin}/auth/login`;
+    }
+    return {
+      data: resp.data,
+      message: resp.data.msg,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      message: "Something wen't wrong",
+    };
+  }
+};
+
 const addUseProductStock = async (token, payload) => {
   try {
     const resp = await axios.get(
@@ -1083,11 +1113,13 @@ const getBillNo = async (token, payload) => {
   }
 };
 
-const createInvoice = async (token, payload, json) => {
+const createInvoice = async (token, payload, json, challanId = null) => {
   try {
-    // const formData = objectToFormData(json);
     const formData = new FormData();
     formData.append("rows", json);
+    if (challanId != null) {
+      formData.append("challan_id", challanId);
+    }
     const resp = await axios.post(
       baseUrl +
         `?action=${createInvoiceAction}&token=${token}&${getParams(payload)}`,
@@ -2101,4 +2133,5 @@ export {
   createChallanFromInvoice,
   challanGet,
   challanDownload,
+  adddiscount,
 };
