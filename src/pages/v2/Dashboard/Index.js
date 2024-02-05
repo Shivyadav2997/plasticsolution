@@ -117,6 +117,8 @@ const Index = (props) => {
       } else {
         Toast.fire({
           icon: "error",
+          timer: null,
+          showCloseButton: true,
           title: resp.data.msg || "Something went wrong",
         });
       }

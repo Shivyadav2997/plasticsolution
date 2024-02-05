@@ -119,10 +119,13 @@ const Index = (props) => {
         Toast.fire({
           icon: "success",
           title: resp.data.msg,
+          timer: null,
         });
       } else {
         Toast.fire({
           icon: "error",
+          timer: null,
+          showCloseButton: true,
           title: resp.data.msg || "Something went wrong",
         });
       }

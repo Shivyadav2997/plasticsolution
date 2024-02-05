@@ -125,6 +125,8 @@ const Transport = () => {
       } else {
         Toast.fire({
           icon: "error",
+          timer: null,
+          showCloseButton: true,
           title: resp.message,
         });
       }
@@ -168,6 +170,8 @@ const Transport = () => {
     } else {
       Toast.fire({
         icon: "error",
+        timer: null,
+        showCloseButton: true,
         title: resp.message,
       });
     }

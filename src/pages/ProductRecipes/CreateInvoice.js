@@ -58,6 +58,8 @@ const CreateChallan = () => {
     } else if (rows.length == 0 || rows[0].row.item == "") {
       Toast.fire({
         icon: "error",
+        timer: null,
+        showCloseButton: true,
         title: "Invalid Data in Rows",
       });
     } else {
@@ -107,6 +109,8 @@ const CreateChallan = () => {
       } else {
         Toast.fire({
           icon: "error",
+          timer: null,
+          showCloseButton: true,
           title: resp.data.msg || "Something went wrong",
         });
       }

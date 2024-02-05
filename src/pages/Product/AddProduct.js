@@ -64,6 +64,8 @@ const AddProduct = ({
     } else {
       Toast.fire({
         icon: "error",
+        timer: null,
+        showCloseButton: true,
         title: "Something wen't wrong",
       });
     }

@@ -91,6 +91,8 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
     } else {
       Toast.fire({
         icon: "error",
+        timer: null,
+        showCloseButton: true,
         title: resp.message,
       });
     }

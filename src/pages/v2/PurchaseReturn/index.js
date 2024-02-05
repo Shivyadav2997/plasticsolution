@@ -117,6 +117,8 @@ const Purchase = () => {
       } else {
         Toast.fire({
           icon: "error",
+          timer: null,
+          showCloseButton: true,
           title: resp.message,
         });
       }

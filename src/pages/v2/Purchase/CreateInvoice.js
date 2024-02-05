@@ -149,6 +149,8 @@ const CreateInvoice = () => {
     } else {
       Toast.fire({
         icon: "error",
+        timer: null,
+        showCloseButton: true,
         title: resp.message,
       });
     }
@@ -164,6 +166,8 @@ const CreateInvoice = () => {
     } else if (rows.length == 0 || rows[0].row.item == "") {
       Toast.fire({
         icon: "error",
+        timer: null,
+        showCloseButton: true,
         title: "Invalid Invoice Data",
       });
     } else {
@@ -246,6 +250,8 @@ const CreateInvoice = () => {
       } else {
         Toast.fire({
           icon: "error",
+          timer: null,
+          showCloseButton: true,
           title: resp.data.msg || "Something went wrong",
         });
       }
