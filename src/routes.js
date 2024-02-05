@@ -39,6 +39,8 @@ import Bank from "pages/Bank";
 import Profile from "pages/Profile";
 import ProductList from "pages/Product";
 import ProductStock from "pages/Product/stock";
+import ProductRecipes from "pages/ProductRecipes/index";
+import CreateRecipe from "pages/ProductRecipes/CreateInvoice";
 import ViewAccount from "pages/Account/view";
 import Setting from "pages/Setting";
 import Dashboard from "pages/Dashboard/Index";
@@ -311,7 +313,22 @@ var routes = [
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },
+      {
+        path: "/v1/product-recipes",
+        name: "Product Recipes",
+        icon: "",
+        component: ProductRecipes,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
     ],
+  },
+  {
+    path: "/v1/recipe-create",
+    name: "Create Product Recipe",
+    component: CreateRecipe,
+    layout: "/admin",
+    wOutLink: true,
   },
   {
     path: "/v1/production",
@@ -619,7 +636,22 @@ var routes = [
         layout: "/admin",
         iconCmp: RiCheckboxBlankCircleLine,
       },
+      {
+        path: "/v2/product-recipes",
+        name: "Product Recipes",
+        icon: "",
+        component: ProductRecipes,
+        layout: "/admin",
+        iconCmp: RiCheckboxBlankCircleLine,
+      },
     ],
+  },
+  {
+    path: "/v2/recipe-create",
+    name: "Create Product Recipe",
+    component: CreateRecipe,
+    layout: "/admin",
+    wOutLink: true,
   },
   {
     path: "/v2/production",

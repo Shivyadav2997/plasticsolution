@@ -87,3 +87,7 @@ export const quotationDetailsAction = "quotationdetails";
 export const updateQuotationAction = "update_quotation";
 export const reportAction = "report";
 export const discountAction = "discount";
+export const recipesListAction = "productracipes_list";
+export const createRecipesAction = "create_productrecipes";
+export const updateRecipesAction = "update_productrecipes";
+export const recipeGetAction = "productrecipesdetails";

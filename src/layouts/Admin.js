@@ -27,8 +27,8 @@ const Admin = (props) => {
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (
-        prop.layout === "/admin"
-        //&& prop.path.includes("/" + user.path + "/")
+        prop.layout === "/admin" &&
+        prop.path.includes("/" + user.path + "/")
       ) {
         if (prop.hasChild) {
           return prop.childRoutes.map((prop2, key2) => {
