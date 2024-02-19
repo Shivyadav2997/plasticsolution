@@ -64,12 +64,12 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
   }, [show]);
   const validate = Yup.object({
     name: Yup.string().required("Required"),
-    owner: Yup.string().required("Required"),
+    // owner: Yup.string().required("Required"),
     email: Yup.string().email("Email is invalid"),
     // mobile: Yup.string().required("Required"),
     city: Yup.string().required("Required"),
-    pancard: Yup.string().required("Required"),
-    reg_type: Yup.string().required("Required"),
+    // pancard: Yup.string().required("Required"),
+    // reg_type: Yup.string().required("Required"),
     gpname: Yup.string().required("Required"),
     state: Yup.string().required("Required"),
   });

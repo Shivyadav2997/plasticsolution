@@ -45,9 +45,11 @@ const Report = () => {
     party: "0",
   });
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
+  const [oldfilterDate, setOldFilterDate] = useState({ st: "", et: "" });
   const [invoiceHtml, setInvoiceHtml] = useState("");
   const [parties, setParties] = useState([]);
   const [selParty, setselParty] = useState("");
+  const [oldselParty, setoldselParty] = useState("");
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
@@ -96,6 +98,8 @@ const Report = () => {
       id: selectedReport.id,
     });
     dispatch(setLoader(false));
+    setoldselParty(selParty);
+    setOldFilterDate(filterDate);
     setFilterDate({ st: "", et: "" });
     setselParty("");
     setInvoiceHtml(resp.data);
@@ -111,9 +115,9 @@ const Report = () => {
   const downloadOrWhatsappInvoice = async (whatsapp, mob) => {
     dispatch(setLoader(true));
     const resp = await downloadReport(user.token, {
-      p: selParty,
-      st: filterDate.st,
-      en: filterDate.et,
+      p: oldselParty,
+      st: oldfilterDate.st,
+      en: oldfilterDate.et,
       id: selectedReport.id,
       wp: whatsapp ? 1 : 0,
       mo: mob,
@@ -134,7 +138,6 @@ const Report = () => {
   useEffect(() => {
     getReportOption();
     getTransactionParties();
-    console.log(process.env.REACT_APP_CREATE_REPORT_URL);
   }, []);
 
   return (
@@ -262,7 +265,7 @@ const Report = () => {
             <CustomDatePicker
               size="btn-sm"
               onCallback={dateSelect}
-              text="Report range"
+              text="Date"
             />
 
             {filterDate.st != "" && ` (${filterDate.st} to ${filterDate.et})`}

@@ -13,6 +13,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { format, parse } from "date-fns";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+import Select from "components/Custom/CustomSelect";
 import DynamicDataTable from "@langleyfoxall/react-dynamic-data-table";
 import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import {
@@ -698,6 +699,26 @@ const CreateInvoice = () => {
     }
   };
 
+  const filterItems = (search) => {
+    let filterData = products;
+    if (search != "") {
+      filterData = products
+        .filter((item) =>
+          item.item_name.toLowerCase().includes(search.toLowerCase())
+        )
+        .slice(0, 10);
+    }
+    if (filterData.length > 50) {
+      filterData = filterData.slice(0, 10);
+    }
+    return filterData.map((item) => {
+      return {
+        value: item.id,
+        label: item.item_name,
+      };
+    });
+  };
+
   useEffect(() => {
     setpartyActive("");
     setpartyInActive("");
@@ -1040,20 +1061,14 @@ const CreateInvoice = () => {
                 switch (field) {
                   case "item":
                     return (
-                      <CustomInputWoutFormik
-                        type="select"
-                        options={[
-                          <option value="">Select Item</option>,
-                          ...products.map((opt) => {
-                            return (
-                              <option value={opt.id}>{opt.item_name}</option>
-                            );
-                          }),
-                        ]}
-                        defaultValue={value}
-                        onChange={(event) => {
-                          row[field] = event.target.value;
-                          setGstFromProduct(row, event.target.value);
+                      <Select
+                        allOptions={products}
+                        portal={document.body}
+                        selectedValue={value}
+                        getFilterData={filterItems}
+                        handlechange={(newvalue, action) => {
+                          row[field] = newvalue.value;
+                          setGstFromProduct(row, newvalue.value);
                         }}
                       />
                     );

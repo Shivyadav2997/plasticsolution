@@ -224,3 +224,50 @@ body,
 .modal-fullscreen .modal-footer {
   padding: 10px !important;
 }
+
+.customselect__control {
+  min-height: 0px !important;
+  height: calc(1.5em + 0.5rem + 2px);
+  padding: 0px !important;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font-weight: 400;
+  color: #8898aa;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #cad1d7;
+  box-shadow: none;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.customselect__indicators {
+  display: none !important;
+}
+
+.customselect__value-container {
+  padding: 0.25rem 0.5rem !important;
+  align-items: unset !important;
+}
+
+.customselect__single-value {
+  color: #8898aa !important;
+}
+
+.customselect__menu-list {
+  font-size: 0.75rem !important;
+}
+
+.customselect__control--is-focused {
+  box-shadow: inherit !important;
+  border-color: hsl(0, 0%, 80%) !important;
+}
+
+.customselect__input-container {
+  color: #8898aa !important;
+  padding: 0px !important;
+  margin: 0px !important;
+}
