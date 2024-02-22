@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Input } from "reactstrap";
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import CustomTable from "components/Custom/CustomTable";
+import CustomSelect from "components/Custom/CustomSelectFormik";
 import * as React from "react";
 import { useState } from "react";
 import {
@@ -266,6 +267,27 @@ const ProductStock = () => {
     handleShowConfirmation();
   };
 
+  const filterItems = (search) => {
+    let filterData = products;
+    if (search != "") {
+      filterData = products
+        .filter((item) =>
+          item.item_name.toLowerCase().includes(search.toLowerCase())
+        )
+
+        .slice(0, 10);
+    }
+    if (filterData.length > 50) {
+      filterData = filterData.slice(0, 10);
+    }
+    return filterData.map((item) => {
+      return {
+        value: item.id,
+        label: item.item_name,
+      };
+    });
+  };
+
   useEffect(() => {
     if (showAllStock) {
       getProductStock();
@@ -340,19 +362,12 @@ const ProductStock = () => {
                 {(formik) => (
                   <div>
                     <Form>
-                      <CustomInput
-                        name="productid"
-                        type="select"
+                      <CustomSelect
                         label="Product"
+                        name="productid"
                         disabled={product != null}
-                        options={[
-                          <option value="">Select Product</option>,
-                          ...products.map((opt) => {
-                            return (
-                              <option value={opt.id}>{opt.item_name}</option>
-                            );
-                          }),
-                        ]}
+                        allOptions={products}
+                        getFilterData={filterItems}
                       />
                       {product != null && (
                         <CustomInput

@@ -2,6 +2,7 @@ import { Container, Row, Col, Button, Card, CardBody } from "reactstrap";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CustomInputWoutFormik } from "components/Custom/CustomInputWoutFormik";
+import Select from "components/Custom/CustomSelect";
 import DynamicDataTable from "@langleyfoxall/react-dynamic-data-table";
 import { toggleSidebar, keepSidebar } from "features/User/UserSlice";
 import {
@@ -50,7 +51,7 @@ const CreateChallan = () => {
 
   useEffect(() => {
     setRows(rows);
-  }, [products]);
+  }, [products, rows]);
 
   const addInvoice = async () => {
     if (upperData.product == "") {
@@ -189,12 +190,37 @@ const CreateChallan = () => {
     setRows(invoiceRowstoShow);
   };
 
+  const filterItems = (search) => {
+    let filterData = products;
+    if (search != "") {
+      filterData = products
+        .filter((item) =>
+          item.item_name.toLowerCase().includes(search.toLowerCase())
+        )
+        .slice(0, 10);
+    }
+    if (filterData.length > 50) {
+      filterData = filterData.slice(0, 10);
+    }
+    return filterData.map((item) => {
+      return {
+        value: item.id,
+        label: item.item_name,
+      };
+    });
+  };
+
   useEffect(() => {
     if (invoiceId > 0 && products.length > 0) {
       fetchInvoiceData(invoiceId);
     }
   }, [invoiceId, products]);
 
+  const setProductValue = (rowsInput, inputValue) => {
+    const curData = [...rows];
+    curData[rowsInput.id] = { id: rowsInput.id, row: rowsInput };
+    setRows(curData);
+  };
   return (
     <>
       <AddProductModal
@@ -213,30 +239,24 @@ const CreateChallan = () => {
           <CardBody>
             <Row>
               <Col xs="6" sm="4" lg="3">
-                <CustomInputWoutFormik
+                <Select
                   label="Product Name *"
-                  type="select"
-                  options={[
-                    <option value="">Select Product</option>,
-                    ...products.map((opt) => {
-                      return <option value={opt.id}>{opt.item_name}</option>;
-                    }),
-                  ]}
                   errorMsg={error.product}
-                  value={upperData.product}
-                  onChange={(e) => {
+                  allOptions={products}
+                  portal={document.body}
+                  selectedValue={upperData.product}
+                  getFilterData={filterItems}
+                  handlechange={(newvalue, action) => {
                     setError({ ...error, product: "" });
-                    setUpperData({ ...upperData, product: e.target.value });
+                    setUpperData({ ...upperData, product: newvalue.value });
                   }}
-                  addon={
-                    <Button
-                      className="btn-sm btn-outline-primary"
-                      onClick={handleToggleProduct}
-                    >
-                      <BiPlus />
-                    </Button>
-                  }
                 />
+                <Button
+                  className="btn-sm btn-outline-primary"
+                  onClick={handleToggleProduct}
+                >
+                  <BiPlus />
+                </Button>
               </Col>
               <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
@@ -267,19 +287,14 @@ const CreateChallan = () => {
                 switch (field) {
                   case "item":
                     return (
-                      <CustomInputWoutFormik
-                        type="select"
-                        options={[
-                          <option value="">Select Item</option>,
-                          ...products.map((opt) => {
-                            return (
-                              <option value={opt.id}>{opt.item_name}</option>
-                            );
-                          }),
-                        ]}
-                        defaultValue={value}
-                        onChange={(event) => {
-                          row[field] = event.target.value;
+                      <Select
+                        allOptions={products}
+                        portal={document.body}
+                        selectedValue={value}
+                        getFilterData={filterItems}
+                        handlechange={(newvalue, action) => {
+                          row[field] = newvalue.value;
+                          setProductValue(row, newvalue.value);
                         }}
                       />
                     );

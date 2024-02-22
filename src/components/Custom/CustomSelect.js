@@ -7,6 +7,7 @@ const CustomSelect = ({
   selectedValue,
   getFilterData,
   handlechange,
+  label,
 }) => {
   const [filterData, setFilterData] = useState([]);
   const [search, setSearch] = useState("");
@@ -15,19 +16,22 @@ const CustomSelect = ({
   }, [search, allOptions]);
 
   return (
-    <Select
-      menuPortalTarget={portal}
-      classNamePrefix="customselect"
-      value={
-        selectedValue
-          ? filterData.find((item) => item.value == selectedValue)
-          : ""
-      }
-      inputValue={search}
-      onInputChange={(val, action) => setSearch(val)}
-      onChange={handlechange}
-      options={filterData}
-    />
+    <>
+      {label && <label className="form-control-label">{label}</label>}
+      <Select
+        menuPortalTarget={portal}
+        classNamePrefix="customselect"
+        value={
+          selectedValue
+            ? filterData.find((item) => item.value == selectedValue)
+            : ""
+        }
+        inputValue={search}
+        onInputChange={(val, action) => setSearch(val)}
+        onChange={handlechange}
+        options={filterData}
+      />
+    </>
   );
 };
 
