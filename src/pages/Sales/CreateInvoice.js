@@ -501,9 +501,9 @@ const CreateInvoice = () => {
     dispatch(setLoader(true));
     var data = await partyListGet(user.token);
     dispatch(setLoader(false));
-    // if (data.data) {
-    //   setParties(data.data);
-    // }
+    if (data.data) {
+      setParties(data.data);
+    }
   };
 
   const getTransporters = async () => {
@@ -674,7 +674,7 @@ const CreateInvoice = () => {
     });
     setRowIndex(invoiceRowstoShow.length - 1);
     setRows(invoiceRowstoShow);
-
+    console.log("rows", invoiceRowstoShow);
     if (Number(invoiceData.details.tpaku ?? 0) > 0) {
       setTotalBAmt(Number(invoiceData.details.tpaku ?? 0));
       setTotalWAmt(Number(invoiceData.details.tkachu ?? 0));

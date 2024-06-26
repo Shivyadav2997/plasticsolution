@@ -12,8 +12,28 @@ const CustomSelect = ({
   const [filterData, setFilterData] = useState([]);
   const [search, setSearch] = useState("");
   useEffect(() => {
-    setFilterData(getFilterData(search));
-  }, [search, allOptions]);
+    let filterDataSearch = getFilterData(search);
+    if (selectedValue) {
+      const isExists = filterDataSearch.find(
+        (item) => item.value == selectedValue
+      );
+      console.log(
+        "selected",
+        isExists,
+        allOptions.find((item) => item.id == selectedValue)
+      );
+      if (!isExists) {
+        const selectedOption = allOptions.find(
+          (item) => item.id == selectedValue
+        );
+        filterDataSearch.push({
+          value: selectedOption.id,
+          label: selectedOption.item_name,
+        });
+      }
+    }
+    setFilterData(filterDataSearch);
+  }, [search, allOptions, selectedValue]);
 
   return (
     <>
