@@ -406,7 +406,8 @@ const Index = (props) => {
                             history.push("/admin/v1/party");
                           }}
                         >
-                          <i className="ni ni-single-02 text-default"></i> Party
+                          <i className="ni ni-single-02 text-default"></i>{" "}
+                          Account
                         </Button>
                       </Col>
                     </Row>
@@ -903,7 +904,7 @@ const Index = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Party</th>
+                    <th scope="col">Account</th>
                     <th scope="col">WithouAmt</th>
                     <th scope="col">BillAmt</th>
                     <th scope="col">Total</th>
@@ -968,7 +969,7 @@ const Index = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Party</th>
+                    <th scope="col">Account</th>
                     <th scope="col">WithouAmt</th>
                     <th scope="col">BillAmt</th>
                     <th scope="col">Total</th>

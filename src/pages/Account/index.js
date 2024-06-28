@@ -214,7 +214,7 @@ Total ${totalDebit} = ${total
       data: null,
     },
     {
-      title: "Party Name",
+      title: "Account Name",
       data: "party",
       className: "all",
     },
@@ -286,7 +286,7 @@ Total ${totalDebit} = ${total
       data: null,
     },
     {
-      title: "Party Name",
+      title: "Account Name",
       data: "party",
       className: "all",
     },
@@ -446,7 +446,7 @@ Total ${totalDebit} = ${total
                 <CustomInput
                   name="pid"
                   type="select"
-                  label="Party"
+                  label="Account Name"
                   onChange={(e) => {
                     formik.handleChange(e);
                     const party = parties.find((x) => x.pid == e.target.value);
@@ -457,7 +457,7 @@ Total ${totalDebit} = ${total
                     formik.setFieldValue("bAmount", party ? party.billamt : "");
                   }}
                   options={[
-                    <option value="">Select Party</option>,
+                    <option value="">Select Account</option>,
                     ...parties.map((opt) => {
                       return <option value={opt.pid}>{opt.b_name}</option>;
                     }),

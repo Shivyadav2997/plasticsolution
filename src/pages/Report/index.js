@@ -178,7 +178,7 @@ const Report = () => {
               label=""
               type="select"
               options={[
-                <option value="">Select Party</option>,
+                <option value="">Select Account</option>,
                 ...parties.map((opt) => {
                   return <option value={opt.id}>{opt.b_name}</option>;
                 }),
@@ -248,7 +248,7 @@ const Report = () => {
               label=""
               type="select"
               options={[
-                <option value="">Select Party</option>,
+                <option value="">Select Account</option>,
                 ...parties.map((opt) => {
                   return <option value={opt.id}>{opt.b_name}</option>;
                 }),

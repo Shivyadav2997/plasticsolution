@@ -92,7 +92,7 @@ var routes = [
   },
   {
     path: "/v1/party",
-    name: "Party",
+    name: "Account",
     icon: "ni ni-single-02 text-yellow",
     component: Party,
     layout: "/admin",
@@ -108,7 +108,7 @@ var routes = [
   },
   {
     path: "/v1/account",
-    name: "Account",
+    name: "Account Ledger",
     icon: "text-success",
     component: Account,
     layout: "/admin",
@@ -416,7 +416,7 @@ var routes = [
   },
   {
     path: "/v2/party",
-    name: "Party",
+    name: "Account",
     icon: "ni ni-single-02 text-yellow",
     component: PartyV2,
     layout: "/admin",
@@ -431,7 +431,7 @@ var routes = [
   },
   {
     path: "/v2/account",
-    name: "Account",
+    name: "Account Ledger",
     icon: "text-success",
     component: AccountV2,
     layout: "/admin",
@@ -473,7 +473,7 @@ var routes = [
     path: "/v2/expenses",
     name: "Expenses",
     icon: "ni ni-money-coins text-success",
-    component: ExpenseV2,
+    component: Expense,
     layout: "/admin",
   },
   {

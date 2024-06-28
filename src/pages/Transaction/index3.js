@@ -32,7 +32,7 @@ const Transaction = () => {
   ];
   const columns = [
     {
-      title: "Party",
+      title: "Account",
       data: "pid",
     },
     {
@@ -62,7 +62,7 @@ const Transaction = () => {
   ];
   const columnsReact = [
     {
-      Header: "Party",
+      Header: "Account",
       accessor: "pid",
     },
     {

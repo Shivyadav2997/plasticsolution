@@ -97,7 +97,7 @@ const GST = () => {
     },
 
     {
-      title: "Party",
+      title: "Account",
       data: "name",
       className: "all",
     },

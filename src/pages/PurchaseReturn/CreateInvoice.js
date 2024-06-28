@@ -169,7 +169,7 @@ const CreateInvoice = () => {
 
   const addInvoice = async () => {
     if (upperData.party == "") {
-      setError({ ...error, party: "Please Select Party" });
+      setError({ ...error, party: "Please Select Account" });
     } else if (upperData.bType == "") {
       setError({ ...error, bType: "Please Select Bill Type" });
     } else if (upperData.bNo == "") {
@@ -849,10 +849,10 @@ const CreateInvoice = () => {
             <Row>
               <Col xs="6" sm="4" lg="3">
                 <CustomInputWoutFormik
-                  label="Party Name *"
+                  label="Account Name *"
                   type="select"
                   options={[
-                    <option value="">Select Party</option>,
+                    <option value="">Select Account</option>,
                     ...parties.map((opt) => {
                       return <option value={opt.id}>{opt.b_name}</option>;
                     }),

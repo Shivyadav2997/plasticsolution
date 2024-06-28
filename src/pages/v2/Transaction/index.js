@@ -500,7 +500,7 @@ const Transaction = () => {
                     formik.setFieldValue("bAmount", party ? party.billamt : "");
                   }}
                   options={[
-                    <option value="">Select Party</option>,
+                    <option value="">Select Account</option>,
                     ...parties.map((opt) => {
                       return <option value={opt.pid}>{opt.b_name}</option>;
                     }),

@@ -202,7 +202,7 @@ const Party = () => {
                 className="btn-md btn-outline-primary"
                 onClick={handleToggle}
               >
-                Add Party
+                Add Account
               </Button>
               <Button className="btn-md btn-outline-default">Add File</Button>
             </Row>
@@ -219,7 +219,7 @@ const Party = () => {
                   dark={false}
                   data={parties}
                   columndefs={colDefs}
-                  title="Party List"
+                  title="Account List"
                   deleteClick={deleteClick}
                   editClick={editClick}
                 />

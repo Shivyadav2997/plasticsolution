@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setLoader } from "features/User/UserSlice";
+import { getExpenseGroup } from "api/api";
 
 const Expense = () => {
   var Toast = Swal.mixin({
@@ -39,6 +40,7 @@ const Expense = () => {
     monthly: [],
   });
 
+  const [expenseGroups, setExpenseGroups] = useState([]);
   const childRef = useRef(null);
   const childRef2 = useRef(null);
   const [filterDate, setFilterDate] = useState({ st: "", et: "" });
@@ -179,6 +181,17 @@ const Expense = () => {
     setLoading(false);
   };
 
+  const getExpenseGroups = async () => {
+    setLoading(true);
+    var data = await getExpenseGroup(user.token);
+    if (data.data) {
+      setExpenseGroups(data.data);
+    } else {
+      setExpenseGroups([]);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     getExpenses();
   }, [filterDate, fyear]);
@@ -189,6 +202,10 @@ const Expense = () => {
       sessionStorage.removeItem("openAdd");
     }
   }, []);
+
+  useEffect(() => {
+    if (show) getExpenseGroups();
+  }, [show]);
   const addExpense = async (payload) => {
     dispatch(setLoader(true));
     let resp = await expenseAdd(user.token, payload);
@@ -249,7 +266,7 @@ const Expense = () => {
 
   const validate = Yup.object({
     amount: Yup.number().required("Required"),
-    type: Yup.string().required("Required"),
+    id: Yup.string().required("Required"),
     mode: Yup.string().required("Required"),
     date: Yup.date().required("Required"),
   });
@@ -276,14 +293,16 @@ const Expense = () => {
         <Formik
           initialValues={{
             amount: "",
-            type: "",
+            id: "",
             mode: "",
             date: format(new Date(), "yyyy-MM-dd"),
             desc: "",
           }}
           validationSchema={validate}
           onSubmit={(values) => {
-            addExpense(values);
+            const type =
+              expenseGroups.find((x) => x.id == values.id)?.name ?? "";
+            addExpense({ ...values, type: type });
           }}
           innerRef={formRef}
           validateOnChange={false}
@@ -293,16 +312,15 @@ const Expense = () => {
             <div>
               <Form>
                 <CustomInput
-                  name="type"
+                  name="id"
                   type="select"
                   label="Expense Type"
                   options={[
                     { label: "Select Type", value: "" },
-                    { label: "Salary", value: "Salary" },
-                    { label: "Rent", value: "Rent" },
-                    { label: "Machine", value: "Machine" },
-                    { label: "Transsport", value: "Transsport" },
-                    { label: "Other", value: "Other" },
+                    ...expenseGroups.map((option) => ({
+                      label: option.name,
+                      value: option.id,
+                    })),
                   ].map((opt) => {
                     return <option value={opt.value}>{opt.label}</option>;
                   })}

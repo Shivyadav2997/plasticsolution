@@ -28,6 +28,16 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
   const { user, fyear } = useSelector((store) => store.user);
   const [gstError, setGstError] = useState("");
   const [gstSuccess, setGstSuccess] = useState("");
+  const [showExtraFields, setShowExtraFields] = useState(false);
+  const [validationSchema, setValidationSchema] = useState(
+    Yup.object({
+      name: Yup.string().required("Required"),
+      gpname: Yup.string().required("Required"),
+      email: Yup.string().email("Email is invalid"),
+      city: Yup.string().required("Required"),
+      state: Yup.string().required("Required"),
+    })
+  );
   const dispatch = useDispatch();
 
   const getStateList = async () => {
@@ -62,18 +72,28 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
       getDefaultData();
     }
   }, [show]);
-  const validate = Yup.object({
-    name: Yup.string().required("Required"),
-    // owner: Yup.string().required("Required"),
-    email: Yup.string().email("Email is invalid"),
-    // mobile: Yup.string().required("Required"),
-    city: Yup.string().required("Required"),
-    // pancard: Yup.string().required("Required"),
-    // reg_type: Yup.string().required("Required"),
-    gpname: Yup.string().required("Required"),
-    state: Yup.string().required("Required"),
-  });
 
+  useEffect(() => {
+    if (showExtraFields) {
+      setValidationSchema(
+        Yup.object({
+          name: Yup.string().required("Required"),
+          gpname: Yup.string().required("Required"),
+          email: Yup.string().email("Email is invalid"),
+          city: Yup.string().required("Required"),
+          state: Yup.string().required("Required"),
+        })
+      );
+    } else {
+      setValidationSchema(
+        Yup.object({
+          name: Yup.string().required("Required"),
+          gpname: Yup.string().required("Required"),
+          email: Yup.string().email("Email is invalid"),
+        })
+      );
+    }
+  }, [showExtraFields]);
   const addPartyApi = async (payload) => {
     dispatch(setLoader(true));
     const resp = await partyAdd(user.token, payload);
@@ -152,7 +172,7 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
     <CustomModal
       show={show}
       handleToggle={handleToggle}
-      title={`${party ? "Edit" : "Add"} Party`}
+      title={`${party ? "Edit" : "Add"} Account`}
       footer={
         <Button
           type="submit"
@@ -167,6 +187,7 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
           Save
         </Button>
       }
+      size={showExtraFields ? "lg" : undefined}
     >
       <Formik
         initialValues={{
@@ -185,7 +206,7 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
           gpname: party?.gpname,
           state: party?.b_state,
         }}
-        validationSchema={validate}
+        validationSchema={validationSchema}
         onSubmit={(values) => {
           if (party) {
             editParty({ id: party.id, ...values });
@@ -199,133 +220,147 @@ const AddParty = ({ show, party, Toast, callbackFunction, toggle }) => {
       >
         {(formik) => (
           <div>
-            <Form>
-              <FormGroup className="mb-1">
-                <label className="form-control-label">GST No.</label>
-                <InputGroup className="input-group-alternative">
+            <Form
+              style={{ display: "flex", flexDirection: "row", gap: "30px" }}
+            >
+              <div style={{ flex: "1" }}>
+                <FormGroup className="mb-1">
+                  <label className="form-control-label">GST No.</label>
+                  <InputGroup className="input-group-alternative">
+                    <CustomInput
+                      placeholder="Business GST No."
+                      name="gst"
+                      type="text"
+                      withFormGroup={false}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button
+                        className="pt-0 pb-0"
+                        color="primary"
+                        type="button"
+                        onClick={() => {
+                          autoFillGST(formik, formik.values.gst);
+                        }}
+                      >
+                        <FaSearch />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                  {gstError && <label className="errorMsg">{gstError}</label>}
+                  {gstSuccess && (
+                    <label className="text-success">{gstSuccess}</label>
+                  )}
+                </FormGroup>
+                <CustomInput
+                  placeholder="Account Name"
+                  label="Account Name"
+                  name="name"
+                  type="text"
+                />
+                <CustomInput
+                  name="gpname"
+                  type="select"
+                  label="Group Name"
+                  options={[
+                    <option value="">Select Group Name</option>,
+                    ...groupname.map((opt) => {
+                      return <option value={opt.id}>{opt.name}</option>;
+                    }),
+                  ]}
+                  onChange={(e) => {
+                    const group = groupname.find((x) => x.id == e.target.value);
+                    setShowExtraFields(group?.phide == "1");
+                    formik.handleChange(e);
+                  }}
+                />
+              </div>
+
+              {showExtraFields && (
+                <div style={{ flex: "1" }}>
                   <CustomInput
-                    placeholder="Business GST No."
-                    name="gst"
+                    placeholder="Owner Name"
+                    label="Owner Name"
+                    name="owner"
                     type="text"
-                    withFormGroup={false}
                   />
-                  <InputGroupAddon addonType="append">
-                    <Button
-                      className="pt-0 pb-0"
-                      color="primary"
-                      type="button"
-                      onClick={() => {
-                        autoFillGST(formik, formik.values.gst);
-                      }}
-                    >
-                      <FaSearch />
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
-                {gstError && <label className="errorMsg">{gstError}</label>}
-                {gstSuccess && (
-                  <label className="text-success">{gstSuccess}</label>
-                )}
-              </FormGroup>
-              <CustomInput
-                placeholder="Business Name"
-                label="Business Name"
-                name="name"
-                type="text"
-              />
+                  <CustomInput
+                    placeholder="Business Mobile No."
+                    label="Mobile No."
+                    name="mobile"
+                    type="number"
+                  />
+                  <CustomInput
+                    placeholder="Business Email"
+                    label="Email"
+                    name="email"
+                    type="email"
+                  />
 
-              <CustomInput
-                placeholder="Owner Name"
-                label="Owner Name"
-                name="owner"
-                type="text"
-              />
-              <CustomInput
-                placeholder="Business Mobile No."
-                label="Mobile No."
-                name="mobile"
-                type="number"
-              />
-              <CustomInput
-                placeholder="Business Email"
-                label="Email"
-                name="email"
-                type="email"
-              />
+                  <CustomInput
+                    placeholder="Business City"
+                    label="City"
+                    name="city"
+                    type="text"
+                  />
+                  <CustomInput
+                    name="state"
+                    type="select"
+                    label="State"
+                    options={[
+                      <option value="">Select State</option>,
+                      ...stateL.map((opt) => {
+                        return <option value={opt.code}>{opt.state}</option>;
+                      }),
+                    ]}
+                  />
 
-              <CustomInput
-                placeholder="Business City"
-                label="City"
-                name="city"
-                type="text"
-              />
-              <CustomInput
-                name="state"
-                type="select"
-                label="State"
-                options={[
-                  <option value="">Select State</option>,
-                  ...stateL.map((opt) => {
-                    return <option value={opt.code}>{opt.state}</option>;
-                  }),
-                ]}
-              />
-              <CustomInput
-                name="gpname"
-                type="select"
-                label="Group Name"
-                options={[
-                  <option value="">Select Group Name</option>,
-                  ...groupname.map((opt) => {
-                    return <option value={opt.id}>{opt.name}</option>;
-                  }),
-                ]}
-              />
-              <CustomInput
-                name="reg_type"
-                type="select"
-                label="Reg. Type"
-                options={[
-                  { label: "Select Type", value: "" },
-                  { label: "Regular", value: "Regular" },
-                  { label: "Consumer", value: "Consumer" },
-                  { label: "Unregistered", value: "Unregistered" },
-                  { label: "Composition", value: "Composition" },
-                ].map((opt) => {
-                  return <option value={opt.value}>{opt.label}</option>;
-                })}
-              />
-              <CustomInput
-                placeholder="Business Address"
-                label="Address"
-                name="add"
-                type="text"
-              />
-              <CustomInput
-                placeholder="Pincode"
-                label="Pincode"
-                name="pincode"
-                type="number"
-              />
-              <CustomInput
-                placeholder="Credit Limit"
-                label="Credit Limit"
-                name="credit_limit"
-                type="number"
-              />
-              <CustomInput
-                placeholder="Credit Days"
-                label="Credit Days"
-                name="credit_day"
-                type="number"
-              />
-              <CustomInput
-                placeholder="PAN Card"
-                label="PAN Card"
-                name="pancard"
-                type="text"
-                maxLength={10}
-              />
+                  <CustomInput
+                    name="reg_type"
+                    type="select"
+                    label="Reg. Type"
+                    options={[
+                      { label: "Select Type", value: "" },
+                      { label: "Regular", value: "Regular" },
+                      { label: "Consumer", value: "Consumer" },
+                      { label: "Unregistered", value: "Unregistered" },
+                      { label: "Composition", value: "Composition" },
+                    ].map((opt) => {
+                      return <option value={opt.value}>{opt.label}</option>;
+                    })}
+                  />
+                  <CustomInput
+                    placeholder="Business Address"
+                    label="Address"
+                    name="add"
+                    type="text"
+                  />
+                  <CustomInput
+                    placeholder="Pincode"
+                    label="Pincode"
+                    name="pincode"
+                    type="number"
+                  />
+                  <CustomInput
+                    placeholder="Credit Limit"
+                    label="Credit Limit"
+                    name="credit_limit"
+                    type="number"
+                  />
+                  <CustomInput
+                    placeholder="Credit Days"
+                    label="Credit Days"
+                    name="credit_day"
+                    type="number"
+                  />
+                  <CustomInput
+                    placeholder="PAN Card"
+                    label="PAN Card"
+                    name="pancard"
+                    type="text"
+                    maxLength={10}
+                  />
+                </div>
+              )}
             </Form>
           </div>
         )}

@@ -214,7 +214,7 @@ const Transaction = () => {
       data: null,
     },
     {
-      title: "Party",
+      title: "Account",
       data: "pid",
       className: "all",
     },
@@ -504,7 +504,7 @@ const Transaction = () => {
                 <CustomInput
                   name="pid"
                   type="select"
-                  label="Party"
+                  label="Account"
                   onChange={(e) => {
                     formik.handleChange(e);
                     const party = parties.find((x) => x.pid == e.target.value);
@@ -515,7 +515,7 @@ const Transaction = () => {
                     formik.setFieldValue("bAmount", party ? party.billamt : "");
                   }}
                   options={[
-                    <option value="">Select Party</option>,
+                    <option value="">Select Account</option>,
                     ...parties.map((opt) => {
                       return <option value={opt.pid}>{opt.b_name}</option>;
                     }),

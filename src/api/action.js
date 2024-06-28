@@ -91,3 +91,4 @@ export const recipesListAction = "productracipes_list";
 export const createRecipesAction = "create_productrecipes";
 export const updateRecipesAction = "update_productrecipes";
 export const recipeGetAction = "productrecipesdetails";
+export const expenseGroupAction = "expensegroupname";
